@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSPROGROUP — Solutions Techniques</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;
+  --text:#111111;
+  --accent:#E52421;
+  --light-gray:#F1F1F1;
+  --dark-bg:#111111;
+  --dark-text:#ffffff;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;font-weight:400;overflow-x:hidden;}
+
+/* NAV (copied/compatible with index template header) */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 4rem;background:rgba(255,255,255,0.98);
+  border-bottom:1px solid #eaeaea;transition:all .3s ease;
+}
+.nav-logo{
+  font-family:"Bebas Neue",sans-serif;font-size:2rem;color:var(--text);
+  text-decoration:none;display:flex;align-items:center;gap:0.8rem;letter-spacing:.05em;
+}
+.nav-logo img{height:44px;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{
+  color:var(--text);text-decoration:none;font-size:.9rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;transition:color .3s;
+}
+.nav-links a:hover{color:var(--accent);}
+.nav-cta{background:var(--accent);color:#fff!important;padding:.8rem 1.8rem;border-radius:2px;}
+.nav-cta:hover{background:#c21e1b!important;}
+.dropdown{position:relative;}
+.dropdown-content{
+  display:none;position:absolute;top:100%;left:0;background:#fff;min-width:240px;
+  box-shadow:0 8px 16px rgba(0,0,0,0.08);flex-direction:column;padding:1rem 0;border-top:2px solid var(--accent);
+}
+.dropdown:hover .dropdown-content{display:flex;}
+.dropdown-content a{
+  padding:.8rem 1.5rem;color:var(--text)!important;font-size:.85rem;text-transform:none;letter-spacing:.05em;
+}
+.dropdown-content a:hover{background:var(--light-gray);color:var(--accent)!important;padding-left:1.8rem;}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{gap:1.2rem;}
+}
+@media(max-width:640px){
+  nav{padding:1rem 1.2rem;}
+  .nav-links{display:none;}
+}
+
+/* PAGE LAYOUT */
+main{padding-top:92px;}
+.hero{
+  padding:10rem 4rem 4rem;
+  text-align:center;
+  max-width:1200px;
+  margin:0 auto;
+}
+.hero .h-tag{
+  font-size:.8rem;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;
+}
+.hero .h-tag::before,.hero .h-tag::after{content:"";width:36px;height:1px;background:var(--accent);}
+.hero h1{
+  font-family:"Bebas Neue",sans-serif;font-size:clamp(3.6rem,6vw,6rem);
+  line-height:.9;color:var(--text);letter-spacing:.02em;margin-bottom:1.5rem;
+}
+.hero h1 em{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);font-size:.7em;display:block;line-height:1.1;}
+.hero p{font-size:1.05rem;line-height:1.8;color:#555;max-width:720px;margin:0 auto;}
+
+/* EXPERTISE GRID (from template) */
+#expertise{padding:4rem 4rem 6rem;max-width:1400px;margin:0 auto;}
+.section-title{
+  font-family:"Bebas Neue",sans-serif;font-size:clamp(2.4rem,4.6vw,4.2rem);
+  text-align:center;margin-bottom:3rem;letter-spacing:.05em;color:var(--text);
+}
+.exp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;}
+.exp-item{
+  position:relative;height:360px;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:2.2rem;
+  color:#fff;text-decoration:none;background:#111;border-radius:12px;
+  box-shadow:0 18px 50px rgba(0,0,0,.08);
+}
+.exp-bg{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:transform .6s cubic-bezier(0.25,0.46,0.45,0.94);z-index:1;
+}
+.exp-item:hover .exp-bg{transform:scale(1.08);}
+.exp-ov{
+  position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.35) 55%,rgba(0,0,0,0.1) 100%);
+  z-index:2;transition:background .4s;
+}
+.exp-item:hover .exp-ov{
+  background:linear-gradient(to top,rgba(229,36,33,0.85) 0%,rgba(0,0,0,0.45) 60%);
+}
+.exp-content{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.exp-title{
+  font-family:"Bebas Neue",sans-serif;font-size:1.85rem;letter-spacing:.05em;text-transform:uppercase;
+}
+.exp-icon{
+  width:42px;height:42px;border:2px solid rgba(255,255,255,.9);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  transition:all .3s;
+}
+.exp-item:hover .exp-icon{background:#fff;color:var(--accent);}
+
+@media(max-width:1100px){
+  .exp-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  #expertise{padding-left:1.2rem;padding-right:1.2rem;}
+  .exp-grid{grid-template-columns:1fr;}
+  .hero{padding-left:1.2rem;padding-right:1.2rem;}
+}
+
+footer{
+  background:var(--dark-bg);
+  color:#fff;
+  padding:6rem 4rem 0;
+}
+.footer-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;margin-bottom:5rem;max-width:1400px;margin-left:auto;margin-right:auto;
+}
+.footer-logo{font-family:"Bebas Neue",sans-serif;font-size:2.5rem;color:#fff;text-decoration:none;display:inline-block;margin-bottom:1.5rem;letter-spacing:.05em;}
+.footer-logo span{color:var(--accent);}
+.footer-logo img{display:block;max-width:180px;max-height:44px;height:auto;width:auto;object-fit:contain;}
+.footer-desc{color:#888;line-height:1.8;font-size:.95rem;max-width:300px;margin-bottom:2rem;}
+.social-icons{display:flex;gap:1rem;}
+.social-icon{width:40px;height:40px;border:1px solid #444;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:all .3s;}
+.social-icon:hover{border-color:var(--accent);background:var(--accent);}
+.footer-col h4{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;margin-bottom:2rem;color:#fff;letter-spacing:.05em;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:1rem;}
+.footer-col ul li a{color:#888;text-decoration:none;transition:color .3s;font-size:.95rem;}
+.footer-col ul li a:hover{color:var(--accent);}
+.footer-bottom{background:#A58F7D;margin:0 -4rem;padding:1.5rem 4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.85rem;color:#fff;font-weight:500;margin-top:2.5rem;}
+.footer-legal-links{display:flex;gap:2rem;}
+.footer-legal-links a{color:#fff;text-decoration:none;}
+.footer-legal-links a:hover{text-decoration:underline;}
+@media(max-width:900px){
+  .footer-top{grid-template-columns:1fr 1fr;gap:3rem;}
+  .footer-bottom{flex-direction:column;text-align:center;margin:0 -2rem;padding:1.5rem 2rem;}
+  .footer-legal-links{justify-content:center;}
+}
+#main-nav > a{display:flex;align-items:center;gap:0.8rem;}
+</style>\n</head>
+<body>
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo">
+  </a>
+  <ul class="nav-links">
+    <li class="dropdown">
+      <a href="solutions.html">Solutions Techniques ▾</a>
+      <div class="dropdown-content">
+        <a href="lumiere.html">Lumière</a>
+        <a href="distribution-electrique.html">Distribution Électrique</a>
+        <a href="sonorisation.html">Sonorisation</a>
+        <a href="scene-mobile.html">Scène Mobile</a>
+        <a href="video.html">Vidéo</a>
+        <a href="integration-led.html">Intégration LED</a>
+        <a href="captation.html">Captation</a>
+        <a href="logistique.html">Logistique</a>
+      </div>
+    </li>
+    <li><a href="projets.html">Nos Projets</a></li>
+    <li class="dropdown">
+      <a href="agence.html">L'Agence ▾</a>
+      <div class="dropdown-content">
+        <a href="a-propos.html">À propos de nous</a>
+        <a href="carrieres.html">Carrières</a>
+        <a href="actualites.html">Actualités</a>
+      </div>
+    </li>
+    <li><a href="catalog.html" class="nav-boutique">Boutique</a></li>
+    <li><a href="contact.html" class="nav-cta">S'inscrire / Contact</a></li>
+    <li><a href="#" class="lang-switch" aria-label="Langue">FR</a></li>
+  </ul>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="h-tag">Solutions Techniques</div>
+    <h1>Magnum by <em>OSSPROGROUP</em></h1>
+    <p>
+      Une approche complète pensée pour vos événements : étude, coordination technique, exécution et contrôle qualité.
+      Choisissez une expertise ci-dessous pour découvrir notre méthode.
+    </p>
+  </section>
+
+  <section id="expertise">
+    <h2 class="section-title">Nos Solutions</h2>
+    <div class="exp-grid">
+      <a href="lumiere.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/Briefing.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Lumière</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="distribution-electrique.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/concert.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Distribution</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="sonorisation.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/Event 1 slide 2.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Sonorisation</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="scene-mobile.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/IMG_1569.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Scène Mobile</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="video.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/event 2 slide 2.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Vidéo</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="integration-led.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/event 3.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Intégration LED</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="captation.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/camer on a job.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Captation</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+      <a href="logistique.html" class="exp-item">
+        <div class="exp-bg" style="background-image:url('MEDIA/Event 1.avif');"></div>
+        <div class="exp-ov"></div>
+        <div class="exp-content">
+          <h3 class="exp-title">Logistique</h3>
+          <div class="exp-icon">+</div>
+        </div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="index.html" class="footer-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo"></a>
+      <p class="footer-desc">L'excellence évènementielle au cœur de l'Afrique. Nous orchestrons vos expertises techniques avec rigueur.</p>
+      <div class="social-icons">
+        <a href="#" class="social-icon">in</a>
+        <a href="#" class="social-icon">ig</a>
+        <a href="#" class="social-icon">fb</a>
+        <a href="#" class="social-icon">yt</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>SOLUTIONS</h4>
+      <ul>
+        <li><a href="lumiere.html">Lumière</a></li>
+        <li><a href="sonorisation.html">Sonorisation</a></li>
+        <li><a href="video.html">Vidéo</a></li>
+        <li><a href="scene-mobile.html">Structure & Scène</a></li>
+        <li><a href="distribution-electrique.html">Distribution Électrique</a></li>
+        <li><a href="catalog.html">Boutique</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>L'AGENCE</h4>
+      <ul>
+        <li><a href="a-propos.html">À propos de nous</a></li>
+        <li><a href="projets.html">Nos Projets</a></li>
+        <li><a href="actualites.html">Actualités</a></li>
+        <li><a href="carrieres.html">Carrières</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>CONTACT</h4>
+      <ul>
+        <li><a href="contact.html">Boulevard Triomphal, Libreville</a></li>
+        <li><a href="contact.html">+241 XX XX XX XX</a></li>
+        <li><a href="contact.html">contact@ossprogroup.ga</a></li>
+        <li style="margin-top:1.5rem;"><a href="contact.html" style="color:var(--accent);font-weight:bold;">NOUS ÉCRIRE →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 OSSPROGROUP. TOUS DROITS RÉSERVÉS.</div>
+    <div class="footer-legal-links">
+      <a href="#">MENTIONS LÉGALES</a>
+      <a href="#">POLITIQUE DE CONFIDENTIALITÉ</a>
+      <a href="#">GESTION DES COOKIES</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

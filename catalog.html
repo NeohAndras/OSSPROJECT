@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OSSPROGROUP — Location (Catalogue)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111111;
+      --accent:#E52421;
+      --muted:#666;
+      --border:#e6e6e6;
+      --card:#ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"DM Sans",sans-serif;
+      font-weight:400;
+      overflow-x:hidden;
+    }
+    nav{
+      position:sticky; top:0; z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+    }
+    .nav-inner{
+      max-width:1200px; margin:0 auto;
+      padding:14px 20px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .nav-logo{
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; color:var(--text);
+    }
+    .nav-logo img{height:44px; width:auto; display:block;}
+    .nav-logo .mark{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.08em;
+      font-size:1.7rem;
+    }
+    .nav-logo .mark span{color:var(--accent);}
+    .nav-links{display:flex; gap:16px; flex-wrap:wrap;}
+    .nav-links a{
+      text-decoration:none;
+      color:var(--text);
+      font-weight:600;
+      font-size:.82rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:8px 10px;
+      border:1px solid transparent;
+      border-radius:10px;
+    }
+    .nav-links a:hover{
+      border-color:rgba(229,36,33,.25);
+      color:var(--accent);
+      background:rgba(229,36,33,.04);
+    }
+
+    main{max-width:none; margin:0; padding:28px 20px 60px; width:100%;}
+    .hero{
+      text-align:center;
+      padding:26px 14px 18px;
+      border:1px solid var(--border);
+      background:linear-gradient(to bottom, #fff, #fafafa);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+    .hero .kicker{
+      font-size:.78rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:var(--accent);
+      display:flex; align-items:center; justify-content:center; gap:12px;
+      margin-bottom:12px;
+      font-weight:700;
+    }
+    .hero .kicker:before, .hero .kicker:after{
+      content:"";
+      height:1px;
+      width:40px;
+      background:rgba(229,36,33,.6);
+    }
+    .hero h1{
+      font-family:"Bebas Neue",sans-serif;
+      font-size:clamp(3rem,5vw,4.4rem);
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      line-height:.9;
+      margin-bottom:10px;
+    }
+    .hero p{
+      color:var(--muted);
+      line-height:1.8;
+      font-size:1.02rem;
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+      margin-top:18px;
+      align-items:start;
+    }
+
+    .panel{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-h{
+      padding:16px 18px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    .panel-h h2{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:1.6rem;
+      line-height:1.05;
+      color:#111;
+    }
+    .panel-h .sub{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.5;
+      margin-top:4px;
+      max-width:260px;
+      text-align:right;
+    }
+    .panel-b{padding:16px 18px;}
+
+    /* Durée & récap: 3 blocs (desktop) + 1 ligne pour “le reste” */
+    .dur-recap-layout{
+      display:grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap:12px;
+      align-items:start;
+    }
+    .dur-recap-block{min-width:0;}
+    .dur-category{display:flex; flex-direction:column;}
+    /* Align the tabs block with the left/right blocks */
+    .dur-category .small-hr{display:none;}
+    .dur-category .tabs{
+      margin:0;
+      padding:0;
+      justify-content:flex-start;
+      align-items:center;
+      width:100%;
+    }
+
+    .dur-rest-row{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+
+    /* Keep these two side-by-side under “Durée & récap” */
+    .dur-rest-row .summary{order:1;flex:1 1 280px;margin-top:0;}
+    .dur-rest-row .accordion{order:2;flex:1 1 280px;margin-top:0;}
+
+    /* Actions row */
+    .dur-actions{
+      order:3;
+      flex:0 0 100%;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:stretch;
+      margin-top:0;
+    }
+    .dur-actions #btn-open-checkout,
+    .dur-actions #btn-clear{
+      flex:1 1 260px;
+      margin-top:0;
+      width:auto !important;
+    }
+
+    @media(max-width:980px){
+      .dur-recap-layout{
+        grid-template-columns:1fr;
+      }
+      .dur-rest-row{
+        flex-direction:column;
+      }
+      .dur-rest-row .summary,
+      .dur-rest-row .accordion{
+        flex:unset;
+        width:100%;
+      }
+      .dur-actions{
+        flex-direction:column;
+      }
+      .dur-actions #btn-open-checkout,
+      .dur-actions #btn-clear{
+        width:100% !important;
+        flex:unset;
+      }
+    }
+
+    label{
+      display:block;
+      font-size:.68rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:#444;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea, input[type="number"]{
+      width:100%;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      padding:11px 12px;
+      outline:none;
+      font-family:"DM Sans",sans-serif;
+      font-size:.95rem;
+      font-weight:400;
+      background:#fff;
+    }
+
+    .form-row{
+      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+    }
+    @media(max-width:520px){
+      .form-row{grid-template-columns:1fr;}
+    }
+
+    .tabs{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-bottom:12px;
+    }
+    .tab{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.12);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.7rem;
+    }
+    .tab.active{
+      border-color:rgba(229,36,33,.45);
+      color:var(--accent);
+      background:rgba(229,36,33,.06);
+    }
+
+    .items{
+      display:flex; flex-direction:column; gap:12px;
+    }
+.items.gridMode{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+      gap:12px;
+      align-items:start;
+    }
+
+    /* Desktop: force 5 cards across (full width) */
+    @media(min-width:1200px){
+      .items.gridMode{
+        grid-template-columns:repeat(5, minmax(0, 1fr));
+      }
+
+      /* Tighten internal card layout for narrow 5-col cards */
+      .items.gridMode .item-card{
+        min-width:0;
+        grid-template-columns: 95px 1fr;
+        padding:12px 12px;
+        gap:10px;
+      }
+      .items.gridMode .item-media{
+        width:95px;
+        height:72px;
+      }
+      .items.gridMode .item-media img{
+        object-fit:cover;
+      }
+
+      .items.gridMode .sel{
+        min-width:0;
+        gap:8px;
+        align-items:flex-start;
+      }
+      .items.gridMode .qty-wrap{
+        gap:6px;
+      }
+      .items.gridMode .qty-wrap input[type="number"]{
+        width:70px;
+        padding:8px 9px;
+      }
+
+      .items.gridMode .meta-line{
+        font-size:.82rem;
+        margin-bottom:8px;
+      }
+      .items.gridMode .item-title{
+        margin-bottom:4px;
+      }
+
+      /* Make “Plus d’info” buttons fit */
+      .items.gridMode .btn{
+        font-size:.66rem;
+        padding:8px 10px;
+      }
+    }
+
+    /* Grid scaling fix (for 5-col desktop):
+       Give the controls full width (span col 2) to avoid clipping. */
+    .items.gridMode .item-card{
+      min-width:0;
+      grid-template-columns: 95px 1fr;
+      grid-template-rows:auto;
+      grid-auto-rows:auto;
+      grid-auto-flow:row;
+    }
+    .items.gridMode .item-media{
+      grid-column:1;
+      grid-row:1;
+    }
+    .items.gridMode .sel{
+      grid-column:2 / -1;
+      grid-row:1;
+      min-width:0;
+      align-items:flex-start;
+    }
+    .items.gridMode .item-left{
+      grid-column:2 / -1;
+      grid-row:2;
+    }
+
+    .item-card{
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:16px;
+      background:#fff;
+      padding:14px 14px;
+      display:grid;
+      grid-template-columns: 120px 1fr auto;
+      gap:12px;
+      align-items:start;
+    }
+
+    .item-media{
+      width:120px;
+      height:84px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.08);
+      background:rgba(0,0,0,.02);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .item-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter:saturate(1.05);
+    }
+    .item-media .ph{
+      font-size:.75rem;
+      color:#777;
+      padding:0 8px;
+      text-align:center;
+      line-height:1.3;
+    }
+
+    .item-title{
+      font-weight:800;
+      letter-spacing:.02em;
+      margin-bottom:6px;
+    }
+    .meta-line{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+      margin-bottom:10px;
+    }
+    .price{
+      font-weight:900;
+      color:var(--accent);
+      letter-spacing:.02em;
+      margin-top:4px;
+      font-size:1.02rem;
+    }
+    .sel{
+      display:flex; flex-direction:column; gap:10px; align-items:flex-end;
+      min-width:170px;
+    }
+    .sel input[type="checkbox"]{
+      width:18px; height:18px; accent-color:var(--accent);
+      cursor:pointer;
+    }
+    .qty-wrap{display:flex; align-items:center; gap:10px;}
+    .qty-wrap input[type="number"]{
+      width:110px;
+      padding:9px 10px;
+      border-radius:12px;
+    }
+
+    @media(max-width:820px){
+      .item-card{
+        grid-template-columns: 100px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .item-media{grid-column:1 / 2;}
+      .item-title{grid-column:2 / 3;}
+      .sel{
+        grid-column:1 / -1;
+        min-width:unset;
+        align-items:flex-start;
+      }
+    }
+
+    .summary{
+      display:flex; flex-direction:column; gap:10px;
+      background:rgba(0,0,0,.02);
+      border:1px dashed rgba(0,0,0,.15);
+      border-radius:16px;
+      padding:12px 12px;
+      margin-top:12px;
+    }
+    .summary .row{
+      display:flex; justify-content:space-between; gap:10px;
+      font-size:.95rem;
+      color:#222;
+    }
+    .summary .row strong{color:#111;}
+    .summary .total{
+      font-size:1.1rem;
+      font-weight:900;
+      color:var(--accent);
+      letter-spacing:.02em;
+    }
+    .note{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+      margin-top:10px;
+    }
+
+    .accordion{
+      margin-top:12px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:16px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .acc-btn{
+      width:100%;
+      border:none;
+      background:#fff;
+      padding:12px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.02em;
+    }
+    .acc-btn .mut{
+      color:var(--muted);
+      font-weight:800;
+      font-size:.9rem;
+      letter-spacing:.02em;
+      text-transform:none;
+    }
+    .acc-content{
+      padding:10px 12px 14px;
+      border-top:1px dashed rgba(0,0,0,.12);
+    }
+    .cart-lines{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .cart-line{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      border:1px dashed rgba(0,0,0,.15);
+      border-radius:14px;
+      padding:10px 10px;
+    }
+    .cart-line .left{
+      max-width:70%;
+    }
+    .cart-line .t{
+      font-weight:900;
+      color:#111;
+      letter-spacing:.01em;
+      margin-bottom:4px;
+      line-height:1.2;
+    }
+    .cart-line .k{
+      color:var(--muted);
+      font-size:.88rem;
+      line-height:1.35;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cart-line .p{
+      font-weight:900;
+      color:var(--accent);
+      white-space:nowrap;
+      font-size:.95rem;
+      letter-spacing:.01em;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      margin-top:14px;
+      transition:transform .15s, background .15s;
+    }
+    .btn:hover{transform:translateY(-2px); background:#c21e1b;}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+    .btn.secondary{background:#111; margin-top:10px; width:auto;}
+    .btn.secondary:hover{background:#000;}
+
+    .toast{
+      position:fixed;
+      left:50%; bottom:18px;
+      transform:translateX(-50%) translateY(18px);
+      background:#111;
+      color:#fff;
+      border:1px solid rgba(229,36,33,.4);
+      border-radius:14px;
+      padding:12px 16px;
+      box-shadow:0 15px 60px rgba(0,0,0,.2);
+      opacity:0; pointer-events:none;
+      transition:opacity .18s, transform .18s;
+      z-index:9999;
+      max-width:92vw;
+      line-height:1.45;
+      font-size:.92rem;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+    .small-hr{height:1px; background:rgba(0,0,0,.08); margin:14px 0;}
+
+    /* ===== Info modal (Plus d’info) ===== */
+    .modal-overlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .modal-overlay[hidden]{
+      display:none !important;
+    }
+    .modal-card{
+      width:min(980px, 100%);
+      background:#fff;
+      border:2px solid rgba(0,0,0,.75);
+      border-radius:18px;
+      box-shadow:0 30px 120px rgba(0,0,0,.35);
+      overflow:hidden;
+      max-height:86vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .modal-h{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 14px 10px;
+      border-bottom:1px dashed rgba(0,0,0,.2);
+      background:#fff;
+    }
+    .modal-title{
+      font-weight:1000;
+      letter-spacing:.02em;
+      font-size:1.15rem;
+      line-height:1.15;
+    }
+    .modal-close{
+      border:2px solid rgba(0,0,0,.75);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:1000;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:.75rem;
+      user-select:none;
+      line-height:1;
+    }
+    .modal-b{
+      padding:14px;
+      overflow:auto;
+    }
+    .modal-grid{
+      display:grid;
+      grid-template-columns: 240px 1fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media(max-width:820px){
+      .modal-grid{grid-template-columns:1fr;}
+    }
+    .modal-img{
+      width:240px;
+      height:170px;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      background:rgba(0,0,0,.02);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .modal-img img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .modal-kpis{
+      display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(0,0,0,.12);
+      padding:8px 10px;
+      border-radius:999px;
+      background:#fff;
+      font-weight:900;
+      letter-spacing:.01em;
+      font-size:.92rem;
+      color:#111;
+      max-width:100%;
+    }
+    .chip .dot{
+      width:8px; height:8px;
+      border-radius:50%;
+      background:var(--accent);
+      display:inline-block;
+      flex:0 0 auto;
+    }
+    .modal-price{
+      font-weight:1000;
+      color:var(--accent);
+      letter-spacing:.02em;
+      font-size:1.2rem;
+      margin:6px 0 10px;
+      white-space:nowrap;
+    }
+    .modal-section-title{
+      font-weight:1000;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:.75rem;
+      color:#111;
+      margin:12px 0 6px;
+    }
+    .modal-desc{
+      color:#333;
+      line-height:1.75;
+      font-size:.98rem;
+      white-space:pre-wrap;
+    }
+    .modal-specs{
+      display:flex; flex-direction:column;
+      gap:6px;
+      margin-top:6px;
+    }
+    .spec-line{
+      border:1px dashed rgba(0,0,0,.15);
+      border-radius:14px;
+      padding:8px 10px;
+      font-size:.93rem;
+      color:#222;
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" />
+        <div class="mark">OSSPRO<span>GROUP</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="lumiere.html">Lumière</a>
+        <a href="sonorisation.html">Sonorisation</a>
+        <a href="video.html">Vidéo</a>
+        <a href="scene-mobile.html">Scène & Structures</a>
+        <a href="distribution-electrique.html">Électricité</a>
+        <a href="catalog.html" style="border-color:rgba(229,36,33,.25);color:var(--accent);background:rgba(229,36,33,.06);">Location</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="kicker">Catalogue location</div>
+      <h1>Devis estimatif</h1>
+      <p>
+        Choisissez vos équipements (et techniciens) par catégorie, indiquez la durée, puis passez à l’étape de validation.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Durée & récap</h2>
+          <div class="sub" id="currencySub">Prix par jour</div>
+        </div>
+        <div class="panel-b">
+          <div class="dur-recap-layout">
+            <div class="dur-recap-block dur-time">
+              <label for="days">Durée (jours)</label>
+              <div class="form-row" style="grid-template-columns: 1fr auto; align-items:end;">
+                <select id="days">
+                  <option value="1">1 jour</option>
+                  <option value="2">2 jours</option>
+                  <option value="3">3 jours</option>
+                  <option value="4">4 jours</option>
+                  <option value="5">5 jours</option>
+                  <option value="7">7 jours</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="dur-recap-block dur-category">
+              <div class="small-hr" aria-hidden="true"></div>
+              <div class="tabs" id="tabs"></div>
+            </div>
+
+            <div class="dur-recap-block dur-rest">
+              <div class="dur-rest-row">
+                <div class="summary" aria-live="polite">
+                  <div class="row"><span>Sous-total / jour</span><strong id="sumPerDay">0</strong></div>
+                  <div class="row"><span>Total devis</span><strong class="total" id="sumTotal">0</strong></div>
+                  <div class="note">Les quantités et la durée sont calculées selon votre sélection.</div>
+                </div>
+
+                <div class="accordion" id="cart-acc">
+                  <button class="acc-btn" type="button" id="cart-toggle" aria-expanded="false">
+                    <span>Panier (<span id="cart-count">0</span>)</span>
+                    <span class="mut" id="cart-perday">0</span>
+                  </button>
+                  <div class="acc-content" id="cart-content" hidden>
+                    <div class="cart-lines" id="cart-lines"></div>
+                  </div>
+                </div>
+
+                <div class="dur-actions">
+                  <button class="btn" id="btn-open-checkout" disabled type="button" style="width:auto;margin-top:0;align-self:flex-start;white-space:nowrap;">
+                    Procéder au devis
+                  </button>
+
+                  <button class="btn secondary" id="btn-clear" type="button" style="width:auto;margin-top:0;align-self:flex-start;white-space:nowrap;">
+                    Réinitialiser
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Choix produits & techniciens</h2>
+          <div class="sub" id="itemsSub">Sélectionnez puis ajustez les quantités</div>
+        </div>
+        <div class="panel-b">
+          <div class="form-row" style="grid-template-columns:1fr 1fr;">
+            <div>
+              <label for="brandFilter">Marque</label>
+              <select id="brandFilter"></select>
+            </div>
+            <div>
+              <label for="familleFilter">Famille</label>
+              <select id="familleFilter"></select>
+            </div>
+          </div>
+
+          <div class="form-row" style="grid-template-columns:1fr; margin-top:12px;">
+            <div>
+              <label for="queryFilter">Recherche</label>
+              <input id="queryFilter" type="text" placeholder="Ex: Astera, Fresnel, DMX…" />
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:10px; margin-bottom:6px;">
+            <button class="btn secondary" id="btn-view-toggle" type="button" style="width:auto;margin-top:0;padding:10px 14px;letter-spacing:.12em;">
+              Vue : Liste
+            </button>
+          </div>
+
+          <div class="items" id="items" style="margin-top:12px;"></div>
+          <button class="btn secondary" id="btn-show-more" type="button" style="display:none;margin-top:14px;max-width:340px;">Afficher plus</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  
+
+  <div id="infoOverlay" class="modal-overlay" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+      <div class="modal-h">
+        <div>
+          <div class="modal-title" id="infoModalTitle">Informations</div>
+          <div id="infoModalSub" style="color:var(--muted);font-weight:700;margin-top:4px;font-size:.9rem;"></div>
+        </div>
+        <button type="button" class="modal-close" id="infoModalClose">Fermer</button>
+      </div>
+      <div class="modal-b">
+        <div id="infoModalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toastEl = document.getElementById('toast');
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=>toastEl.classList.remove('show'), 3500);
+    }
+
+
+    const daysEl = document.getElementById('days');
+    const tabsEl = document.getElementById('tabs');
+    const itemsEl = document.getElementById('items');
+    const btnViewToggleEl = document.getElementById('btn-view-toggle');
+
+    let viewMode = 'grid'; // 'list' | 'grid'
+
+    function applyViewMode(){
+      const isGrid = viewMode === 'grid';
+      itemsEl.classList.toggle('gridMode', isGrid);
+      btnViewToggleEl.textContent = isGrid ? 'Vue : Liste' : 'Vue : Grille';
+    }
+
+    const btnShowMoreEl = document.getElementById('btn-show-more');
+    const DEFAULT_VISIBLE_ITEMS = 12;
+    const SHOW_MORE_STEP = 12;
+    let visibleCount = DEFAULT_VISIBLE_ITEMS;
+
+    // Robust “Plus d’info” click handling (event delegation).
+    // This avoids per-button listener issues after re-render.
+    function ensureInfoDelegation(){
+      if(itemsEl._infoDelegated) return;
+      itemsEl._infoDelegated = true;
+
+      // 1) Container delegation (best effort)
+      itemsEl.addEventListener('click', (e) => {
+        const btn = e.target && typeof e.target.closest === 'function'
+          ? e.target.closest('button[data-open-info]')
+          : null;
+        if(!btn) return;
+
+        const id = btn.getAttribute('data-open-info');
+        if(id) openInfoModal(id);
+      });
+
+      // 2) Global fallback: if Puppeteer clicks miss the delegation target for any reason,
+      // the document listener still catches the button click.
+      if(!window._osspro_infoGlobalListener){
+        window._osspro_infoGlobalListener = true;
+        document.addEventListener('click', (e) => {
+          const btn = e.target && typeof e.target.closest === 'function'
+            ? e.target.closest('button[data-open-info]')
+            : null;
+          if(!btn) return;
+
+          const id = btn.getAttribute('data-open-info');
+          if(!id) return;
+
+          e.preventDefault?.();
+          e.stopPropagation?.();
+          openInfoModal(id);
+        }, { capture: true });
+      }
+    }
+
+    function resetVisibleCount(){
+      visibleCount = DEFAULT_VISIBLE_ITEMS;
+    }
+
+    const sumPerDayEl = document.getElementById('sumPerDay');
+    const sumTotalEl = document.getElementById('sumTotal');
+    const currencySubEl = document.getElementById('currencySub');
+    const itemsSubEl = document.getElementById('itemsSub');
+
+    const brandFilterEl = document.getElementById('brandFilter');
+    const familleFilterEl = document.getElementById('familleFilter');
+    const queryFilterEl = document.getElementById('queryFilter');
+
+    const btnClear = document.getElementById('btn-clear');
+    const btnCheckout = document.getElementById('btn-open-checkout');
+
+    const cartCountEl = document.getElementById('cart-count');
+    const cartPerDayEl = document.getElementById('cart-perday');
+    const cartToggleEl = document.getElementById('cart-toggle');
+    const cartContentEl = document.getElementById('cart-content');
+    const cartLinesEl = document.getElementById('cart-lines');
+
+    let catalog = null;
+    let activeCategoryId = null;
+    let currencyLabel = "XAF";
+
+    // selection map: id -> qty
+    const selection = new Map();
+
+    const FILTER_ALL = "__ALL__";
+    const FILTER_EMPTY = "__EMPTY__";
+
+    let activeBrand = FILTER_ALL;
+    let activeFamille = FILTER_ALL;
+    let filterQuery = "";
+
+    function formatMoney(n){
+      const num = Number(n);
+      const label = currencyLabel || "XAF";
+      if(!Number.isFinite(num)) return '0 ' + label;
+      return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0}).format(num) + ' ' + label;
+    }
+
+    function sanitizeCatalogText(input){
+      let t = String(input || '');
+
+      // Injection signatures the feedback references (with or without "OssPro" prefix)
+      const osspro33Pattern = /OssPro\s*\(33\)\s*1\s*30\s*11\s*60\s*90/i;
+      const numeric33Pattern = /\(33\)\s*1\s*30\s*11\s*60\s*90/i;
+
+      // Known injected nav/footer tokens that must not leak into item descriptions
+      const injectedFooterTokens = /(Facebook|Linkedin|Instagram|Youtube|Tiktok|Accueil|Qui\s*sommes-nous|Engagements|Gouvernance|Groupe\s*Novelty|Vie\s*d'entreprise)/i;
+
+      // 1) Remove pipe-style injected header/footer blob
+      t = t.replace(/\|\s*OssPro\s*\(33\)\s*1\s*30\s*11\s*60\s*90[\s\S]*?Accessoires/gi, '');
+
+      // 2) Remove “OssPro (33) … Facebook … Tiktok … Vie d'entreprise” injected nav blob
+      //    (more tolerant to spacing/punctuation differences)
+      t = t.replace(
+        /OssPro\W*\(33\)\W*1\W*30\W*11\W*60\W*90[\s\S]*?(?:Facebook|Linkedin|Instagram|Youtube|Tiktok)[\s\S]*?(?:Vie d'entreprise|Expertises)/gi,
+        ''
+      );
+
+      // 3) Remove everything from the numeric injection signature onward,
+      // even if it appears without the "OssPro" prefix.
+      if(numeric33Pattern.test(t)){
+        t = t.replace(numeric33Pattern, ''); // remove the marker itself
+        t = t.replace(/\(33\)\s*1\s*30\s*11\s*60\s*90[\s\S]*$/i, '');
+      }
+
+      // Also remove trailing specs section after the marker if present.
+      if(osspro33Pattern.test(t) || numeric33Pattern.test(t)){
+        t = t.replace(/\b(?:Spécifications|Specifications)\b[\s\S]*$/gi, '');
+      }
+
+      // 4) Remove “Siège social … Mentions légales … Conditions …” tail if present
+      t = t.replace(/Siège social[\s\S]*?(?:Conditions générales d’utilisation)/gi, '');
+      t = t.replace(/Copyright\s*©[\s\S]*?(?:Conditions générales d’utilisation)/gi, '');
+
+      // 5) Strip any trailing “Spécifications/Specifications …” section when injected tokens are present
+      if(injectedFooterTokens.test(t) && /\b(?:Spécifications|Specifications)\b/i.test(t)){
+        t = t.replace(/\b(?:Spécifications|Specifications)\b[\s\S]*$/gi, '');
+      } else {
+        // Otherwise remove a standalone trailing “Spécifications/Specifications” word.
+        t = t.replace(/\b(?:Spécifications|Specifications)\b\s*$/gi, '');
+      }
+
+      // 6) Last resort: remove any remaining standalone occurrences of injected tokens.
+      t = t.replace(/\b(?:Facebook|Linkedin|Instagram|Youtube|Tiktok|Accueil|Qui\s*sommes-nous\??|Engagements|Gouvernance|Groupe\s*Novelty|Vie\s*d'entreprise)\b/gi, '');
+
+      // 6.5) If we still see the injected nav/header chain just before the real “Code produit …”
+      //     (e.g. “| OssPro Matériel … | Expertises … | Code produit …”), strip everything
+      //     up to the first “Code produit” label, keeping the actual product specs.
+      t = t.replace(/\|\s*OssPro[\s\S]*?\bExpertises\b[\s\S]*?\bCode produit\b/i, 'Code produit');
+
+      // 7) Remove remaining “pipe-tail” injected fragments like:
+      //    “| OssPro Matériel Astera ... | Expertises ... Code produit”
+      //    Keep this conservative: only strip from those known injected pipe patterns to the end.
+      t = t.replace(/\|\s*OssPro\s+Matériel[\s\S]*$/i, '');
+      t = t.replace(/\|\s*OssPro[\s\S]*$/i, '');
+      t = t.replace(/\|\s*Expertises[\s\S]*$/i, '');
+
+      return t.trim();
+    }
+
+    function setCartOpen(open){
+      cartContentEl.hidden = !open;
+      cartToggleEl.setAttribute('aria-expanded', String(open));
+    }
+
+    cartToggleEl.addEventListener('click', () => {
+      const open = cartContentEl.hidden ? true : false;
+      setCartOpen(open);
+    });
+
+    function renderCart(){
+      cartCountEl.textContent = String(selection.size);
+
+      if(!catalog || selection.size === 0){
+        cartLinesEl.innerHTML = '<div class="note">Votre panier est vide.</div>';
+        return;
+      }
+
+      const lines = [];
+      for(const [id, qty] of selection.entries()){
+        const item = catalog.items.find(it => it.id === id);
+        if(!item) continue;
+        const pricePerDay = Number(item.priceFcfaPerDay) || 0;
+        const lineTotalPerDay = pricePerDay * qty;
+        const kind = item.kind === 'technician' ? 'Technicien' : 'Matériel';
+        lines.push({ id, qty, item, pricePerDay, lineTotalPerDay, kind });
+      }
+
+      if(!lines.length){
+        cartLinesEl.innerHTML = '<div class="note">Votre panier est vide.</div>';
+        return;
+      }
+
+      cartLinesEl.innerHTML = lines.map(l => `
+        <div class="cart-line">
+          <div class="left">
+            <div class="t">${l.item.title}</div>
+            <div class="k">${l.kind} • Qté ${l.qty}</div>
+          </div>
+          <div class="p">${formatMoney(l.lineTotalPerDay)} / jour</div>
+        </div>
+      `).join('');
+    }
+
+    function updateTotals(){
+      if(!catalog){
+        sumPerDayEl.textContent = formatMoney(0);
+        sumTotalEl.textContent = formatMoney(0);
+        btnCheckout.disabled = true;
+        cartPerDayEl.textContent = formatMoney(0) + ' / jour';
+        renderCart();
+        return;
+      }
+
+      let perDay = 0;
+      for(const [id, qty] of selection.entries()){
+        const item = catalog.items.find(it => it.id === id);
+        if(!item) continue;
+        perDay += (Number(item.priceFcfaPerDay) || 0) * qty;
+      }
+
+      const days = Number(daysEl.value) || 1;
+      const total = perDay * days;
+
+      sumPerDayEl.textContent = formatMoney(perDay);
+      sumTotalEl.textContent = formatMoney(total);
+      cartPerDayEl.textContent = formatMoney(perDay) + ' / jour';
+
+      btnCheckout.disabled = selection.size === 0;
+      renderCart();
+    }
+
+    function getCategoryItems(catId){
+      return catalog.items.filter(it => it.categoryId === catId);
+    }
+
+    function renderTabs(){
+      tabsEl.innerHTML = '';
+      for(const c of catalog.categories){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tab' + (c.id === activeCategoryId ? ' active' : '');
+        b.textContent = c.label;
+        b.onclick = () => {
+          activeCategoryId = c.id;
+          renderTabs();
+          renderFilterOptionsForActiveCategory();
+
+          pruneSelectionToCurrentFilters();
+          updateTotals();
+          resetVisibleCount();
+
+          renderItems();
+        };
+        tabsEl.appendChild(b);
+      }
+    }
+
+    function renderFilterOptionsForActiveCategory(){
+      if(!catalog) return;
+
+      const catItems = getCategoryItems(activeCategoryId);
+
+      const brandsSet = new Set();
+      const famillesSet = new Set();
+      let hasEmptyBrand = false;
+      let hasEmptyFamille = false;
+
+      for(const it of catItems){
+        const brand = String(it.brand || '').trim();
+        const famille = String(it.famille || '').trim();
+
+        if(brand) brandsSet.add(brand);
+        else hasEmptyBrand = true;
+
+        if(famille) famillesSet.add(famille);
+        else hasEmptyFamille = true;
+      }
+
+      const brands = Array.from(brandsSet).sort((a,b)=>a.localeCompare(b, 'fr'));
+      const familles = Array.from(famillesSet).sort((a,b)=>a.localeCompare(b, 'fr'));
+
+      brandFilterEl.innerHTML = '';
+      const optAllB = document.createElement('option');
+      optAllB.value = FILTER_ALL;
+      optAllB.textContent = 'Toutes les marques';
+      brandFilterEl.appendChild(optAllB);
+
+      if(hasEmptyBrand){
+        const optEmptyB = document.createElement('option');
+        optEmptyB.value = FILTER_EMPTY;
+        optEmptyB.textContent = 'Sans marque';
+        brandFilterEl.appendChild(optEmptyB);
+      }
+
+      for(const b of brands){
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.textContent = b;
+        brandFilterEl.appendChild(opt);
+      }
+
+      familleFilterEl.innerHTML = '';
+      const optAllF = document.createElement('option');
+      optAllF.value = FILTER_ALL;
+      optAllF.textContent = 'Toutes les familles';
+      familleFilterEl.appendChild(optAllF);
+
+      if(hasEmptyFamille){
+        const optEmptyF = document.createElement('option');
+        optEmptyF.value = FILTER_EMPTY;
+        optEmptyF.textContent = 'Sans famille';
+        familleFilterEl.appendChild(optEmptyF);
+      }
+
+      for(const f of familles){
+        const opt = document.createElement('option');
+        opt.value = f;
+        opt.textContent = f;
+        familleFilterEl.appendChild(opt);
+      }
+
+      const brandVals = new Set(Array.from(brandFilterEl.options).map(o=>o.value));
+      if(!brandVals.has(activeBrand)) activeBrand = FILTER_ALL;
+      brandFilterEl.value = activeBrand;
+
+      const famVals = new Set(Array.from(familleFilterEl.options).map(o=>o.value));
+      if(!famVals.has(activeFamille)) activeFamille = FILTER_ALL;
+      familleFilterEl.value = activeFamille;
+    }
+
+    const infoOverlayEl = document.getElementById('infoOverlay');
+    const infoModalCloseEl = document.getElementById('infoModalClose');
+    const infoModalBodyEl = document.getElementById('infoModalBody');
+    const infoModalTitleEl = document.getElementById('infoModalTitle');
+    const infoModalSubEl = document.getElementById('infoModalSub');
+
+
+    function closeInfoModal(){
+      toast('closeInfoModal()');
+      infoOverlayEl.hidden = true;
+      infoOverlayEl.setAttribute('aria-hidden', 'true');
+      infoOverlayEl.style.display = 'none';
+    }
+
+    infoModalCloseEl.addEventListener('click', closeInfoModal);
+    infoOverlayEl.addEventListener('click', (e) => {
+      if(e.target === infoOverlayEl) closeInfoModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeInfoModal();
+    });
+
+    function openInfoModal(itemId){
+      toast('Ouverture (click): ' + String(itemId));
+      if(!catalog) return;
+
+      const it = catalog.items.find(x => x.id === itemId);
+      if(!it) return;
+
+      const cat = catalog.categories.find(c => c.id === it.categoryId) || { label: it.categoryId };
+      const kind = it.kind === 'technician' ? 'Technicien' : 'Matériel';
+      const brandText = String(it.brand || '').trim() || '—';
+      const familleText = String(it.famille || '').trim() || '—';
+
+      const imageName = typeof it.image === 'string' ? it.image.trim() : '';
+      const imgHtml = imageName
+        ? `<img src="MEDIA/${imageName}" alt="${it.title}">`
+        : `<div style="color:#777;font-size:.9rem;padding:0 10px;">Sans image</div>`;
+
+      const titleClean = String(it.title || '').replace(/\s*\|\s*OssPro\s*$/i,'').trim();
+
+      const fullDesc = sanitizeCatalogText(String(it.description || '').trim());
+      const fullMore = sanitizeCatalogText(String(it.moreInfo || '').trim());
+      const specs = Array.isArray(it.specs) ? it.specs : [];
+
+      const specsHtml = specs.length
+        ? (() => {
+            const cleanedSpecs = specs
+              .slice(0, 80)
+              .map((s) => {
+                const clean = sanitizeCatalogText(String(s));
+                // Drop empty results and any spec lines that still look like injected junk
+                if(!clean) return '';
+                if(/\(33\)\s*1\s*30\s*11\s*60\s*90/i.test(clean)) return '';
+                if(/\b(Facebook|Linkedin|Instagram|Youtube|Tiktok|Accueil|Qui\s*sommes-nous|Engagements|Gouvernance|Groupe\s*Novelty|Vie\s*d'entreprise)\b/i.test(clean)) return '';
+                return `<div class="spec-line">${clean}</div>`;
+              })
+              .filter(Boolean)
+              .join('');
+            return cleanedSpecs
+              ? `<div class="modal-specs">${cleanedSpecs}</div>`
+              : '';
+          })()
+        : '';
+
+      infoModalTitleEl.textContent = titleClean || '—';
+      infoModalSubEl.textContent = `${cat.label} • ${kind}`;
+
+      infoModalBodyEl.innerHTML = `
+        <div class="modal-grid">
+          <div class="modal-img">
+            ${imgHtml}
+          </div>
+
+          <div>
+            <div class="modal-kpis">
+              <div class="chip"><span class="dot"></span> Marque: ${brandText}</div>
+              <div class="chip"><span class="dot"></span> Famille: ${familleText}</div>
+              <div class="chip"><span class="dot"></span> Catégorie: ${cat.label}</div>
+            </div>
+
+            <div class="modal-price">${formatMoney(it.priceFcfaPerDay)} / jour</div>
+
+            <div class="modal-section-title">Description</div>
+            <div class="modal-desc">${fullDesc || '—'}</div>
+
+            ${fullMore ? `
+              <div class="modal-section-title">Plus d’infos</div>
+              <div class="modal-desc">${fullMore}</div>
+            ` : ''}
+
+            ${specsHtml ? `
+              <div class="modal-section-title">Spécifications</div>
+              ${specsHtml}
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+      infoOverlayEl.hidden = false;
+      infoOverlayEl.style.display = 'flex';
+    }
+
+    // Inline onclick hook (used by “Plus d’info” button).
+    window._ossproOpenInfoModal = openInfoModal;
+
+    function renderItems(){
+      itemsEl.innerHTML = '';
+      applyViewMode();
+      const catItems = getCategoryItems(activeCategoryId);
+
+      btnShowMoreEl.style.display = 'none';
+
+      if(!catItems.length){
+        itemsEl.innerHTML = '<div class="note">Aucun article pour cette catégorie.</div>';
+        return;
+      }
+
+      const q = String(filterQuery || '').trim().toLowerCase();
+      const matches = (it) => {
+        const brand = String(it.brand || '').trim();
+        const famille = String(it.famille || '').trim();
+
+        const brandOk = activeBrand === FILTER_ALL
+          ? true
+          : activeBrand === FILTER_EMPTY
+            ? !brand
+            : brand === activeBrand;
+
+        const familleOk = activeFamille === FILTER_ALL
+          ? true
+          : activeFamille === FILTER_EMPTY
+            ? !famille
+            : famille === activeFamille;
+
+        if(!brandOk || !familleOk) return false;
+        if(!q) return true;
+
+        const title = String(it.title || '').toLowerCase();
+        const desc = String(it.description || '').toLowerCase();
+        const more = String(it.moreInfo || '').toLowerCase();
+        return title.includes(q) || desc.includes(q) || more.includes(q);
+      };
+
+      const displayItems = catItems.filter(it => matches(it) || selection.has(it.id));
+
+      if(!displayItems.length){
+        itemsEl.innerHTML = '<div class="note">Aucun article ne correspond à vos filtres.</div>';
+        return;
+      }
+
+      const selectedIds = new Set(selection.keys());
+      const selectedItems = displayItems.filter(it => selectedIds.has(it.id));
+      const nonSelectedItems = displayItems.filter(it => !selectedIds.has(it.id));
+
+      const capacityForNonSelected = Math.max(0, visibleCount - selectedItems.length);
+      const visibleNonSelected = nonSelectedItems.slice(0, capacityForNonSelected);
+
+      const finalItems = selectedItems.concat(visibleNonSelected);
+
+      if(nonSelectedItems.length > visibleNonSelected.length){
+        btnShowMoreEl.style.display = 'block';
+      }
+
+      for(const it of finalItems){
+        const selected = selection.has(it.id);
+        const qty = selection.get(it.id) || 1;
+
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        const media = document.createElement('div');
+        media.className = 'item-media';
+        const imageName = typeof it.image === 'string' ? it.image.trim() : '';
+        if(imageName){
+          media.innerHTML = `<img src="MEDIA/${imageName}" alt="${it.title}">`;
+        }else{
+          media.innerHTML = `<div class="ph">Sans image</div>`;
+        }
+
+        const left = document.createElement('div');
+        left.className = 'item-left';
+        const kind = it.kind === 'technician' ? 'Technicien' : 'Matériel';
+        const brandText = String(it.brand || '').trim() || '—';
+        const familleText = String(it.famille || '').trim() || '—';
+        const displayTitle = String(it.title || '')
+          .replace(/\s*\|\s*OssPro\s*$/i, '')
+          .trim();
+
+        // Description auto-hide + "Plus d’info" modal
+        const rawDescription = sanitizeCatalogText(String(it.description || '').trim());
+        const rawMoreInfo = sanitizeCatalogText(String(it.moreInfo || '').trim());
+        const fullInfoText = [rawDescription, rawMoreInfo].filter(Boolean).join(' — ');
+
+        const DESC_PREVIEW_MAX = 220;
+        const hasInfo = !!fullInfoText;
+        const hasPreviewTrunc = hasInfo && fullInfoText.length > DESC_PREVIEW_MAX;
+        const previewText = !fullInfoText
+          ? ''
+          : hasPreviewTrunc
+            ? (fullInfoText.slice(0, DESC_PREVIEW_MAX).trim() + '…')
+            : fullInfoText;
+
+        left.innerHTML = `
+          <div class="kind-chip" style="display:inline-flex; gap:8px; align-items:center; font-weight:800; letter-spacing:.12em; text-transform:uppercase; font-size:.65rem; padding:.4rem .7rem; border-radius:999px; border:1px solid rgba(0,0,0,.12); background:#fff; margin-bottom:8px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block;"></span>${kind}
+          </div>
+          <div class="item-title">${displayTitle}</div>
+
+          <div class="meta-line" style="margin-bottom:8px;">
+            ${previewText ? previewText : '—'}
+          </div>
+
+          ${hasInfo ? `
+            <button type="button" class="btn secondary" style="width:auto; margin-top:0; padding:8px 12px; letter-spacing:.12em;"
+              data-open-info="${it.id}" onclick="openInfoModal(this.getAttribute('data-open-info'))">
+              Plus d’info
+            </button>
+          ` : ''}
+
+          <div class="meta-line" style="margin-bottom:8px; font-size:.82rem; line-height:1.4; color:#444; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="Marque: ${brandText} • Famille: ${familleText}">
+            Marque: ${brandText} • Famille: ${familleText}
+          </div>
+          <div class="price">${formatMoney(it.priceFcfaPerDay)} / jour</div>
+        `;
+
+        const btnInfo = left.querySelector(`button[data-open-info="${it.id}"]`);
+        if(btnInfo){
+          btnInfo.addEventListener('click', () => openInfoModal(it.id));
+        }
+
+        const sel = document.createElement('div');
+        sel.className = 'sel';
+        sel.innerHTML = `
+          <label style="margin:0;display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" ${selected ? 'checked' : ''} data-id="${it.id}" />
+            Choisir
+          </label>
+          <div class="qty-wrap">
+            <span style="font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.7rem;color:#444;">Qté</span>
+            <input type="number" min="1" step="1" value="${qty}" data-qty="${it.id}" ${selected ? '' : 'disabled'} />
+          </div>
+        `;
+
+        sel.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+          const id = e.target.getAttribute('data-id');
+          if(e.target.checked){
+            selection.set(id, 1);
+          }else{
+            selection.delete(id);
+          }
+          renderItems();
+          updateTotals();
+        });
+
+        sel.querySelector('input[type="number"]').addEventListener('input', (e) => {
+          const id = e.target.getAttribute('data-qty');
+          const v = Math.max(1, Math.floor(Number(e.target.value) || 1));
+          if(selection.has(id)) selection.set(id, v);
+          updateTotals();
+        });
+
+        card.appendChild(media);
+        card.appendChild(left);
+        card.appendChild(sel);
+        itemsEl.appendChild(card);
+      }
+    }
+
+    function matchesFiltersForPrune(it){
+      const brand = String(it.brand || '').trim();
+      const famille = String(it.famille || '').trim();
+
+      const brandOk = activeBrand === FILTER_ALL
+        ? true
+        : activeBrand === FILTER_EMPTY
+          ? !brand
+          : brand === activeBrand;
+
+      const familleOk = activeFamille === FILTER_ALL
+        ? true
+        : activeFamille === FILTER_EMPTY
+          ? !famille
+          : famille === activeFamille;
+
+      if(!brandOk || !familleOk) return false;
+
+      const q = String(filterQuery || '').trim().toLowerCase();
+      if(!q) return true;
+
+      const title = String(it.title || '').toLowerCase();
+      const desc = String(it.description || '').toLowerCase();
+      const more = String(it.moreInfo || '').toLowerCase();
+      return title.includes(q) || desc.includes(q) || more.includes(q);
+    }
+
+    function pruneSelectionToCurrentFilters(){
+      if(!catalog) return;
+
+      for(const [id] of Array.from(selection.entries())){
+        const it = catalog.items.find(x => x.id === id);
+        if(!it){
+          selection.delete(id);
+          continue;
+        }
+
+        if(activeCategoryId && it.categoryId !== activeCategoryId){
+          selection.delete(id);
+          continue;
+        }
+
+        if(!matchesFiltersForPrune(it)){
+          selection.delete(id);
+        }
+      }
+    }
+
+    btnViewToggleEl.addEventListener('click', () => {
+      viewMode = viewMode === 'grid' ? 'list' : 'grid';
+      applyViewMode();
+      renderItems();
+    });
+
+    brandFilterEl.addEventListener('change', () => {
+      activeBrand = brandFilterEl.value;
+      pruneSelectionToCurrentFilters();
+      updateTotals();
+      resetVisibleCount();
+      renderItems();
+    });
+
+    familleFilterEl.addEventListener('change', () => {
+      activeFamille = familleFilterEl.value;
+      pruneSelectionToCurrentFilters();
+      updateTotals();
+      resetVisibleCount();
+      renderItems();
+    });
+
+    queryFilterEl.addEventListener('input', () => {
+      filterQuery = String(queryFilterEl.value || '');
+      pruneSelectionToCurrentFilters();
+      resetVisibleCount();
+      updateTotals();
+      renderItems();
+    });
+
+    btnShowMoreEl.addEventListener('click', () => {
+      visibleCount = Math.min(
+        displayItemsMaxCount(),
+        visibleCount + SHOW_MORE_STEP
+      );
+      renderItems();
+    });
+
+    function displayItemsMaxCount(){
+      if(!catalog) return 0;
+      const catItems = getCategoryItems(activeCategoryId);
+      const selectedIds = new Set(selection.keys());
+
+      const q = String(filterQuery || '').trim().toLowerCase();
+      const matches = (it) => {
+        const brand = String(it.brand || '').trim();
+        const famille = String(it.famille || '').trim();
+
+        const brandOk = activeBrand === FILTER_ALL
+          ? true
+          : activeBrand === FILTER_EMPTY
+            ? !brand
+            : brand === activeBrand;
+
+        const familleOk = activeFamille === FILTER_ALL
+          ? true
+          : activeFamille === FILTER_EMPTY
+            ? !famille
+            : famille === activeFamille;
+
+        if(!brandOk || !familleOk) return false;
+        if(!q) return true;
+
+        const title = String(it.title || '').toLowerCase();
+        const desc = String(it.description || '').toLowerCase();
+        const more = String(it.moreInfo || '').toLowerCase();
+        return title.includes(q) || desc.includes(q) || more.includes(q);
+      };
+
+      const displayItems = catItems.filter(it => matches(it) || selectedIds.has(it.id));
+      return displayItems.length;
+    }
+
+    btnClear.addEventListener('click', () => {
+      selection.clear();
+      resetVisibleCount();
+      updateTotals();
+      renderItems();
+      setCartOpen(false);
+      toast('Sélection réinitialisée.');
+    });
+
+    btnCheckout.addEventListener('click', () => {
+      if(selection.size === 0) return;
+
+      const payload = {
+        version: 1,
+        days: Number(daysEl.value) || 1,
+        items: Array.from(selection.entries()).map(([id, qty]) => ({ id, qty })),
+      };
+
+      localStorage.setItem('osppro_cart_v1', JSON.stringify(payload));
+      toast('✓ Sélection enregistrée. Passage au devis…');
+      window.location.href = 'cart.html';
+    });
+
+    async function loadCatalog(){
+      ensureInfoDelegation();
+      const resp = await fetch('/api/shop/catalog');
+      const data = await resp.json();
+      if(!resp.ok || !data.ok) throw new Error(data.error || 'Catalog load failed');
+
+      catalog = data.catalog;
+      currencyLabel = catalog?.meta?.currencyLabel || 'XAF';
+
+      currencySubEl.textContent = 'Prix en ' + currencyLabel + ' • par jour';
+      itemsSubEl.textContent = 'Sélectionnez puis ajustez les quantités';
+
+      activeCategoryId = catalog.categories[0]?.id || null;
+
+      renderTabs();
+      renderFilterOptionsForActiveCategory();
+      renderItems();
+      updateTotals();
+      setCartOpen(selection.size > 0);
+    }
+
+    loadCatalog().catch(e => {
+      toast('Impossible de charger le catalogue : ' + (e?.message || e));
+      console.error(e);
+    });
+  </script>
+</body>
+</html>

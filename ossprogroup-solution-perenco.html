@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSPROGROUP — Perenco 30 ans</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--deep:#0d0d0d;--surf:#141414;--card:#1a1a1a;
+  --red:#8b1a1a;--rl:#b22222;--rd:rgba(139,26,26,.18);
+  --w:#f0eaea;--mu:#6e5a5a;--tx:#c4b8b8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:"DM Sans",sans-serif;font-weight:300;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+section{position:relative;z-index:1;}
+
+.sec-lbl{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+.sec-lbl::before{content:"";width:30px;height:1px;background:var(--red);}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 4rem;
+  background:linear-gradient(to bottom,rgba(8,8,8,.95),transparent);
+  backdrop-filter:blur(4px);
+}
+.nav-logo{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;letter-spacing:.12em;color:var(--w);display:flex;align-items:center;gap:.7rem;}
+.nav-logo span{color:var(--red);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--mu);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;transition:color .3s;}
+.nav-links a:hover{color:var(--red);}
+.nav-cta{border:1px solid var(--red);color:var(--red)!important;padding:.5rem 1.4rem;border-radius:0.2rem;}
+
+@media(max-width:640px){
+  nav{padding:1rem;}
+  .nav-links{display:none;}
+}
+
+#hero{
+  min-height:78vh;
+  padding:0 4rem 5rem;
+  display:flex;
+  align-items:flex-end;
+  overflow:hidden;
+background-image:url('MEDIA/Projet Perenco 30 ans/AVIF/IMG_20221203_121316.avif');
+  background-size:cover;background-position:center;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(8,8,8,.97) 0%,rgba(8,8,8,.45) 40%,rgba(8,8,8,.18) 100%);
+  z-index:0;
+}
+.hero-red{
+  position:absolute;inset:0;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 18% 70%,rgba(139,26,26,.18) 0%,transparent 70%);
+}
+.hero-wrap{position:relative;z-index:1;max-width:940px;padding-top:96px;}
+.h-tag{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;}
+.h-tag::before{content:"";width:36px;height:1px;background:var(--red);}
+.h-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(3.8rem,7vw,7.2rem);line-height:.92;color:var(--w);letter-spacing:.02em;margin-bottom:1.2rem;}
+.h-title em{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--red);font-size:.68em;display:block;letter-spacing:.06em;line-height:1.05;}
+.h-sub{max-width:620px;font-size:.95rem;line-height:1.85;color:rgba(240,234,234,.65);}
+
+.hero-badges{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem;}
+.pill{
+  border:1px solid rgba(139,26,26,.25);
+  background:rgba(139,26,26,.06);
+  color:var(--mu);
+  padding:.45rem .9rem;
+  font-size:.65rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  border-radius:999px;
+}
+.pill.hot{color:var(--red);border-color:rgba(139,26,26,.55);background:rgba(139,26,26,.10);}
+
+.hero-actions{display:flex;gap:1rem;align-items:center;margin-top:2rem;flex-wrap:wrap;}
+.btn-p{
+  background:var(--red);color:var(--w);
+  padding:1rem 2.2rem;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;
+  display:inline-flex;align-items:center;gap:.6rem;
+  transition:transform .2s, background .3s;
+}
+.btn-p:hover{background:var(--rl);transform:translateY(-2px);}
+.btn-g{
+  border:1px solid rgba(139,26,26,.35);
+  color:var(--w);
+  padding:1rem 2.2rem;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:.6rem;
+  transition:border-color .3s,color .3s;
+}
+.btn-g:hover{border-color:var(--red);color:var(--red);}
+
+@media(max-width:1024px){
+  #hero{padding-left:2rem;padding-right:2rem;}
+  nav{padding:1.2rem 2rem;}
+  .hero-wrap{padding-top:86px;}
+}
+@media(max-width:640px){
+  #hero{min-height:640px;}
+}
+
+#overview{padding:8rem 4rem 4rem;}
+.grid2{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:2.5rem;
+  align-items:start;
+}
+.card{
+  border:1px solid rgba(139,26,26,.18);
+  border-radius:18px;
+  background:rgba(13,13,13,.25);
+  box-shadow:0 24px 90px rgba(0,0,0,.40);
+}
+.over-card{padding:2.4rem 2rem;}
+.over-card h3{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:3.1rem;
+  color:var(--w);
+  letter-spacing:.02em;
+  line-height:.95;
+  margin-bottom:1rem;
+}
+.over-card p{
+  color:var(--mu);
+  line-height:1.9;
+  font-size:.95rem;
+  max-width:720px;
+}
+.kv{
+  padding:1.8rem 1.6rem;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+.kv-row{
+  display:flex;gap:1rem;align-items:flex-start;
+  padding:.9rem 0;border-top:1px solid rgba(139,26,26,.12);
+}
+.kv-row:first-child{border-top:none;padding-top:0;}
+.kv-ic{
+  width:38px;height:38px;border:1px solid rgba(139,26,26,.25);
+  border-radius:14px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--red);
+}
+.kv-text strong{
+  display:block;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:.2rem;
+}
+.kv-text span{
+  color:var(--tx);font-size:.9rem;line-height:1.6;
+}
+
+@media(max-width:1024px){
+  #overview{padding-left:2rem;padding-right:2rem;}
+  .grid2{grid-template-columns:1fr;}
+}
+
+#gallery{padding:4rem 4rem 10rem;}
+.gal-wrap{
+  border:1px solid rgba(139,26,26,.18);
+  border-radius:18px;
+  background:rgba(13,13,13,.20);
+  padding:1.8rem;
+}
+.gal-title{
+  display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1.4rem;flex-wrap:wrap;
+}
+.gal-title h2{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:3.2rem;color:var(--w);letter-spacing:.02em;line-height:.95;
+}
+.gal-title p{color:var(--mu);max-width:520px;line-height:1.8;font-size:.92rem;}
+
+.gal-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+  background:rgba(139,26,26,.08);
+}
+.thumb{
+  height:220px;position:relative;overflow:hidden;cursor:none;
+}
+.thumb img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.65) saturate(.75);
+  transition:transform .5s, filter .35s;
+}
+.thumb:hover img{transform:scale(1.05);filter:brightness(.86) saturate(1);}
+
+@media(max-width:1024px){
+  #gallery{padding-left:2rem;padding-right:2rem;}
+  .gal-grid{grid-template-columns:repeat(2,1fr);}
+  .thumb{height:200px;}
+}
+
+footer{
+  background:var(--deep);
+  border-top:1px solid rgba(139,26,26,.12);
+  padding:5rem 4rem 3rem;
+}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4rem;}
+.footer-brand .logo{font-family:"Bebas Neue",sans-serif;font-size:2.2rem;color:var(--w);letter-spacing:.1em;display:flex;align-items:center;gap:.7rem;margin-bottom:1rem;}
+.footer-brand .logo span{color:var(--red);}
+.footer-brand p{font-size:.88rem;line-height:1.8;color:var(--mu);max-width:280px;margin-bottom:1.5rem;}
+.social-links{display:flex;gap:1rem;}
+.social-link{width:38px;height:38px;border:1px solid rgba(139,26,26,.2);display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.85rem;text-decoration:none;transition:border-color .3s,color .3s,background .3s;cursor:none;}
+.social-link:hover{border-color:var(--red);color:var(--red);background:var(--rd);}
+.footer-col h5{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+.footer-col ul li a{font-size:.88rem;color:var(--mu);text-decoration:none;transition:color .3s;cursor:none;}
+.footer-col ul li a:hover{color:var(--red);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid rgba(139,26,26,.07);font-size:.75rem;color:var(--mu);}
+#main-nav > a{display:flex;align-items:center;gap:0.8rem;}
+</style>\n</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:34px;width:auto;display:block;"></a>
+  <ul class="nav-links">
+    <li class="dropdown">
+      <a href="/solutions.html">Solutions ▾</a>
+      <div class="dropdown-content">
+        <a href="/lumiere.html">Lumière</a>
+        <a href="/distribution-electrique.html">Distribution Électrique</a>
+        <a href="/sonorisation.html">Sonorisation</a>
+        <a href="/scene-mobile.html">Scène Mobile</a>
+        <a href="/video.html">Vidéo</a>
+        <a href="/integration-led.html">Intégration LED</a>
+        <a href="/captation.html">Captation</a>
+        <a href="/logistique.html">Logistique</a>
+      </div>
+    </li>
+    <li><a href="/projets.html">Réalisations</a></li>
+    <li class="dropdown">
+      <a href="/agence.html">L'Agence ▾</a>
+      <div class="dropdown-content">
+        <a href="/a-propos.html">À propos de nous</a>
+        <a href="/carrieres.html">Carrières</a>
+        <a href="/actualites.html">Actualités</a>
+      </div>
+    </li>
+    <li><a href="/contact.html" class="nav-cta">Nous contacter</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-red"></div>
+
+  <div class="hero-wrap">
+    <div class="h-tag">Perenco — 30 ans</div>
+    <div class="h-title">Événement <em>anniversaire</em></div>
+    <p class="h-sub">
+      Une soirée anniversaire orchestrée avec une approche technique complète :
+      mise en lumière, sonorisation, vidéo et intégration LED — pour une expérience fluide,
+      spectaculaire et maîtrisée.
+    </p>
+
+    <div class="hero-badges">
+      <span class="pill hot">Contrôle qualité</span>
+      <span class="pill">Régies vidéo</span>
+      <span class="pill">Scénographie</span>
+      <span class="pill">LED & diffusion</span>
+    </div>
+
+    <div class="hero-actions">
+      <a class="btn-p" href="/#contact">Demander un devis →</a>
+      <a class="btn-g" href="/solutions">Retour aux solutions</a>
+    </div>
+  </div>
+</section>
+
+<section id="overview">
+  <div class="grid2">
+    <div class="card over-card">
+      <h3>Une direction technique de bout en bout</h3>
+      <p>
+        Perenco 30 ans a nécessité une coordination précise : plan de diffusion,
+        réglages lumière, gestion des contenus vidéo et intégration LED dans les éléments
+        de décor. L’objectif : une expérience cohérente du début à la fin, sans friction,
+        avec une qualité visuelle et sonore constante.
+      </p>
+      <p>
+        Chaque étape a été pensée pour la performance et l’impact, afin de rendre
+        la soirée immersive, dynamique et mémorable pour l’ensemble des invités.
+      </p>
+    </div>
+
+    <div class="card kv">
+      <div class="kv-row">
+        <div class="kv-ic">🎥</div>
+        <div class="kv-text">
+          <strong>Vidéo</strong>
+          <span>Régies, multi-caméras et synchronisation des contenus</span>
+        </div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-ic">💡</div>
+        <div class="kv-text">
+          <strong>Lumière</strong>
+          <span>Ambiances, plans et mise en valeur des temps forts</span>
+        </div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-ic">🔊</div>
+        <div class="kv-text">
+          <strong>Sonorisation</strong>
+          <span>Équilibrage, couverture et clarté du message</span>
+        </div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-ic">🟧</div>
+        <div class="kv-text">
+          <strong>LED</strong>
+          <span>Intégration et diffusion pour une narration visuelle</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="gal-wrap">
+    <div class="gal-title">
+      <h2>Galerie</h2>
+      <p>Images du projet Perenco 30 ans — extraites de `MEDIA/Projet Perenco 30 ans/`.</p>
+    </div>
+
+    <div class="gal-grid">
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7397.avif" alt="Perenco 30 ans 1"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7409.avif" alt="Perenco 30 ans 2"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/DJI_0046.avif" alt="Perenco 30 ans 3"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7969.avif" alt="Perenco 30 ans 4"></div>
+
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/DJI_0047.avif" alt="Perenco 30 ans 5"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7491.avif" alt="Perenco 30 ans 6"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7762.avif" alt="Perenco 30 ans 7"></div>
+<div class="thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/IMG_20221203_121316.avif" alt="Perenco 30 ans 8"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="/" class="logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;"></a>
+      <p>L'agence évènementielle de référence au Gabon. Nous transformons vos idées en expériences inoubliables depuis plus de 10 ans.</p>
+      <div class="social-links">
+        <a href="#" class="social-link">f</a>
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">ig</a>
+        <a href="#" class="social-link">yt</a>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Solutions</h5><ul><li><a href="/solutions">Nos solutions</a></li><li><a href="/solutions/perenco">Perenco 30 ans</a></li></ul></div>
+    <div class="footer-col"><h5>Entreprise</h5><ul><li><a href="/#about">À propos</a></li><li><a href="/#process">Méthode</a></li></ul></div>
+    <div class="footer-col"><h5>Contact</h5><ul><li><a href="/#contact">Demander un devis</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 OSSPROGROUP Gabon — Tous droits réservés</span>
+    <span>Libreville, Gabon 🇬🇦</span>
+  </div>
+</footer>
+
+<script>
+(function initTechAccordion(){
+  // (No accordion on this page; kept placeholder for template consistency)
+})();
+</script>
+
+</body>
+</html>

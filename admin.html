@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSPROGROUP — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808; --surface:#0f0a0a; --card:#161010; --border:rgba(139,26,26,.18);
+  --red:#8b1a1a; --red-light:#b22222; --red-dim:rgba(139,26,26,.15);
+  --red-glow:rgba(139,26,26,.08);
+  --white:#f0eaea; --muted:#7a6060; --text:#c4b4b4;
+  --green:#2d6a2d; --green-light:#3a8a3a;
+  --sidebar:260px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;font-weight:300;display:flex;flex-direction:column;}
+
+/* ── LOGIN SCREEN ── */
+#login-screen{position:fixed;inset:0;z-index:9999;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}
+.login-noise{position:absolute;inset:0;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");}
+.login-glow{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(139,26,26,.14) 0%,transparent 70%);}
+.login-box{position:relative;z-index:1;width:420px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);padding:3.5rem;box-shadow:0 0 100px rgba(139,26,26,.18),0 0 0 1px rgba(139,26,26,.08);animation:boxIn .5s cubic-bezier(.4,0,.2,1);}
+@keyframes boxIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;letter-spacing:.14em;color:var(--white);text-align:center;margin-bottom:.3rem;}
+.login-logo span{color:var(--red);}
+.login-role{font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:2.5rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}
+.login-role::before,.login-role::after{content:"";width:28px;height:1px;background:rgba(139,26,26,.3);}
+.lock-ring{width:56px;height:56px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;background:rgba(139,26,26,.06);font-size:1.5rem;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 14px rgba(139,26,26,0)}}
+.lf{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.2rem;}
+.lf label{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+.lf input{background:rgba(20,8,8,.9);border:1px solid rgba(139,26,26,.22);color:var(--white);padding:.9rem 1.1rem;font-family:"DM Sans",sans-serif;font-size:.92rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}
+.lf input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(139,26,26,.12);}
+.lf input.err{border-color:#c0392b;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.login-err{font-size:.72rem;color:#c0392b;min-height:1.2rem;margin-bottom:.5rem;letter-spacing:.06em;}
+.login-attempts{font-size:.62rem;color:rgba(122,96,96,.6);text-align:center;margin-top:.8rem;letter-spacing:.1em;}
+.btn-login{background:var(--red);color:var(--white);border:none;width:100%;padding:1.05rem;font-family:"DM Sans",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}
+.btn-login:hover{background:var(--red-light);transform:translateY(-1px);}
+.btn-login:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.login-hint{font-size:.6rem;color:rgba(122,96,96,.35);text-align:center;margin-top:1rem;letter-spacing:.1em;}
+
+/* ── APP SHELL ── */
+#app{display:flex;height:100%;flex-direction:column;}
+#app.show{display:flex;}
+
+/* TOP BAR */
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1.2rem;flex-shrink:0;z-index:100;}
+.topbar-logo{font-family:"Bebas Neue",sans-serif;font-size:1.4rem;letter-spacing:.12em;color:var(--white);}
+.topbar-logo span{color:var(--red);}
+.topbar-divider{width:1px;height:24px;background:var(--border);}
+.topbar-title{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:1rem;}
+.session-badge{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.25rem .8rem;display:flex;align-items:center;gap:.4rem;}
+.session-badge::before{content:"●";font-size:.45rem;}
+.topbar-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.4rem .9rem;font-family:"DM Sans",sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}
+.topbar-btn:hover{border-color:var(--red);color:var(--red);}
+.topbar-btn.danger:hover{border-color:#c0392b;color:#c0392b;}
+
+/* MAIN LAYOUT */
+.main-layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sidebar-section{padding:.6rem .8rem .3rem;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(122,96,96,.5);margin-top:.8rem;}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;font-size:.78rem;color:var(--muted);cursor:pointer;transition:color .25s,background .25s;border-left:2px solid transparent;user-select:none;}
+.nav-item:hover{color:var(--text);background:var(--red-glow);}
+.nav-item.active{color:var(--white);background:var(--red-dim);border-left-color:var(--red);}
+.nav-item .icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-item .badge{margin-left:auto;font-size:.55rem;background:var(--red);color:var(--white);padding:.1rem .45rem;letter-spacing:.05em;}
+.sidebar-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--border);}
+.sidebar-bottom .user-info{font-size:.7rem;color:var(--muted);margin-bottom:.6rem;}
+.sidebar-bottom .user-info strong{display:block;color:var(--white);font-size:.78rem;margin-bottom:.1rem;}
+
+/* CONTENT AREA */
+.content{flex:1;overflow-y:auto;background:var(--bg);}
+.panel{display:none;padding:2rem;max-width:900px;}
+.panel.active{display:block;}
+.panel-header{margin-bottom:2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
+.panel-header h1{font-family:"Bebas Neue",sans-serif;font-size:2rem;color:var(--white);letter-spacing:.06em;margin-bottom:.3rem;}
+.panel-header p{font-size:.82rem;color:var(--muted);line-height:1.7;}
+.panel-header .breadcrumb{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(122,96,96,.5);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;}
+.breadcrumb span{color:var(--red);}
+
+/* CARDS */
+.cms-card{background:var(--card);border:1px solid var(--border);margin-bottom:1.2rem;}
+.cms-card-head{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.cms-card-head h3{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:.6rem;}
+.cms-card-head h3 .icon{font-size:1rem;}
+.cms-card-head .toggle{font-size:.6rem;color:var(--muted);transition:transform .3s;}
+.cms-card-head.open .toggle{transform:rotate(180deg);}
+.cms-card-body{padding:1.2rem;display:none;}
+.cms-card-body.open{display:block;}
+
+/* FORM ELEMENTS */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem;}
+.field-grid.col3{grid-template-columns:1fr 1fr 1fr;}
+.field-grid.col1{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:.35rem;}
+.field label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+.field label .tip{font-size:.55rem;color:rgba(122,96,96,.5);font-weight:300;text-transform:none;letter-spacing:0;}
+.field input,.field textarea,.field select{background:rgba(20,8,8,.8);border:1px solid rgba(139,26,26,.2);color:var(--white);padding:.7rem .9rem;font-family:"DM Sans",sans-serif;font-size:.85rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;resize:vertical;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--red);box-shadow:0 0 0 2px rgba(139,26,26,.1);}
+.field textarea{min-height:80px;}
+.field select option{background:#180a0a;}
+.field .char-count{font-size:.58rem;color:rgba(122,96,96,.5);text-align:right;margin-top:.2rem;}
+
+/* IMAGE UPLOAD */
+.img-upload-wrap{display:flex;flex-direction:column;gap:.5rem;}
+.img-preview{width:100%;height:150px;background:rgba(20,8,8,.6);border:1px dashed rgba(139,26,26,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;position:relative;overflow:hidden;transition:border-color .3s;}
+.img-preview:hover{border-color:rgba(139,26,26,.5);}
+.img-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.img-preview .ph{font-size:.68rem;color:var(--muted);text-align:center;line-height:1.7;position:relative;z-index:1;}
+.img-preview.loaded .ph{display:none;}
+.img-preview .ph-icon{font-size:1.6rem;opacity:.4;position:relative;z-index:1;}
+.img-preview.loaded .ph-icon{display:none;}
+.img-btn{background:rgba(139,26,26,.15);border:1px solid rgba(139,26,26,.3);color:var(--red);padding:.55rem .9rem;font-family:"DM Sans",sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .3s;width:100%;}
+.img-btn:hover{background:rgba(139,26,26,.28);}
+.hf{display:none;}
+.img-size-hint{font-size:.58rem;color:rgba(122,96,96,.45);letter-spacing:.06em;}
+
+/* LOGOS GRID */
+.logos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;}
+.logo-slot{background:rgba(20,8,8,.6);border:1px solid var(--border);padding:.8rem;display:flex;flex-direction:column;gap:.5rem;}
+.logo-slot label{font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:center;}
+.logo-preview{height:54px;background:rgba(8,4,4,.8);border:1px dashed rgba(139,26,26,.2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.logo-preview img{max-width:90%;max-height:90%;object-fit:contain;position:relative;z-index:1;}
+.logo-preview svg{max-width:90%;max-height:90%;}
+.logo-preview.loaded svg{display:none;}
+.logo-slot .img-btn{font-size:.58rem;padding:.4rem .6rem;}
+
+/* TABS inside panel */
+.inner-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.2rem;}
+.inner-tab{padding:.6rem 1.1rem;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .3s;background:none;border-top:none;border-left:none;border-right:none;font-family:"DM Sans",sans-serif;}
+.inner-tab:hover{color:var(--text);}
+.inner-tab.active{color:var(--red);border-bottom-color:var(--red);}
+.inner-panel{display:none;}
+.inner-panel.active{display:block;}
+
+/* ACTIONS BAR */
+.actions-bar{display:flex;gap:.7rem;align-items:center;padding-top:1rem;border-top:1px solid var(--border);margin-top:1.2rem;}
+.btn-save{background:var(--red);color:var(--white);border:none;padding:.8rem 1.6rem;font-family:"DM Sans",sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}
+.btn-save:hover{background:var(--red-light);transform:translateY(-1px);}
+.btn-save:active{transform:translateY(0);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.8rem 1.2rem;font-family:"DM Sans",sans-serif;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}
+.btn-outline:hover{border-color:var(--red);color:var(--red);}
+.save-status{font-size:.7rem;color:#4caf50;display:none;align-items:center;gap:.4rem;}
+.save-status.show{display:flex;}
+
+/* STATS PANEL */
+.stats-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:1.5rem;}
+.stat-card{background:var(--card);padding:1.2rem 1rem;}
+.stat-card .val{font-family:"Bebas Neue",sans-serif;font-size:2.2rem;color:var(--red);line-height:1;}
+.stat-card .key{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:.3rem;}
+.stat-card input{background:transparent;border:none;border-bottom:1px solid rgba(139,26,26,.25);color:var(--red);font-family:"Bebas Neue",sans-serif;font-size:2.2rem;width:100%;outline:none;line-height:1;padding:0;}
+.stat-card .key-input{background:transparent;border:none;border-bottom:1px dashed rgba(122,96,96,.3);color:var(--muted);font-family:"DM Sans",sans-serif;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;width:100%;outline:none;margin-top:.3rem;padding:0;}
+
+/* SECURITY */
+.sec-block{background:var(--card);border:1px solid var(--border);padding:1.2rem;margin-bottom:.8rem;}
+.sec-block h4{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;}
+.sec-log{background:rgba(8,4,4,.8);border:1px solid rgba(139,26,26,.15);padding:.8rem;font-size:.72rem;font-family:monospace;color:var(--muted);max-height:140px;overflow-y:auto;line-height:1.8;}
+.sec-log .ok{color:#4caf50;}.sec-log .warn{color:#ff9800;}.sec-log .err{color:#c0392b;}
+.sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+
+/* EXPORT */
+.export-zone{border:1px solid rgba(139,26,26,.25);background:rgba(139,26,26,.04);padding:1.5rem;margin-bottom:.8rem;}
+.export-zone h4{font-family:"Bebas Neue",sans-serif;font-size:1.2rem;color:var(--white);letter-spacing:.08em;margin-bottom:.5rem;}
+.export-zone p{font-size:.78rem;color:var(--muted);line-height:1.8;margin-bottom:1rem;}
+.btn-export{display:flex;align-items:center;justify-content:center;gap:.6rem;background:transparent;border:1px solid var(--red);color:var(--red);padding:1rem;font-family:"DM Sans",sans-serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;width:100%;transition:background .3s,color .3s;}
+.btn-export:hover{background:var(--red);color:var(--white);}
+.btn-export.green-export{border-color:#2d6a2d;color:#4caf50;}
+.btn-export.green-export:hover{background:#2d6a2d;color:#fff;}
+
+/* CHANGE PASSWORD */
+.cpw-form{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;align-items:end;}
+.cpw-msg{font-size:.72rem;margin-top:.5rem;min-height:1rem;}
+.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--card);border:1px solid var(--red);color:var(--white);padding:.8rem 1.4rem;font-size:.78rem;z-index:9999;transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);letter-spacing:.06em;display:flex;align-items:center;gap:.6rem;max-width:320px;}
+.toast.show{transform:translateX(0);}
+.toast.success{border-color:#2d6a2d;}.toast.success::before{content:"✓";color:#4caf50;}
+.toast.error{border-color:#c0392b;}.toast.error::before{content:"⚠";color:#c0392b;}
+.toast.info::before{content:"ℹ";color:var(--red);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(139,26,26,.3);border-radius:2px;}
+
+/* SITE LINK BUTTON */
+.site-link-btn{display:flex;align-items:center;gap:.5rem;background:rgba(139,26,26,.1);border:1px solid rgba(139,26,26,.25);color:var(--red);padding:.4rem .9rem;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background .3s;}
+.site-link-btn:hover{background:rgba(139,26,26,.2);}
+
+@media(max-width:768px){
+  .sidebar{width:200px;}
+  .field-grid{grid-template-columns:1fr;}
+  .logos-grid{grid-template-columns:repeat(2,1fr);}
+  .stats-overview{grid-template-columns:repeat(2,1fr);}
+  .panel{padding:1rem;}
+}
+footer .footer-logo img[src="MEDIA/LOGO.avif"]{display:block;max-width:180px;max-height:70px;height:auto;width:auto;object-fit:contain;}
+</style>\n</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  LOGIN SCREEN
+════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-noise"></div>
+  <div class="login-glow"></div>
+  <div class="login-box">
+    <div class="login-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;"></div>
+    <div class="login-role">Panneau d'administration</div>
+    <div class="lock-ring" id="lock-icon">🔒</div>
+    <div class="lf">
+      <label>Identifiant</label>
+      <input type="text" id="login-user" placeholder="admin" autocomplete="username">
+    </div>
+    <div class="lf">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Connexion</button>
+    <div class="login-attempts" id="login-attempts"></div>
+    <div class="login-hint">Accès réservé · OSSPROGROUP Admin v3</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  APP
+════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:28px;width:auto;display:block;"></div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-title">CMS Admin</div>
+    <div class="topbar-right">
+      <span class="session-badge" id="session-user">Connecté</span>
+      <a class="site-link-btn" href="ossprogroup.html" target="_blank">↗ Voir le site</a>
+      <button class="topbar-btn" onclick="showPanel('security')">🔐 Sécurité</button>
+      <button class="topbar-btn danger" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-section">Navigation</div>
+      <div class="nav-item active" onclick="showPanel('dashboard')"><span class="icon">📊</span> Tableau de bord</div>
+
+      <div class="sidebar-section">Contenu</div>
+      <div class="nav-item" onclick="showPanel('hero')"><span class="icon">🏠</span> Section Hero<span class="badge">3</span></div>
+      <div class="nav-item" onclick="showPanel('about')"><span class="icon">👥</span> À propos</div>
+      <div class="nav-item" onclick="showPanel('services')"><span class="icon">🎭</span> Services</div>
+      <div class="nav-item" onclick="showPanel('portfolio')"><span class="icon">🖼</span> Réalisations</div>
+      <div class="nav-item" onclick="showPanel('process')"><span class="icon">⚙</span> Notre Méthode</div>
+      <div class="nav-item" onclick="showPanel('testimonials')"><span class="icon">💬</span> Témoignages</div>
+      <div class="nav-item" onclick="showPanel('contact')"><span class="icon">📞</span> Contact</div>
+      <div class="nav-item" onclick="window.open('shop-admin.html','_blank')"><span class="icon">🛒</span> Boutique</div>
+
+      <div class="sidebar-section">Médias</div>
+      <div class="nav-item" onclick="showPanel('media-slider')"><span class="icon">🎞</span> Slider Hero</div>
+      <div class="nav-item" onclick="showPanel('media-photos')"><span class="icon">📷</span> Photos</div>
+      <div class="nav-item" onclick="showPanel('media-logos')"><span class="icon">🏢</span> Logos</div>
+
+      <div class="sidebar-section">Système</div>
+      <div class="nav-item" onclick="showPanel('security')"><span class="icon">🔐</span> Sécurité</div>
+
+
+      <div class="sidebar-bottom">
+        <div class="user-info"><strong id="sidebar-username">admin</strong>Administrateur</div>
+        <button class="topbar-btn" style="width:100%" onclick="doLogout()">Déconnexion</button>
+      </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="panel-header">
+          <div class="breadcrumb">CMS <span>▸</span> Tableau de bord</div>
+          <h1>Tableau de bord</h1>
+          <p>Bienvenue dans le panneau d'administration OSSPROGROUP. Sélectionnez une section à modifier dans le menu latéral.</p>
+        </div>
+        <div class="stats-overview">
+          <div class="stat-card"><div class="val">8</div><div class="key">Sections éditables</div></div>
+          <div class="stat-card"><div class="val">15</div><div class="key">Images gérées</div></div>
+          <div class="stat-card"><div class="val">8</div><div class="key">Logos partenaires</div></div>
+          <div class="stat-card"><div class="val">3</div><div class="key">Slides hero</div></div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">🚀</span>Accès rapide</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;">
+            <button class="btn-outline" onclick="showPanel('hero')" style="padding:1rem;cursor:pointer;">🏠 Hero &amp; Slider</button>
+            <button class="btn-outline" onclick="showPanel('about')" style="padding:1rem;cursor:pointer;">👥 À propos</button>
+            <button class="btn-outline" onclick="showPanel('portfolio')" style="padding:1rem;cursor:pointer;">🖼 Réalisations</button>
+            <button class="btn-outline" onclick="showPanel('contact')" style="padding:1rem;cursor:pointer;">📞 Contact</button>
+            <button class="btn-outline" onclick="showPanel('media-logos')" style="padding:1rem;cursor:pointer;">🏢 Logos</button>
+ 
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">📋</span>Instructions</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <p style="font-size:.83rem;line-height:1.9;color:var(--muted);">
+              1. Modifiez les textes et images dans chaque section du menu.<br>
+              2. Cliquez <strong style="color:var(--white);">Appliquer</strong> pour voir les changements sur le site ouvert dans un autre onglet.<br>
+              3. Une fois satisfait, allez dans <strong style="color:var(--white);">Exporter</strong> pour télécharger le fichier HTML final.<br>
+              4. Pour changer le mot de passe, accédez à <strong style="color:var(--white);">Sécurité</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HERO ── -->
+      <div class="panel" id="panel-hero">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Section Hero</div>
+          <h1>Section Hero</h1>
+          <p>Textes affichés sur la page d'accueil en premier plan du slider.</p>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">✏️</span>Textes du Hero</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <div class="field-grid col1">
+              <div class="field">
+                <label>Tag / Sous-titre haut <span class="tip">— texte rouge au-dessus du titre</span></label>
+                <input id="c-hero-tag" type="text" value="Agence Évènementielle — Libreville, Gabon" oninput="countChars(this,80)">
+                <div class="char-count" id="cc-hero-tag"></div>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label>Titre ligne 1 <span class="tip">— CAPS (Bebas Neue)</span></label>
+                <input id="c-hero-l1" type="text" value="CRÉATEURS">
+              </div>
+              <div class="field">
+                <label>Titre ligne 3 <span class="tip">— CAPS (Bebas Neue)</span></label>
+                <input id="c-hero-l3" type="text" value="MÉMORABLES">
+              </div>
+            </div>
+            <div class="field-grid col1">
+              <div class="field">
+                <label>Titre italique (ligne 2) <span class="tip">— style Cormorant en rouge</span></label>
+                <input id="c-hero-em" type="text" value="d'instants">
+              </div>
+              <div class="field">
+                <label>Sous-titre (paragraphe)</label>
+                <textarea id="c-hero-sub" rows="3">OSSPROGROUP transforme vos ambitions en événements d'exception. Du concept à la réalisation, nous orchestrons chaque détail pour créer des expériences uniques et inoubliables au cœur du Gabon.</textarea>
+              </div>
+            </div>
+            <div class="actions-bar">
+              <button class="btn-save" onclick="applyHero()">✓ Appliquer sur le site</button>
+              <span class="save-status" id="ss-hero">✓ Appliqué</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ABOUT ── -->
+      <div class="panel" id="panel-about">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> À propos</div>
+          <h1>Section À propos</h1>
+          <p>Statistiques, textes de présentation et valeurs de l'entreprise.</p>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">📊</span>4 Statistiques</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <div class="stats-overview" style="margin-bottom:1rem;">
+              <div class="stat-card">
+                <input id="c-s1" value="+200" placeholder="Ex: +200">
+                <input class="key-input" id="c-s1l" value="Événements réalisés">
+              </div>
+              <div class="stat-card">
+                <input id="c-s2" value="10" placeholder="Ex: 10">
+                <input class="key-input" id="c-s2l" value="Ans d'expérience">
+              </div>
+              <div class="stat-card">
+                <input id="c-s3" value="+80" placeholder="Ex: +80">
+                <input class="key-input" id="c-s3l" value="Clients satisfaits">
+              </div>
+              <div class="stat-card">
+                <input id="c-s4" value="9" placeholder="Ex: 9">
+                <input class="key-input" id="c-s4l" value="Provinces couvertes">
+              </div>
+            </div>
+            <div class="actions-bar">
+              <button class="btn-save" onclick="applyAbout()">✓ Appliquer</button>
+              <span class="save-status" id="ss-about">✓ Appliqué</span>
+            </div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">📝</span>Textes de présentation</h3><span class="toggle">▼</span></div>
+          <div class="cms-card-body">
+            <div class="field-grid col1">
+              <div class="field"><label>Paragraphe 1</label><textarea id="c-about-p1" rows="3">Fondée à Libreville, OSSPROGROUP est l'agence de référence pour la conception et l'organisation d'événements professionnels et privés au Gabon. Notre équipe passionnée allie créativité, rigueur et expertise logistique pour dépasser vos attentes.</textarea></div>
+              <div class="field"><label>Paragraphe 2</label><textarea id="c-about-p2" rows="3">Nous intervenons à chaque étape de votre projet — de l'idée créative à la coordination sur le terrain — avec un engagement total pour la qualité et la satisfaction de nos clients.</textarea></div>
+            </div>
+            <div class="actions-bar">
+              <button class="btn-save" onclick="applyAboutText()">✓ Appliquer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SERVICES ── -->
+      <div class="panel" id="panel-services">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Services</div>
+          <h1>Services</h1>
+          <p>Les 6 cartes de services affichées sur la page d'accueil.</p>
+        </div>
+        <div id="services-cards-container"></div>
+        <div class="actions-bar">
+          <button class="btn-save" onclick="applyServices()">✓ Appliquer tous les services</button>
+          <span class="save-status" id="ss-services">✓ Appliqué</span>
+        </div>
+      </div>
+
+      <!-- ── PORTFOLIO ── -->
+      <div class="panel" id="panel-portfolio">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Réalisations</div>
+          <h1>Réalisations</h1>
+          <p>Les 3 projets mis en avant dans la grille portfolio.</p>
+        </div>
+        <div class="inner-tabs">
+          <button class="inner-tab active" onclick="switchInner(this,'pt-1')">Projet 1</button>
+          <button class="inner-tab" onclick="switchInner(this,'pt-2')">Projet 2</button>
+          <button class="inner-tab" onclick="switchInner(this,'pt-3')">Projet 3</button>
+        </div>
+        <div class="inner-panel active" id="pt-1">
+          <div class="field-grid">
+            <div class="field"><label>Catégorie</label><input id="c-p1-cat" value="Événement Corporate"></div>
+            <div class="field"><label>Année / Détails</label><input id="c-p1-year" value="500+ participants · Palais des Congrès, Libreville"></div>
+          </div>
+          <div class="field-grid col1"><div class="field"><label>Titre</label><input id="c-p1-title" value="Forum Économique du Gabon 2024"></div></div>
+        </div>
+        <div class="inner-panel" id="pt-2">
+          <div class="field-grid">
+            <div class="field"><label>Catégorie</label><input id="c-p2-cat" value="Gala Prestige"></div>
+            <div class="field"><label>Année / Détails</label><input id="c-p2-year" value="300 invités VIP · Hôtel Radisson Blu"></div>
+          </div>
+          <div class="field-grid col1"><div class="field"><label>Titre</label><input id="c-p2-title" value="Nuit des Entrepreneurs"></div></div>
+        </div>
+        <div class="inner-panel" id="pt-3">
+          <div class="field-grid">
+            <div class="field"><label>Catégorie</label><input id="c-p3-cat" value="Concert & Spectacle"></div>
+            <div class="field"><label>Année / Détails</label><input id="c-p3-year" value="2000+ spectateurs · Esplanade du Port"></div>
+          </div>
+          <div class="field-grid col1"><div class="field"><label>Titre</label><input id="c-p3-title" value="AfricaFest Libreville"></div></div>
+        </div>
+        <div class="actions-bar">
+          <button class="btn-save" onclick="applyPortfolio()">✓ Appliquer</button>
+          <span class="save-status" id="ss-portfolio">✓ Appliqué</span>
+        </div>
+      </div>
+
+      <!-- ── PROCESS ── -->
+      <div class="panel" id="panel-process">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Notre Méthode</div>
+          <h1>Notre Méthode</h1>
+          <p>Les 4 étapes du processus de travail.</p>
+        </div>
+        <div id="process-cards-container"></div>
+        <div class="actions-bar">
+          <button class="btn-save" onclick="applyProcess()">✓ Appliquer</button>
+          <span class="save-status" id="ss-process">✓ Appliqué</span>
+        </div>
+      </div>
+
+      <!-- ── TESTIMONIALS ── -->
+      <div class="panel" id="panel-testimonials">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Témoignages</div>
+          <h1>Témoignages</h1>
+          <p>Les 3 citations clients affichées sur le site.</p>
+        </div>
+        <div id="testi-cards-container"></div>
+        <div class="actions-bar">
+          <button class="btn-save" onclick="applyTestis()">✓ Appliquer</button>
+          <span class="save-status" id="ss-testi">✓ Appliqué</span>
+        </div>
+      </div>
+
+      <!-- ── CONTACT ── -->
+      <div class="panel" id="panel-contact">
+        <div class="panel-header">
+          <div class="breadcrumb">Contenu <span>▸</span> Contact</div>
+          <h1>Informations de contact</h1>
+          <p>Coordonnées, réseaux sociaux et mentions légales.</p>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">📍</span>Coordonnées</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <div class="field-grid">
+              <div class="field"><label>Adresse</label><input id="c-addr" value="Boulevard Triomphal, Libreville, Gabon"></div>
+              <div class="field"><label>Téléphone</label><input id="c-phone" value="+241 XX XX XX XX"></div>
+              <div class="field"><label>Email</label><input id="c-email" type="email" value="contact@ossprogroup.ga"></div>
+              <div class="field"><label>Horaires</label><input id="c-hours" value="Lun – Ven : 8h00 – 18h00"></div>
+            </div>
+            <div class="actions-bar">
+              <button class="btn-save" onclick="applyContact()">✓ Appliquer</button>
+              <span class="save-status" id="ss-contact">✓ Appliqué</span>
+            </div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">🔗</span>Réseaux sociaux</h3><span class="toggle">▼</span></div>
+          <div class="cms-card-body">
+            <div class="field-grid">
+              <div class="field"><label>Facebook</label><input id="c-fb" placeholder="https://facebook.com/ossprogroup"></div>
+              <div class="field"><label>Instagram</label><input id="c-ig" placeholder="https://instagram.com/ossprogroup"></div>
+              <div class="field"><label>LinkedIn</label><input id="c-li" placeholder="https://linkedin.com/company/ossprogroup"></div>
+              <div class="field"><label>YouTube</label><input id="c-yt" placeholder="https://youtube.com/@ossprogroup"></div>
+            </div>
+            <div class="actions-bar"><button class="btn-save" onclick="applySocial()">✓ Appliquer</button></div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">©</span>Pied de page</h3><span class="toggle">▼</span></div>
+          <div class="cms-card-body">
+            <div class="field-grid col1">
+              <div class="field"><label>Mention copyright</label><input id="c-copy" value="© 2025 OSSPROGROUP Gabon — Tous droits réservés"></div>
+            </div>
+            <div class="actions-bar"><button class="btn-save" onclick="applyFooter()">✓ Appliquer</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MEDIA SLIDER ── -->
+      <div class="panel" id="panel-media-slider">
+        <div class="panel-header">
+          <div class="breadcrumb">Médias <span>▸</span> Slider Hero</div>
+          <h1>Slider Hero</h1>
+          <p>Les 3 images qui défilent en fond de la section d'accueil. Recommandé : 1920×1080px, format paysage.</p>
+        </div>
+        <div class="field-grid col3">
+          <div class="field">
+            <label>Slide 1 <span class="tip">— affichée en premier</span></label>
+            <div class="img-preview loaded" id="prev-sl0"><div class="ph-icon">🖼</div><div class="ph">1920×1080px<br>JPG ou PNG</div><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=60" alt="s0"></div>
+            <div class="img-size-hint">Actuelle : Unsplash placeholder</div>
+            <input type="file" accept="image/*" class="hf" id="fsl0" onchange="uploadSlide(this,'prev-sl0','slide-0')">
+            <button class="img-btn" onclick="document.getElementById('fsl0').click()">📷 Changer Slide 1</button>
+          </div>
+          <div class="field">
+            <label>Slide 2</label>
+            <div class="img-preview loaded" id="prev-sl1"><div class="ph-icon">🖼</div><div class="ph">1920×1080px<br>JPG ou PNG</div><img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=60" alt="s1"></div>
+            <div class="img-size-hint">Actuelle : Unsplash placeholder</div>
+            <input type="file" accept="image/*" class="hf" id="fsl1" onchange="uploadSlide(this,'prev-sl1','slide-1')">
+            <button class="img-btn" onclick="document.getElementById('fsl1').click()">📷 Changer Slide 2</button>
+          </div>
+          <div class="field">
+            <label>Slide 3</label>
+            <div class="img-preview loaded" id="prev-sl2"><div class="ph-icon">🖼</div><div class="ph">1920×1080px<br>JPG ou PNG</div><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&q=60" alt="s2"></div>
+            <div class="img-size-hint">Actuelle : Unsplash placeholder</div>
+            <input type="file" accept="image/*" class="hf" id="fsl2" onchange="uploadSlide(this,'prev-sl2','slide-2')">
+            <button class="img-btn" onclick="document.getElementById('fsl2').click()">📷 Changer Slide 3</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MEDIA PHOTOS ── -->
+      <div class="panel" id="panel-media-photos">
+        <div class="panel-header">
+          <div class="breadcrumb">Médias <span>▸</span> Photos</div>
+          <h1>Photos du site</h1>
+          <p>Toutes les photos utilisées sur le site, par section.</p>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">👥</span>Photo — Section À propos</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.8rem;">Affichée dans le bloc statistiques à gauche de la présentation. Format portrait recommandé.</p>
+            <div style="max-width:300px;">
+              <div class="img-preview loaded" id="prev-about-ph"><img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&q=60" alt="about"></div>
+              <input type="file" accept="image/*" class="hf" id="f-about-ph" onchange="uploadImg(this,'prev-about-ph','about-photo')">
+              <button class="img-btn" onclick="document.getElementById('f-about-ph').click()" style="margin-top:.4rem;">📷 Changer</button>
+            </div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">🖼</span>Photos — Réalisations (3 projets)</h3><span class="toggle">▼</span></div>
+          <div class="cms-card-body">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:.8rem;">Images de fond des cartes portfolio. Format paysage recommandé.</p>
+            <div class="field-grid col3">
+              <div class="field">
+                <label>Projet 1 (grande carte)</label>
+                <div class="img-preview loaded" id="prev-ph-p1"><img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=60" alt="p1"></div>
+                <input type="file" accept="image/*" class="hf" id="f-ph-p1" onchange="uploadBg(this,'prev-ph-p1','proj-1-bg')">
+                <button class="img-btn" onclick="document.getElementById('f-ph-p1').click()">📷 Changer</button>
+              </div>
+              <div class="field">
+                <label>Projet 2</label>
+                <div class="img-preview loaded" id="prev-ph-p2"><img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400&q=60" alt="p2"></div>
+                <input type="file" accept="image/*" class="hf" id="f-ph-p2" onchange="uploadBg(this,'prev-ph-p2','proj-2-bg')">
+                <button class="img-btn" onclick="document.getElementById('f-ph-p2').click()">📷 Changer</button>
+              </div>
+              <div class="field">
+                <label>Projet 3</label>
+                <div class="img-preview loaded" id="prev-ph-p3"><img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=400&q=60" alt="p3"></div>
+                <input type="file" accept="image/*" class="hf" id="f-ph-p3" onchange="uploadBg(this,'prev-ph-p3','proj-3-bg')">
+                <button class="img-btn" onclick="document.getElementById('f-ph-p3').click()">📷 Changer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">📸</span>Galerie — 4 vignettes</h3><span class="toggle">▼</span></div>
+          <div class="cms-card-body">
+            <div class="field-grid" style="grid-template-columns:repeat(4,1fr);">
+              <div class="field">
+                <label>Photo 1</label>
+                <div class="img-preview loaded" id="prev-g1-ph"><img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&q=60" alt="g1"></div>
+                <input type="file" accept="image/*" class="hf" id="f-g1" onchange="uploadImg(this,'prev-g1-ph','gal-1')">
+                <button class="img-btn" onclick="document.getElementById('f-g1').click()">📷</button>
+              </div>
+              <div class="field">
+                <label>Photo 2</label>
+                <div class="img-preview loaded" id="prev-g2-ph"><img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=300&q=60" alt="g2"></div>
+                <input type="file" accept="image/*" class="hf" id="f-g2" onchange="uploadImg(this,'prev-g2-ph','gal-2')">
+                <button class="img-btn" onclick="document.getElementById('f-g2').click()">📷</button>
+              </div>
+              <div class="field">
+                <label>Photo 3</label>
+                <div class="img-preview loaded" id="prev-g3-ph"><img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=300&q=60" alt="g3"></div>
+                <input type="file" accept="image/*" class="hf" id="f-g3" onchange="uploadImg(this,'prev-g3-ph','gal-3')">
+                <button class="img-btn" onclick="document.getElementById('f-g3').click()">📷</button>
+              </div>
+              <div class="field">
+                <label>Photo 4</label>
+                <div class="img-preview loaded" id="prev-g4-ph"><img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=300&q=60" alt="g4"></div>
+                <input type="file" accept="image/*" class="hf" id="f-g4" onchange="uploadImg(this,'prev-g4-ph','gal-4')">
+                <button class="img-btn" onclick="document.getElementById('f-g4').click()">📷</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MEDIA LOGOS ── -->
+      <div class="panel" id="panel-media-logos">
+        <div class="panel-header">
+          <div class="breadcrumb">Médias <span>▸</span> Logos</div>
+          <h1>Logos & Identité</h1>
+          <p>Logo principal et logos des entreprises partenaires. Recommandé : PNG transparent, fond sombre.</p>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">✏️</span>Logo OSSPROGROUP (nav + footer)</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.7;">Votre logo apparaît dans la navigation et le footer. PNG transparent recommandé, hauteur 40px.<br><strong style="color:var(--text);">Après upload ou URL → cliquez Appliquer le logo.</strong></p>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start;">
+              <div>
+                <div class="field" style="margin-bottom:.8rem;">
+                  <label>Option A — Upload fichier</label>
+                  <div class="img-preview" id="prev-main-logo" style="height:80px;background:#100808;"><div class="ph-icon" style="font-size:1.2rem;">✏️</div><div class="ph">PNG/SVG transparent</div></div>
+                  <input type="file" accept="image/*,.svg" class="hf" id="f-main-logo" onchange="uploadMainLogo(this)">
+                  <button class="img-btn" onclick="document.getElementById('f-main-logo').click()" style="margin-top:.4rem;">📷 Choisir un fichier</button>
+                </div>
+              </div>
+              <div>
+                <div class="field" style="margin-bottom:.8rem;">
+                  <label>Option B — URL Netlify / hébergement</label>
+                  <input type="url" id="logo-url-input" placeholder="https://votre-site.netlify.app/logo.png" style="background:rgba(20,8,8,.8);border:1px solid rgba(139,26,26,.2);color:var(--white);padding:.65rem .9rem;font-family:DM Sans,sans-serif;font-size:.82rem;outline:none;transition:border-color .3s;width:100%;margin-top:.4rem;">
+                  <button class="img-btn" onclick="applyLogoUrl()" style="margin-top:.4rem;">✓ Appliquer cette URL</button>
+                </div>
+                <div style="font-size:.7rem;color:var(--muted);line-height:1.8;">
+                  Hébergez votre logo sur :<br>
+                  • <strong style="color:var(--text);">Netlify</strong> → glissez dans Large Media<br>
+                  • <strong style="color:var(--text);">Imgur</strong> → gratuit, lien direct<br>
+                  • <strong style="color:var(--text);">Cloudinary</strong> → recommandé pour images
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:1rem;padding:.8rem;background:rgba(139,26,26,.06);border:1px solid rgba(139,26,26,.12);">
+              <div style="font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;">Aperçu du logo actuel</div>
+              <div id="main-logo-live-preview" style="height:50px;display:flex;align-items:center;padding:.5rem;background:#100808;border:1px dashed rgba(139,26,26,.2);">
+                <img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:35px;width:auto;display:block;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-head open" onclick="toggleCard(this)"><h3><span class="icon">🏢</span>Logos Partenaires (8 entreprises)</h3><span class="toggle">▲</span></div>
+          <div class="cms-card-body open">
+            <p style="font-size:.75rem;color:var(--muted);margin-bottom:1rem;">Remplacez les logos SVG par vos images. PNG transparent sur fond sombre recommandé, 200×80px.</p>
+            <div class="logos-grid" id="logos-grid-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SECURITY ── -->
+      <div class="panel" id="panel-security">
+        <div class="panel-header">
+          <div class="breadcrumb">Système <span>▸</span> Sécurité</div>
+          <h1>Sécurité &amp; Accès</h1>
+          <p>Gestion du mot de passe, sessions et journal d'activité.</p>
+        </div>
+        <div class="sec-grid">
+          <div>
+            <div class="sec-block">
+              <h4>🔑 Changer le mot de passe</h4>
+              <div class="field" style="margin-bottom:.8rem;"><label>Mot de passe actuel</label><input type="password" id="cpw-cur" placeholder="••••••••"></div>
+              <div class="field" style="margin-bottom:.8rem;"><label>Nouveau mot de passe <span class="tip">— minimum 8 caractères</span></label><input type="password" id="cpw-new" placeholder="••••••••"></div>
+              <div class="field" style="margin-bottom:.8rem;"><label>Confirmer</label><input type="password" id="cpw-conf" placeholder="••••••••"></div>
+              <div class="cpw-msg" id="cpw-msg"></div>
+              <button class="btn-save" onclick="changePassword()" style="margin-top:.5rem;">Enregistrer</button>
+            </div>
+            <div class="sec-block">
+              <h4>👤 Identifiant admin</h4>
+              <div class="field" style="margin-bottom:.8rem;"><label>Identifiant <span class="tip">— utilisé pour la connexion</span></label><input type="text" id="new-username" placeholder="admin"></div>
+              <button class="btn-save" onclick="changeUsername()">Modifier</button>
+            </div>
+          </div>
+          <div>
+            <div class="sec-block" style="height:100%;">
+              <h4>📋 Journal d'activité</h4>
+              <div class="sec-log" id="activity-log"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-block" style="margin-top:.8rem;">
+          <h4>ℹ️ Informations de session</h4>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;font-size:.78rem;color:var(--muted);">
+            <div>Connecté en tant que<br><strong style="color:var(--white);" id="info-user">admin</strong></div>
+            <div>Heure de connexion<br><strong style="color:var(--white);" id="info-time">—</strong></div>
+            <div>Tentatives échouées<br><strong style="color:var(--red);" id="info-attempts">0</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── EXPORT ── -->
+       
+
+    </div><!-- /content -->
+  </div><!-- /main-layout -->
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+\n\n<!-- \u2550\u2550\u2550 AUTH STYLES \u2550\u2550\u2550 -->\n<style>\n#auth-screen{position:fixed;inset:0;z-index:99998;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}\n#auth-screen.show{display:flex;animation:authFade .35s ease;}\n@keyframes authFade{from{opacity:0}to{opacity:1}}\n.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(139,26,26,.12) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(139,26,26,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(139,26,26,.025) 60px);}\n.auth-box{position:relative;z-index:1;width:400px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);backdrop-filter:blur(20px);padding:3rem;box-shadow:0 0 80px rgba(139,26,26,.15);animation:authBoxIn .5s cubic-bezier(.4,0,.2,1);}\n@keyframes authBoxIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}\n.auth-logo{font-family:\"Bebas Neue\",sans-serif;font-size:1.6rem;letter-spacing:.14em;color:#f0eaea;text-align:center;margin-bottom:.3rem;}\n.auth-logo span{color:#8b1a1a;}\n.auth-subtitle{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#6e5a5a;text-align:center;margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}\n.auth-subtitle::before,.auth-subtitle::after{content:\"\";display:block;height:1px;width:30px;background:rgba(139,26,26,.3);}\n.auth-lock{display:flex;justify-content:center;margin-bottom:2rem;}\n.lock-icon{width:52px;height:52px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(139,26,26,.08);animation:lockPulse 3s ease-in-out infinite;}\n@keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 12px rgba(139,26,26,0)}}\n.auth-field-g{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}\n.auth-field-g label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#6e5a5a;}\n.auth-field-g input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.22);color:#f0eaea;padding:.9rem 1.1rem;font-family:\"DM Sans\",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}\n.auth-field-g input:focus{border-color:#8b1a1a;box-shadow:0 0 0 3px rgba(139,26,26,.12);}\n.auth-field-g input.error{border-color:#c0392b;animation:shake .4s ease;}\n@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}\n.auth-error{font-size:.72rem;color:#c0392b;letter-spacing:.08em;min-height:1.2rem;margin-bottom:.6rem;}\n.auth-submit{background:#8b1a1a;color:#f0eaea;border:none;width:100%;padding:1rem;font-family:\"DM Sans\",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}\n.auth-submit:hover{background:#b22222;transform:translateY(-1px);}\n.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}\n.auth-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid rgba(139,26,26,.2);color:#6e5a5a;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:border-color .3s,color .3s;}\n.auth-close-x:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.auth-attempts{font-size:.65rem;color:rgba(110,90,90,.5);text-align:center;margin-top:1rem;letter-spacing:.1em;}\n.auth-hint{font-size:.6rem;color:rgba(110,90,90,.3);text-align:center;margin-top:.5rem;letter-spacing:.08em;}\n/* Change PW modal */\n#change-pw-modal{position:fixed;inset:0;z-index:99999;background:rgba(6,4,4,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}\n#change-pw-modal.show{display:flex;}\n.cpw-box{width:380px;border:1px solid rgba(139,26,26,.3);background:#0c0606;padding:2.5rem;position:relative;box-shadow:0 0 60px rgba(139,26,26,.15);}\n.cpw-box h3{font-family:\"Bebas Neue\",sans-serif;font-size:1.4rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:1.5rem;}\n.cpw-box h3 span{color:#8b1a1a;}\n.cpw-field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}\n.cpw-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6e5a5a;}\n.cpw-field input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.2);color:#f0eaea;padding:.8rem 1rem;font-family:\"DM Sans\",sans-serif;font-size:.88rem;outline:none;transition:border-color .3s;width:100%;}\n.cpw-field input:focus{border-color:#8b1a1a;}\n.cpw-btns{display:flex;gap:.8rem;margin-top:1.2rem;}\n.cpw-save{flex:1;background:#8b1a1a;color:#f0eaea;border:none;padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .3s;}\n.cpw-save:hover{background:#b22222;}\n.cpw-cancel{flex:1;background:transparent;color:#6e5a5a;border:1px solid rgba(139,26,26,.2);padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}\n.cpw-cancel:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.cpw-msg{font-size:.72rem;min-height:1rem;margin-top:.5rem;letter-spacing:.06em;}\n.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}\n/* session badge */\n.auth-user-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.2rem .7rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}\n.auth-user-badge::before{content:\"\u25cf\";font-size:.45rem;}\n/* security section in export tab */\n.security-section{margin-top:1rem;padding:1.5rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.04);}\n.security-section h4{font-family:\"Bebas Neue\",sans-serif;font-size:1.1rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:.5rem;}\n.security-section p{font-size:.75rem;color:#6e5a5a;line-height:1.8;margin-bottom:.8rem;}\n.sec-btn{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.07);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#6e5a5a;cursor:pointer;transition:all .3s;width:100%;font-family:\"DM Sans\",sans-serif;margin-bottom:.4rem;}\n.sec-btn:hover{border-color:rgba(139,26,26,.4);color:#8b1a1a;background:rgba(139,26,26,.12);}\n.sec-btn.danger:hover{border-color:#c0392b;color:#c0392b;}\n</style>\n\n<!-- AUTH SCREEN -->\n<div id=\"auth-screen\">\n  <div class=\"auth-bg\"></div>\n  <div class=\"auth-box\">\n    <button class=\"auth-close-x\" onclick=\"closeAuth()\">\u2715</button>\n    <div class=\"auth-logo\"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;" /></div>\n    <div class=\"auth-subtitle\">Acc\u00e8s Administration</div>\n    <div class=\"auth-lock\"><div class=\"lock-icon\" id=\"lock-icon\">\ud83d\udd12</div></div>\n    <div class=\"auth-field-g\">\n      <label>Mot de passe</label>\n      <input type=\"password\" id=\"auth-pw-input\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\">\n    </div>\n    <div class=\"auth-error\" id=\"auth-error\"></div>\n    <button class=\"auth-submit\" id=\"auth-submit-btn\" onclick=\"submitAuth()\">Acc\u00e9der au panneau</button>\n    <div class=\"auth-attempts\" id=\"auth-attempts\"></div>\n    <div class=\"auth-hint\">Triple-clic sur le copyright \u00b7 Ctrl+Shift+A</div>\n  </div>\n</div>\n\n<!-- CHANGE PASSWORD MODAL -->\n<div id=\"change-pw-modal\">\n  <div class=\"cpw-box\">\n    <h3>Changer le <span>mot de passe</span></h3>\n    <div class=\"cpw-field\"><label>Mot de passe actuel</label><input type=\"password\" id=\"cpw-current\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Nouveau mot de passe</label><input type=\"password\" id=\"cpw-new\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Confirmer</label><input type=\"password\" id=\"cpw-confirm\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-msg\" id=\"cpw-msg\"></div>\n    <div class=\"cpw-btns\">\n      <button class=\"cpw-save\" onclick=\"savePassword()\">Enregistrer</button>\n      <button class=\"cpw-cancel\" id=\"cpw-close\">Annuler</button>\n    </div>\n  </div>\n</div>\n\n\n<!-- Admin access shortcut (hidden, revealed by triple-click on copyright) -->\n<a id=\"admin-page-link\" href=\"ossprogroup-admin.html\" target=\"_blank\" style=\"display:none;position:fixed;bottom:2rem;left:2rem;z-index:9990;background:#8b1a1a;color:#f0eaea;padding:.7rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,234,234,.15);transition:background .3s;\">\n  \u2699 Admin CMS\n</a>\n\n\n\n\n<!-- \u2550\u2550\u2550 AUTH STYLES \u2550\u2550\u2550 -->\n<style>\n#auth-screen{position:fixed;inset:0;z-index:99998;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}\n#auth-screen.show{display:flex;animation:authFade .35s ease;}\n@keyframes authFade{from{opacity:0}to{opacity:1}}\n.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(139,26,26,.12) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(139,26,26,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(139,26,26,.025) 60px);}\n.auth-box{position:relative;z-index:1;width:400px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);backdrop-filter:blur(20px);padding:3rem;box-shadow:0 0 80px rgba(139,26,26,.15);animation:authBoxIn .5s cubic-bezier(.4,0,.2,1);}\n@keyframes authBoxIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}\n.auth-logo{font-family:\"Bebas Neue\",sans-serif;font-size:1.6rem;letter-spacing:.14em;color:#f0eaea;text-align:center;margin-bottom:.3rem;}\n.auth-logo span{color:#8b1a1a;}\n.auth-subtitle{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#6e5a5a;text-align:center;margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}\n.auth-subtitle::before,.auth-subtitle::after{content:\"\";display:block;height:1px;width:30px;background:rgba(139,26,26,.3);}\n.auth-lock{display:flex;justify-content:center;margin-bottom:2rem;}\n.lock-icon{width:52px;height:52px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(139,26,26,.08);animation:lockPulse 3s ease-in-out infinite;}\n@keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 12px rgba(139,26,26,0)}}\n.auth-field-g{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}\n.auth-field-g label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#6e5a5a;}\n.auth-field-g input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.22);color:#f0eaea;padding:.9rem 1.1rem;font-family:\"DM Sans\",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}\n.auth-field-g input:focus{border-color:#8b1a1a;box-shadow:0 0 0 3px rgba(139,26,26,.12);}\n.auth-field-g input.error{border-color:#c0392b;animation:shake .4s ease;}\n@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}\n.auth-error{font-size:.72rem;color:#c0392b;letter-spacing:.08em;min-height:1.2rem;margin-bottom:.6rem;}\n.auth-submit{background:#8b1a1a;color:#f0eaea;border:none;width:100%;padding:1rem;font-family:\"DM Sans\",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}\n.auth-submit:hover{background:#b22222;transform:translateY(-1px);}\n.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}\n.auth-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid rgba(139,26,26,.2);color:#6e5a5a;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:border-color .3s,color .3s;}\n.auth-close-x:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.auth-attempts{font-size:.65rem;color:rgba(110,90,90,.5);text-align:center;margin-top:1rem;letter-spacing:.1em;}\n.auth-hint{font-size:.6rem;color:rgba(110,90,90,.3);text-align:center;margin-top:.5rem;letter-spacing:.08em;}\n/* Change PW modal */\n#change-pw-modal{position:fixed;inset:0;z-index:99999;background:rgba(6,4,4,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}\n#change-pw-modal.show{display:flex;}\n.cpw-box{width:380px;border:1px solid rgba(139,26,26,.3);background:#0c0606;padding:2.5rem;position:relative;box-shadow:0 0 60px rgba(139,26,26,.15);}\n.cpw-box h3{font-family:\"Bebas Neue\",sans-serif;font-size:1.4rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:1.5rem;}\n.cpw-box h3 span{color:#8b1a1a;}\n.cpw-field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}\n.cpw-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6e5a5a;}\n.cpw-field input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.2);color:#f0eaea;padding:.8rem 1rem;font-family:\"DM Sans\",sans-serif;font-size:.88rem;outline:none;transition:border-color .3s;width:100%;}\n.cpw-field input:focus{border-color:#8b1a1a;}\n.cpw-btns{display:flex;gap:.8rem;margin-top:1.2rem;}\n.cpw-save{flex:1;background:#8b1a1a;color:#f0eaea;border:none;padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .3s;}\n.cpw-save:hover{background:#b22222;}\n.cpw-cancel{flex:1;background:transparent;color:#6e5a5a;border:1px solid rgba(139,26,26,.2);padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}\n.cpw-cancel:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.cpw-msg{font-size:.72rem;min-height:1rem;margin-top:.5rem;letter-spacing:.06em;}\n.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}\n/* session badge */\n.auth-user-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.2rem .7rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}\n.auth-user-badge::before{content:\"\u25cf\";font-size:.45rem;}\n/* security section in export tab */\n.security-section{margin-top:1rem;padding:1.5rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.04);}\n.security-section h4{font-family:\"Bebas Neue\",sans-serif;font-size:1.1rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:.5rem;}\n.security-section p{font-size:.75rem;color:#6e5a5a;line-height:1.8;margin-bottom:.8rem;}\n.sec-btn{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.07);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#6e5a5a;cursor:pointer;transition:all .3s;width:100%;font-family:\"DM Sans\",sans-serif;margin-bottom:.4rem;}\n.sec-btn:hover{border-color:rgba(139,26,26,.4);color:#8b1a1a;background:rgba(139,26,26,.12);}\n.sec-btn.danger:hover{border-color:#c0392b;color:#c0392b;}\n</style>\n\n<!-- AUTH SCREEN -->\n<div id=\"auth-screen\">\n  <div class=\"auth-bg\"></div>\n  <div class=\"auth-box\">\n    <button class=\"auth-close-x\" onclick=\"closeAuth()\">\u2715</button>\n    <div class=\"auth-logo\"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;" /></div>\n    <div class=\"auth-subtitle\">Acc\u00e8s Administration</div>\n    <div class=\"auth-lock\"><div class=\"lock-icon\" id=\"lock-icon\">\ud83d\udd12</div></div>\n    <div class=\"auth-field-g\">\n      <label>Mot de passe</label>\n      <input type=\"password\" id=\"auth-pw-input\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\">\n    </div>\n    <div class=\"auth-error\" id=\"auth-error\"></div>\n    <button class=\"auth-submit\" id=\"auth-submit-btn\" onclick=\"submitAuth()\">Acc\u00e9der au panneau</button>\n    <div class=\"auth-attempts\" id=\"auth-attempts\"></div>\n    <div class=\"auth-hint\">Triple-clic sur le copyright \u00b7 Ctrl+Shift+A</div>\n  </div>\n</div>\n\n<!-- CHANGE PASSWORD MODAL -->\n<div id=\"change-pw-modal\">\n  <div class=\"cpw-box\">\n    <h3>Changer le <span>mot de passe</span></h3>\n    <div class=\"cpw-field\"><label>Mot de passe actuel</label><input type=\"password\" id=\"cpw-current\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Nouveau mot de passe</label><input type=\"password\" id=\"cpw-new\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Confirmer</label><input type=\"password\" id=\"cpw-confirm\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-msg\" id=\"cpw-msg\"></div>\n    <div class=\"cpw-btns\">\n      <button class=\"cpw-save\" onclick=\"savePassword()\">Enregistrer</button>\n      <button class=\"cpw-cancel\" id=\"cpw-close\">Annuler</button>\n    </div>\n  </div>\n</div>\n\n\n<!-- Admin access shortcut (hidden, revealed by triple-click on copyright) -->\n<a id=\"admin-page-link\" href=\"ossprogroup-admin.html\" target=\"_blank\" style=\"display:none;position:fixed;bottom:2rem;left:2rem;z-index:9990;background:#8b1a1a;color:#f0eaea;padding:.7rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,234,234,.15);transition:background .3s;\">\n  \u2699 Admin CMS\n</a>\n\n\n\n\n<!-- \u2550\u2550\u2550 AUTH STYLES \u2550\u2550\u2550 -->\n<style>\n#auth-screen{position:fixed;inset:0;z-index:99998;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}\n#auth-screen.show{display:flex;animation:authFade .35s ease;}\n@keyframes authFade{from{opacity:0}to{opacity:1}}\n.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(139,26,26,.12) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(139,26,26,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(139,26,26,.025) 60px);}\n.auth-box{position:relative;z-index:1;width:400px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);backdrop-filter:blur(20px);padding:3rem;box-shadow:0 0 80px rgba(139,26,26,.15);animation:authBoxIn .5s cubic-bezier(.4,0,.2,1);}\n@keyframes authBoxIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}\n.auth-logo{font-family:\"Bebas Neue\",sans-serif;font-size:1.6rem;letter-spacing:.14em;color:#f0eaea;text-align:center;margin-bottom:.3rem;}\n.auth-logo span{color:#8b1a1a;}\n.auth-subtitle{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#6e5a5a;text-align:center;margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}\n.auth-subtitle::before,.auth-subtitle::after{content:\"\";display:block;height:1px;width:30px;background:rgba(139,26,26,.3);}\n.auth-lock{display:flex;justify-content:center;margin-bottom:2rem;}\n.lock-icon{width:52px;height:52px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(139,26,26,.08);animation:lockPulse 3s ease-in-out infinite;}\n@keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 12px rgba(139,26,26,0)}}\n.auth-field-g{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}\n.auth-field-g label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#6e5a5a;}\n.auth-field-g input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.22);color:#f0eaea;padding:.9rem 1.1rem;font-family:\"DM Sans\",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}\n.auth-field-g input:focus{border-color:#8b1a1a;box-shadow:0 0 0 3px rgba(139,26,26,.12);}\n.auth-field-g input.error{border-color:#c0392b;animation:shake .4s ease;}\n@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}\n.auth-error{font-size:.72rem;color:#c0392b;letter-spacing:.08em;min-height:1.2rem;margin-bottom:.6rem;}\n.auth-submit{background:#8b1a1a;color:#f0eaea;border:none;width:100%;padding:1rem;font-family:\"DM Sans\",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}\n.auth-submit:hover{background:#b22222;transform:translateY(-1px);}\n.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}\n.auth-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid rgba(139,26,26,.2);color:#6e5a5a;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:border-color .3s,color .3s;}\n.auth-close-x:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.auth-attempts{font-size:.65rem;color:rgba(110,90,90,.5);text-align:center;margin-top:1rem;letter-spacing:.1em;}\n.auth-hint{font-size:.6rem;color:rgba(110,90,90,.3);text-align:center;margin-top:.5rem;letter-spacing:.08em;}\n/* Change PW modal */\n#change-pw-modal{position:fixed;inset:0;z-index:99999;background:rgba(6,4,4,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}\n#change-pw-modal.show{display:flex;}\n.cpw-box{width:380px;border:1px solid rgba(139,26,26,.3);background:#0c0606;padding:2.5rem;position:relative;box-shadow:0 0 60px rgba(139,26,26,.15);}\n.cpw-box h3{font-family:\"Bebas Neue\",sans-serif;font-size:1.4rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:1.5rem;}\n.cpw-box h3 span{color:#8b1a1a;}\n.cpw-field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}\n.cpw-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6e5a5a;}\n.cpw-field input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.2);color:#f0eaea;padding:.8rem 1rem;font-family:\"DM Sans\",sans-serif;font-size:.88rem;outline:none;transition:border-color .3s;width:100%;}\n.cpw-field input:focus{border-color:#8b1a1a;}\n.cpw-btns{display:flex;gap:.8rem;margin-top:1.2rem;}\n.cpw-save{flex:1;background:#8b1a1a;color:#f0eaea;border:none;padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .3s;}\n.cpw-save:hover{background:#b22222;}\n.cpw-cancel{flex:1;background:transparent;color:#6e5a5a;border:1px solid rgba(139,26,26,.2);padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}\n.cpw-cancel:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.cpw-msg{font-size:.72rem;min-height:1rem;margin-top:.5rem;letter-spacing:.06em;}\n.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}\n/* session badge */\n.auth-user-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.2rem .7rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}\n.auth-user-badge::before{content:\"\u25cf\";font-size:.45rem;}\n/* security section in export tab */\n.security-section{margin-top:1rem;padding:1.5rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.04);}\n.security-section h4{font-family:\"Bebas Neue\",sans-serif;font-size:1.1rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:.5rem;}\n.security-section p{font-size:.75rem;color:#6e5a5a;line-height:1.8;margin-bottom:.8rem;}\n.sec-btn{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.07);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#6e5a5a;cursor:pointer;transition:all .3s;width:100%;font-family:\"DM Sans\",sans-serif;margin-bottom:.4rem;}\n.sec-btn:hover{border-color:rgba(139,26,26,.4);color:#8b1a1a;background:rgba(139,26,26,.12);}\n.sec-btn.danger:hover{border-color:#c0392b;color:#c0392b;}\n</style>\n\n<!-- AUTH SCREEN -->\n<div id=\"auth-screen\">\n  <div class=\"auth-bg\"></div>\n  <div class=\"auth-box\">\n    <button class=\"auth-close-x\" onclick=\"closeAuth()\">\u2715</button>\n    <div class=\"auth-logo\"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;" /></div>\n    <div class=\"auth-subtitle\">Acc\u00e8s Administration</div>\n    <div class=\"auth-lock\"><div class=\"lock-icon\" id=\"lock-icon\">\ud83d\udd12</div></div>\n    <div class=\"auth-field-g\">\n      <label>Mot de passe</label>\n      <input type=\"password\" id=\"auth-pw-input\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\">\n    </div>\n    <div class=\"auth-error\" id=\"auth-error\"></div>\n    <button class=\"auth-submit\" id=\"auth-submit-btn\" onclick=\"submitAuth()\">Acc\u00e9der au panneau</button>\n    <div class=\"auth-attempts\" id=\"auth-attempts\"></div>\n    <div class=\"auth-hint\">Triple-clic sur le copyright \u00b7 Ctrl+Shift+A</div>\n  </div>\n</div>\n\n<!-- CHANGE PASSWORD MODAL -->\n<div id=\"change-pw-modal\">\n  <div class=\"cpw-box\">\n    <h3>Changer le <span>mot de passe</span></h3>\n    <div class=\"cpw-field\"><label>Mot de passe actuel</label><input type=\"password\" id=\"cpw-current\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Nouveau mot de passe</label><input type=\"password\" id=\"cpw-new\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Confirmer</label><input type=\"password\" id=\"cpw-confirm\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-msg\" id=\"cpw-msg\"></div>\n    <div class=\"cpw-btns\">\n      <button class=\"cpw-save\" onclick=\"savePassword()\">Enregistrer</button>\n      <button class=\"cpw-cancel\" id=\"cpw-close\">Annuler</button>\n    </div>\n  </div>\n</div>\n\n\n<!-- Admin access shortcut (hidden, revealed by triple-click on copyright) -->\n<a id=\"admin-page-link\" href=\"ossprogroup-admin.html\" target=\"_blank\" style=\"display:none;position:fixed;bottom:2rem;left:2rem;z-index:9990;background:#8b1a1a;color:#f0eaea;padding:.7rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,234,234,.15);transition:background .3s;\">\n  \u2699 Admin CMS\n</a>\n\n\n
+\n\n<!-- \u2550\u2550\u2550 AUTH STYLES \u2550\u2550\u2550 -->\n<style>\n#auth-screen{position:fixed;inset:0;z-index:99998;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}\n#auth-screen.show{display:flex;animation:authFade .35s ease;}\n@keyframes authFade{from{opacity:0}to{opacity:1}}\n.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(139,26,26,.12) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(139,26,26,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(139,26,26,.025) 60px);}\n.auth-box{position:relative;z-index:1;width:400px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);backdrop-filter:blur(20px);padding:3rem;box-shadow:0 0 80px rgba(139,26,26,.15);animation:authBoxIn .5s cubic-bezier(.4,0,.2,1);}\n@keyframes authBoxIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}\n.auth-logo{font-family:\"Bebas Neue\",sans-serif;font-size:1.6rem;letter-spacing:.14em;color:#f0eaea;text-align:center;margin-bottom:.3rem;}\n.auth-logo span{color:#8b1a1a;}\n.auth-subtitle{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#6e5a5a;text-align:center;margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}\n.auth-subtitle::before,.auth-subtitle::after{content:\"\";display:block;height:1px;width:30px;background:rgba(139,26,26,.3);}\n.auth-lock{display:flex;justify-content:center;margin-bottom:2rem;}\n.lock-icon{width:52px;height:52px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(139,26,26,.08);animation:lockPulse 3s ease-in-out infinite;}\n@keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 12px rgba(139,26,26,0)}}\n.auth-field-g{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}\n.auth-field-g label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#6e5a5a;}\n.auth-field-g input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.22);color:#f0eaea;padding:.9rem 1.1rem;font-family:\"DM Sans\",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}\n.auth-field-g input:focus{border-color:#8b1a1a;box-shadow:0 0 0 3px rgba(139,26,26,.12);}\n.auth-field-g input.error{border-color:#c0392b;animation:shake .4s ease;}\n@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}\n.auth-error{font-size:.72rem;color:#c0392b;letter-spacing:.08em;min-height:1.2rem;margin-bottom:.6rem;}\n.auth-submit{background:#8b1a1a;color:#f0eaea;border:none;width:100%;padding:1rem;font-family:\"DM Sans\",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}\n.auth-submit:hover{background:#b22222;transform:translateY(-1px);}\n.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}\n.auth-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid rgba(139,26,26,.2);color:#6e5a5a;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:border-color .3s,color .3s;}\n.auth-close-x:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.auth-attempts{font-size:.65rem;color:rgba(110,90,90,.5);text-align:center;margin-top:1rem;letter-spacing:.1em;}\n.auth-hint{font-size:.6rem;color:rgba(110,90,90,.3);text-align:center;margin-top:.5rem;letter-spacing:.08em;}\n/* Change PW modal */\n#change-pw-modal{position:fixed;inset:0;z-index:99999;background:rgba(6,4,4,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}\n#change-pw-modal.show{display:flex;}\n.cpw-box{width:380px;border:1px solid rgba(139,26,26,.3);background:#0c0606;padding:2.5rem;position:relative;box-shadow:0 0 60px rgba(139,26,26,.15);}\n.cpw-box h3{font-family:\"Bebas Neue\",sans-serif;font-size:1.4rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:1.5rem;}\n.cpw-box h3 span{color:#8b1a1a;}\n.cpw-field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}\n.cpw-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6e5a5a;}\n.cpw-field input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.2);color:#f0eaea;padding:.8rem 1rem;font-family:\"DM Sans\",sans-serif;font-size:.88rem;outline:none;transition:border-color .3s;width:100%;}\n.cpw-field input:focus{border-color:#8b1a1a;}\n.cpw-btns{display:flex;gap:.8rem;margin-top:1.2rem;}\n.cpw-save{flex:1;background:#8b1a1a;color:#f0eaea;border:none;padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .3s;}\n.cpw-save:hover{background:#b22222;}\n.cpw-cancel{flex:1;background:transparent;color:#6e5a5a;border:1px solid rgba(139,26,26,.2);padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}\n.cpw-cancel:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.cpw-msg{font-size:.72rem;min-height:1rem;margin-top:.5rem;letter-spacing:.06em;}\n.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}\n/* session badge */\n.auth-user-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.2rem .7rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}\n.auth-user-badge::before{content:\"\u25cf\";font-size:.45rem;}\n/* security section in export tab */\n.security-section{margin-top:1rem;padding:1.5rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.04);}\n.security-section h4{font-family:\"Bebas Neue\",sans-serif;font-size:1.1rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:.5rem;}\n.security-section p{font-size:.75rem;color:#6e5a5a;line-height:1.8;margin-bottom:.8rem;}\n.sec-btn{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.07);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#6e5a5a;cursor:pointer;transition:all .3s;width:100%;font-family:\"DM Sans\",sans-serif;margin-bottom:.4rem;}\n.sec-btn:hover{border-color:rgba(139,26,26,.4);color:#8b1a1a;background:rgba(139,26,26,.12);}\n.sec-btn.danger:hover{border-color:#c0392b;color:#c0392b;}\n</style>\n\n<!-- AUTH SCREEN -->\n<div id=\"auth-screen\">\n  <div class=\"auth-bg\"></div>\n  <div class=\"auth-box\">\n    <button class=\"auth-close-x\" onclick=\"closeAuth()\">\u2715</button>\n    <div class=\"auth-logo\"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;" /></div>\n    <div class=\"auth-subtitle\">Acc\u00e8s Administration</div>\n    <div class=\"auth-lock\"><div class=\"lock-icon\" id=\"lock-icon\">\ud83d\udd12</div></div>\n    <div class=\"auth-field-g\">\n      <label>Mot de passe</label>\n      <input type=\"password\" id=\"auth-pw-input\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\">\n    </div>\n    <div class=\"auth-error\" id=\"auth-error\"></div>\n    <button class=\"auth-submit\" id=\"auth-submit-btn\" onclick=\"submitAuth()\">Acc\u00e9der au panneau</button>\n    <div class=\"auth-attempts\" id=\"auth-attempts\"></div>\n    <div class=\"auth-hint\">Triple-clic sur le copyright \u00b7 Ctrl+Shift+A</div>\n  </div>\n</div>\n\n<!-- CHANGE PASSWORD MODAL -->\n<div id=\"change-pw-modal\">\n  <div class=\"cpw-box\">\n    <h3>Changer le <span>mot de passe</span></h3>\n    <div class=\"cpw-field\"><label>Mot de passe actuel</label><input type=\"password\" id=\"cpw-current\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Nouveau mot de passe</label><input type=\"password\" id=\"cpw-new\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Confirmer</label><input type=\"password\" id=\"cpw-confirm\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-msg\" id=\"cpw-msg\"></div>\n    <div class=\"cpw-btns\">\n      <button class=\"cpw-save\" onclick=\"savePassword()\">Enregistrer</button>\n      <button class=\"cpw-cancel\" id=\"cpw-close\">Annuler</button>\n    </div>\n  </div>\n</div>\n\n\n<!-- Admin access shortcut (hidden, revealed by triple-click on copyright) -->\n<a id=\"admin-page-link\" href=\"ossprogroup-admin.html\" target=\"_blank\" style=\"display:none;position:fixed;bottom:2rem;left:2rem;z-index:9990;background:#8b1a1a;color:#f0eaea;padding:.7rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,234,234,.15);transition:background .3s;\">\n  \u2699 Admin CMS\n</a>\n\n\n<script>
+
+
+// ═══ CONFIG ═══
+const STORE={PW_KEY:'ospg_cms_pw',USER_KEY:'ospg_cms_user',LOCKOUT_KEY:'ospg_cms_lockout',ATTEMPTS_KEY:'ospg_cms_attempts',LOG_KEY:'ospg_cms_log',SESSION_KEY:'ospg_cms_session'};
+const DEFAULT_PW='ossprogroup2025',DEFAULT_USER='admin',MAX_ATTEMPTS=5,LOCKOUT_MIN=10;
+function getPw(){return localStorage.getItem(STORE.PW_KEY)||DEFAULT_PW;}
+function getUser(){return localStorage.getItem(STORE.USER_KEY)||DEFAULT_USER;}
+function getAttempts(){return parseInt(localStorage.getItem(STORE.ATTEMPTS_KEY)||'0');}
+function setAttempts(n){localStorage.setItem(STORE.ATTEMPTS_KEY,n);}
+function isLockedOut(){const t=parseInt(localStorage.getItem(STORE.LOCKOUT_KEY)||'0');if(!t)return false;const m=(Date.now()-t)/60000;if(m>=LOCKOUT_MIN){localStorage.removeItem(STORE.LOCKOUT_KEY);localStorage.removeItem(STORE.ATTEMPTS_KEY);return false;}return Math.ceil(LOCKOUT_MIN-m);}
+function isSessionOk(){return sessionStorage.getItem(STORE.SESSION_KEY)==='ok';}
+function setSession(){sessionStorage.setItem(STORE.SESSION_KEY,'ok');}
+function clearSession(){sessionStorage.removeItem(STORE.SESSION_KEY);}
+
+// ═══ ACTIVITY LOG ═══
+function getLog(){try{return JSON.parse(localStorage.getItem(STORE.LOG_KEY)||'[]');}catch(e){return[];}}
+function addLog(type,msg){const log=getLog(),now=new Date().toLocaleString('fr-FR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'});log.unshift({type,msg,time:now});if(log.length>50)log.pop();localStorage.setItem(STORE.LOG_KEY,JSON.stringify(log));renderLog();}
+function renderLog(){const el=document.getElementById('activity-log');if(!el)return;const log=getLog();if(!log.length){el.innerHTML='<span style="color:rgba(122,96,96,.4)">Aucune activité.</span>';return;}el.innerHTML=log.map(l=>`<div class="${l.type}">[${l.time}] ${l.msg}</div>`).join('');}
+
+// ═══ AUTH ═══
+function doLogin(){
+  const lockout=isLockedOut();if(lockout){setErr(`Compte verrouillé. Réessayez dans ${lockout} min.`);return;}
+  const user=document.getElementById('login-user').value.trim(),pw=document.getElementById('login-pw').value;
+  const btn=document.getElementById('btn-login');if(!user||!pw){setErr('Identifiant et mot de passe requis.');return;}
+  btn.disabled=true;btn.textContent='Vérification…';
+  setTimeout(()=>{
+    btn.textContent='Connexion';btn.disabled=false;
+    if(user===getUser()&&pw===getPw()){
+      setAttempts(0);localStorage.removeItem(STORE.LOCKOUT_KEY);setSession();
+      const loginTime=new Date().toLocaleString('fr-FR');
+      addLog('ok',`Connexion réussie — ${user}`);
+      sessionStorage.setItem('login_time',loginTime);sessionStorage.setItem('login_user',user);
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('app').classList.add('show');
+      document.getElementById('session-user').textContent=user;
+      document.getElementById('sidebar-username').textContent=user;
+      document.getElementById('info-user').textContent=user;
+      document.getElementById('info-time').textContent=loginTime;
+      document.getElementById('info-attempts').textContent=getAttempts();
+      renderLog();buildDynamic();
+    } else {
+      const attempts=getAttempts()+1;setAttempts(attempts);addLog('err',`Échec connexion — ${user}`);
+      if(attempts>=MAX_ATTEMPTS){localStorage.setItem(STORE.LOCKOUT_KEY,Date.now());setErr(`Compte verrouillé ${LOCKOUT_MIN} min.`);document.getElementById('btn-login').disabled=true;}
+      else{const r=MAX_ATTEMPTS-attempts;setErr('Identifiant ou mot de passe incorrect.');document.getElementById('login-attempts').textContent=`${r} tentative${r>1?'s':''} restante${r>1?'s':''}`;document.getElementById('login-pw').classList.add('err');setTimeout(()=>document.getElementById('login-pw').classList.remove('err'),500);}
+      document.getElementById('login-pw').value='';
+    }
+  },700);
+}
+function setErr(msg){document.getElementById('login-err').textContent='⚠ '+msg;}
+function doLogout(){clearSession();addLog('warn','Déconnexion');location.reload();}
+
+// ═══ NAV ═══
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const panel=document.getElementById('panel-'+id);if(panel)panel.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes(`'${id}'`))n.classList.add('active');});
+  document.querySelector('.content').scrollTop=0;
+}
+function toggleCard(head){const body=head.nextElementSibling,open=body.classList.toggle('open');head.classList.toggle('open',open);head.querySelector('.toggle').textContent=open?'▲':'▼';}
+function switchInner(btn,id){btn.closest('.panel').querySelectorAll('.inner-tab').forEach(t=>t.classList.remove('active'));btn.closest('.panel').querySelectorAll('.inner-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// ═══ CHANGES STORE ═══
+let CHANGES={};
+try{CHANGES=JSON.parse(localStorage.getItem('ospg_changes')||'{}');}catch(e){}
+function saveChange(k,v){CHANGES[k]=v;try{localStorage.setItem('ospg_changes',JSON.stringify(CHANGES));}catch(e){}}
+function saveImageChange(key,url){
+  try{localStorage.setItem('ospg_img_'+key,url);}catch(e){toast('Image trop lourde pour le cache local. Hébergez-la sur Netlify ou Cloudinary.','error');}
+  CHANGES[key]='__img__:'+key;try{localStorage.setItem('ospg_changes',JSON.stringify(CHANGES));}catch(e){}
+}
+function getImageChange(key){return localStorage.getItem('ospg_img_'+key)||null;}
+
+// ═══ NETLIFY IMAGE HOSTING ═══
+// Users can paste a Netlify/Cloudinary/Imgur URL instead of uploading locally
+function applyImageUrl(field,siteId,isBackground){
+  const url=document.getElementById(field).value.trim();
+  if(!url){toast('Entrez une URL valide','error');return;}
+  saveChange(siteId,url);
+  // Update site preview if open
+  const tab=getSiteTab();
+  if(tab){try{const el=tab.document.getElementById(siteId);if(el){if(isBackground){el.style.backgroundImage=`url(${url})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';}else{el.src=url;}}}catch(e){}}
+  toast('✓ URL image sauvegardée','success');addLog('ok',`Image URL: ${siteId}`);
+}
+
+// ═══ SITE TAB ═══
+let siteTab=null;
+function getSiteTab(){return siteTab&&!siteTab.closed?siteTab:null;}
+function applyToSite(ops){const tab=getSiteTab();if(!tab)return;try{ops.forEach(op=>{const el=tab.document.getElementById(op.id);if(!el)return;if(op.type==='text')el.textContent=op.val;if(op.type==='bg'){el.style.backgroundImage=`url(${op.val})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';}if(op.type==='src')el.src=op.val;});}catch(e){}}
+
+// ═══ APPLY FUNCTIONS ═══
+function applyHero(){const v={'hero-tag-text':document.getElementById('c-hero-tag').value,'hero-l1':document.getElementById('c-hero-l1').value,'hero-l3':document.getElementById('c-hero-l3').value,'hero-em-el':document.getElementById('c-hero-em').value,'hero-sub-el':document.getElementById('c-hero-sub').value};Object.entries(v).forEach(([k,val])=>saveChange(k,val));applyToSite(Object.entries(v).map(([id,val])=>({id,type:'text',val})));toast('✓ Hero sauvegardé','success');showStatus('ss-hero');addLog('ok','Hero modifié');}
+function applyAbout(){const ops=[];['1','2','3','4'].forEach(n=>{const v1=document.getElementById(`c-s${n}`).value,v2=document.getElementById(`c-s${n}l`).value;saveChange(`stat-${n}`,v1);saveChange(`stat-${n}-lbl`,v2);ops.push({id:`stat-${n}`,type:'text',val:v1},{id:`stat-${n}-lbl`,type:'text',val:v2});});applyToSite(ops);toast('✓ Stats sauvegardées','success');showStatus('ss-about');addLog('ok','Stats modifiées');}
+function applyAboutText(){const v1=document.getElementById('c-about-p1').value,v2=document.getElementById('c-about-p2').value;saveChange('about-p1',v1);saveChange('about-p2',v2);applyToSite([{id:'about-p1',type:'text',val:v1},{id:'about-p2',type:'text',val:v2}]);toast('✓ Textes sauvegardés','success');addLog('ok','Textes À propos modifiés');}
+function applyPortfolio(){const ops=[];['1','2','3'].forEach(n=>['cat','title','year'].forEach(f=>{const v=document.getElementById(`c-p${n}-${f}`).value;saveChange(`proj-${n}-${f}`,v);ops.push({id:`proj-${n}-${f}`,type:'text',val:v});}));applyToSite(ops);toast('✓ Portfolio sauvegardé','success');showStatus('ss-portfolio');addLog('ok','Portfolio modifié');}
+function applyServices(){for(let i=0;i<6;i++){saveChange(`sv-title-${i}`,document.getElementById(`sv-title-${i}`).value);saveChange(`sv-desc-${i}`,document.getElementById(`sv-desc-${i}`).value);saveChange(`sv-icon-${i}`,document.getElementById(`sv-icon-${i}`).value);}const tab=getSiteTab();if(tab){try{const c=tab.document.querySelectorAll('.service-card');for(let i=0;i<6;i++){if(!c[i])continue;const h3=c[i].querySelector('h3'),p=c[i].querySelector('p'),ic=c[i].querySelector('.service-icon');if(h3)h3.textContent=document.getElementById(`sv-title-${i}`).value;if(p)p.textContent=document.getElementById(`sv-desc-${i}`).value;if(ic)ic.textContent=document.getElementById(`sv-icon-${i}`).value;}}catch(e){}}toast('✓ Services sauvegardés','success');showStatus('ss-services');addLog('ok','Services modifiés');}
+function applyProcess(){for(let i=0;i<4;i++){saveChange(`pr-title-${i}`,document.getElementById(`pr-title-${i}`).value);saveChange(`pr-desc-${i}`,document.getElementById(`pr-desc-${i}`).value);saveChange(`pr-num-${i}`,document.getElementById(`pr-num-${i}`).value);}const tab=getSiteTab();if(tab){try{const s=tab.document.querySelectorAll('.step');for(let i=0;i<4;i++){if(!s[i])continue;const h4=s[i].querySelector('h4'),p=s[i].querySelector('p'),sc=s[i].querySelector('.step-circle');if(h4)h4.textContent=document.getElementById(`pr-title-${i}`).value;if(p)p.textContent=document.getElementById(`pr-desc-${i}`).value;if(sc)sc.textContent=document.getElementById(`pr-num-${i}`).value;}}catch(e){}}toast('✓ Méthode sauvegardée','success');showStatus('ss-process');addLog('ok','Méthode modifiée');}
+function applyTestis(){for(let i=0;i<3;i++){saveChange(`ts-text-${i}`,document.getElementById(`ts-text-${i}`).value);saveChange(`ts-name-${i}`,document.getElementById(`ts-name-${i}`).value);saveChange(`ts-role-${i}`,document.getElementById(`ts-role-${i}`).value);saveChange(`ts-init-${i}`,document.getElementById(`ts-init-${i}`).value);}const tab=getSiteTab();if(tab){try{const c=tab.document.querySelectorAll('.testi-card');for(let i=0;i<3;i++){if(!c[i])continue;const txt=c[i].querySelector('.testi-text'),nm=c[i].querySelector('.testi-name'),rl=c[i].querySelector('.testi-role'),av=c[i].querySelector('.testi-avatar');if(txt)txt.textContent=document.getElementById(`ts-text-${i}`).value;if(nm)nm.textContent=document.getElementById(`ts-name-${i}`).value;if(rl)rl.textContent=document.getElementById(`ts-role-${i}`).value;if(av)av.textContent=document.getElementById(`ts-init-${i}`).value;}}catch(e){}}toast('✓ Témoignages sauvegardés','success');showStatus('ss-testi');addLog('ok','Témoignages modifiés');}
+function applyContact(){const m={'contact-address':'c-addr','contact-phone':'c-phone','contact-email':'c-email','contact-hours':'c-hours'};const ops=[];Object.entries(m).forEach(([id,fid])=>{const v=document.getElementById(fid).value;saveChange(id,v);ops.push({id,type:'text',val:v});});applyToSite(ops);toast('✓ Contact sauvegardé','success');showStatus('ss-contact');addLog('ok','Contact modifié');}
+function applySocial(){['fb','li','ig','yt'].forEach(k=>{const v=document.getElementById(`c-${k}`).value;if(v)saveChange(`social-${k}`,v);});toast('✓ Réseaux sauvegardés','success');addLog('ok','Réseaux modifiés');}
+function applyFooter(){const v=document.getElementById('c-copy').value;saveChange('footer-copy',v);applyToSite([{id:'footer-copy',type:'text',val:v}]);toast('✓ Footer sauvegardé','success');addLog('ok','Footer modifié');}
+
+// ═══ IMAGE UPLOADS ═══
+function readFile(file,cb){const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(file);}
+function _setPreview(prevId,url){const p=document.getElementById(prevId);if(!p)return;p.classList.add('loaded');let img=p.querySelector('img');if(!img){img=document.createElement('img');p.appendChild(img);}img.src=url;}
+function uploadSlide(input,prevId,slideId){const f=input.files[0];if(!f)return;readFile(f,url=>{_setPreview(prevId,url);saveImageChange(slideId,url);applyToSite([{id:slideId,type:'bg',val:url}]);toast('✓ Slide sauvegardée — ou collez une URL Netlify','success');addLog('ok',`Slide ${slideId}`);});}
+function uploadImg(input,prevId,siteId){const f=input.files[0];if(!f)return;readFile(f,url=>{_setPreview(prevId,url);saveImageChange(siteId,url);applyToSite([{id:siteId,type:'src',val:url}]);toast('✓ Image sauvegardée','success');addLog('ok',`Img ${siteId}`);});}
+function uploadBg(input,prevId,siteId){const f=input.files[0];if(!f)return;readFile(f,url=>{_setPreview(prevId,url);saveImageChange(siteId,url);applyToSite([{id:siteId,type:'bg',val:url}]);toast('✓ Photo sauvegardée','success');addLog('ok',`Bg ${siteId}`);});}
+function uploadClientLogo(input,idx){const f=input.files[0];if(!f)return;readFile(f,url=>{const p=document.getElementById(`prev-clogo-${idx}`);p.classList.add('loaded');p.innerHTML=`<img src="${url}" style="max-width:90%;max-height:90%;object-fit:contain;">`;saveImageChange(`client-logo-${idx}`,url);const tab=getSiteTab();if(tab){try{const el=tab.document.getElementById(`client-logo-${idx}`);if(el)el.innerHTML=`<img src="${url}" style="max-height:44px;max-width:120px;object-fit:contain;filter:grayscale(20%);" alt="logo">`;}catch(e){}}toast(`✓ Logo ${idx+1} sauvegardé`,'success');addLog('ok',`Logo client ${idx+1}`);});}
+
+// ═══ MAIN LOGO — FIXED ═══
+function uploadMainLogo(input){
+  const f=input.files[0];if(!f)return;
+  readFile(f,url=>{
+    _setPreview('prev-main-logo',url);
+    saveImageChange('main-logo',url);
+    // Live update nav + footer logos immediately in admin preview area
+    const preview=document.getElementById('main-logo-live-preview');
+    if(preview){preview.innerHTML=`<img src="${url}" style="max-height:44px;object-fit:contain;" alt="Logo">`;preview.style.background='none';}
+    // If site tab is open, update it too
+    const tab=getSiteTab();
+    if(tab){try{
+      const nl=tab.document.querySelector('.nav-logo');
+      const fl=tab.document.querySelector('.footer-brand .logo');
+      if(nl)nl.innerHTML=`<img src="${url}" style="height:36px;object-fit:contain;" alt="OSSPROGROUP">`;
+      if(fl)fl.innerHTML=`<img src="${url}" style="height:44px;object-fit:contain;" alt="OSSPROGROUP">`;
+    }catch(e){}}
+    toast('✓ Logo principal mis à jour','success');
+    addLog('ok','Logo principal modifié');
+  });
+}
+function applyLogoUrl(){
+  const url=document.getElementById('logo-url-input').value.trim();
+  if(!url){toast('Entrez une URL valide','error');return;}
+  saveChange('main-logo',url);
+  const preview=document.getElementById('main-logo-live-preview');
+  if(preview){preview.innerHTML=`<img src="${url}" style="max-height:44px;object-fit:contain;" alt="Logo">`;preview.style.background='none';}
+  const tab=getSiteTab();
+  if(tab){try{
+    const nl=tab.document.querySelector('.nav-logo');
+    const fl=tab.document.querySelector('.footer-brand .logo');
+    if(nl)nl.innerHTML=`<img src="${url}" style="height:36px;object-fit:contain;" alt="OSSPROGROUP">`;
+    if(fl)fl.innerHTML=`<img src="${url}" style="height:44px;object-fit:contain;" alt="OSSPROGROUP">`;
+  }catch(e){}}
+  toast('✓ Logo URL appliqué','success');addLog('ok','Logo URL modifié');
+}
+
+// ═══ TOAST & STATUS ═══
+let _tt;
+function toast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+function showStatus(id){const el=document.getElementById(id);if(el){el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}}
+function countChars(el,max){const cc=document.getElementById('cc-'+el.id.replace('c-',''));if(cc)cc.textContent=`${el.value.length}/${max}`;}
+
+// ═══ SECURITY ═══
+function changePassword(){
+  const cur=document.getElementById('cpw-cur').value,nw=document.getElementById('cpw-new').value,conf=document.getElementById('cpw-conf').value,msg=document.getElementById('cpw-msg');
+  if(cur!==getPw()){msg.className='cpw-msg err';msg.textContent='Mot de passe actuel incorrect.';return;}
+  if(nw.length<8){msg.className='cpw-msg err';msg.textContent='Minimum 8 caractères.';return;}
+  if(nw!==conf){msg.className='cpw-msg err';msg.textContent='Les mots de passe ne correspondent pas.';return;}
+  localStorage.setItem(STORE.PW_KEY,nw);msg.className='cpw-msg ok';msg.textContent='✓ Mot de passe mis à jour !';
+  addLog('warn','Mot de passe modifié');toast('✓ Mot de passe changé','success');
+  ['cpw-cur','cpw-new','cpw-conf'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>msg.textContent='',3000);
+}
+function changeUsername(){
+  const nu=document.getElementById('new-username').value.trim();if(nu.length<3){toast('Minimum 3 caractères','error');return;}
+  localStorage.setItem(STORE.USER_KEY,nu);
+  document.getElementById('session-user').textContent=nu;document.getElementById('sidebar-username').textContent=nu;document.getElementById('info-user').textContent=nu;
+  addLog('warn',`Identifiant changé en: ${nu}`);toast('✓ Identifiant mis à jour','success');
+}
+
+// ═══ BUILD DYNAMIC ═══
+const SERVICES_DATA=[{icon:'🎭',title:'Événements Corporates',desc:"Séminaires, conférences, assemblées générales, team building et lancements de produits."},{icon:'✨',title:'Galas & Cérémonies',desc:"Dîners de gala, remises de prix, soirées de prestige. Moments de distinction inoubliables."},{icon:'💍',title:'Mariages & Célébrations',desc:"De la cérémonie traditionnelle au mariage contemporain, une expérience inoubliable."},{icon:'🎵',title:'Concerts & Spectacles',desc:"Production artistique, scénographie, gestion des artistes et sécurité."},{icon:'🏛️',title:'Événements Institutionnels',desc:"Réceptions d'État, inaugurations, forums internationaux. Protocole rigoureux."},{icon:'🎪',title:'Décoration & Scénographie',desc:"Conception artistique, éclairage d'ambiance et scénographie sur mesure."}];
+const PROCESS_DATA=[{num:'01',title:'Brief & Vision',desc:"Nous écoutons vos besoins et contraintes pour définir ensemble la vision de votre événement."},{num:'02',title:'Conception',desc:"Notre équipe élabore un concept unique, de la scénographie au programme."},{num:'03',title:'Production',desc:"Coordination des prestataires, logistique et répétitions. Chaque détail maîtrisé."},{num:'04',title:'Exécution',desc:"Le jour J, notre équipe garantit une expérience fluide et mémorable."}];
+const TESTI_DATA=[{init:'MN',name:'Marie-Claire Ntoutoume',role:'DG, Gabon Export',text:"OSSPROGROUP a su transformer notre vision en une réalité qui a dépassé toutes nos espérances."},{init:'JO',name:'Jean-Pierre Obiang',role:'Ministre du Commerce',text:"Notre conférence internationale a été un véritable succès grâce à leur rigueur et créativité."},{init:'SA',name:'Sophie & Armand Mba',role:'Mariés en 2024',text:"Un mariage féerique, une organisation parfaite. OSSPROGROUP a rendu notre jour exceptionnel."}];
+const LOGOS_DATA=[{id:'client-logo-0',label:'Gabon Oil'},{id:'client-logo-1',label:'BGFI Bank'},{id:'client-logo-2',label:'TotalEnergies'},{id:'client-logo-3',label:'Airtel'},{id:'client-logo-4',label:'Olam Gabon'},{id:'client-logo-5',label:'CNAMGS'},{id:'client-logo-6',label:'SETRAG'},{id:'client-logo-7',label:'Min. Tourisme'}];
+
+function buildDynamic(){
+  const sc=document.getElementById('services-cards-container');
+  if(sc)sc.innerHTML=SERVICES_DATA.map((s,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">${s.icon}</span> Service ${i+1} — ${s.title}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Icône</label><input id="sv-icon-${i}" value="${s.icon}"></div><div class="field"><label>Titre</label><input id="sv-title-${i}" value="${s.title}"></div></div><div class="field-grid col1"><div class="field"><label>Description</label><textarea id="sv-desc-${i}" rows="3">${s.desc}</textarea></div></div></div></div>`).join('');
+  const pc=document.getElementById('process-cards-container');
+  if(pc)pc.innerHTML=PROCESS_DATA.map((p,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">${p.num}</span> Étape ${i+1} — ${p.title}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Titre</label><input id="pr-title-${i}" value="${p.title}"></div><div class="field"><label>Numéro</label><input id="pr-num-${i}" value="${p.num}"></div></div><div class="field-grid col1"><div class="field"><label>Description</label><textarea id="pr-desc-${i}" rows="3">${p.desc}</textarea></div></div></div></div>`).join('');
+  const tc=document.getElementById('testi-cards-container');
+  if(tc)tc.innerHTML=TESTI_DATA.map((t,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">💬</span> Témoignage ${i+1} — ${t.name}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Nom</label><input id="ts-name-${i}" value="${t.name}"></div><div class="field"><label>Rôle</label><input id="ts-role-${i}" value="${t.role}"></div></div><div class="field-grid col1"><div class="field"><label>Citation</label><textarea id="ts-text-${i}" rows="3">${t.text}</textarea></div></div><div class="field"><label>Initiales</label><input id="ts-init-${i}" value="${t.init}" style="max-width:80px;"></div></div></div>`).join('');
+  const lg=document.getElementById('logos-grid-container');
+  if(lg)lg.innerHTML=LOGOS_DATA.map((l,i)=>`<div class="logo-slot"><label>${l.label}</label><div class="logo-preview" id="prev-clogo-${i}"><svg width="60" height="20" viewBox="0 0 60 20"><text x="0" y="15" font-family="sans-serif" font-size="9" fill="rgba(200,180,180,.4)">${l.label}</text></svg></div><input type="file" accept="image/*,.svg" class="hf" id="f-clogo-${i}" onchange="uploadClientLogo(this,${i})"><button class="img-btn" onclick="document.getElementById('f-clogo-${i}').click()">📷 Uploader</button></div>`).join('');
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pw').focus();});
+  document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  if(isSessionOk()){
+    document.getElementById('login-screen').style.display='none';document.getElementById('app').classList.add('show');
+    const u=sessionStorage.getItem('login_user')||DEFAULT_USER;
+    document.getElementById('session-user').textContent=u;document.getElementById('sidebar-username').textContent=u;
+    document.getElementById('info-user').textContent=u;document.getElementById('info-time').textContent=sessionStorage.getItem('login_time')||'—';
+    document.getElementById('info-attempts').textContent=getAttempts();
+    renderLog();buildDynamic();
+  }
+  document.querySelector('a.site-link-btn').addEventListener('click',e=>{e.preventDefault();siteTab=window.open(e.currentTarget.href,'_blank');});
+});
+
+</script>
+</body>\n</html>";
+
+// ═══ EXPORT ═══
+
+
+// ═══ SECURITY ═══
+function changePassword(){
+  const cur=document.getElementById('cpw-cur').value,nw=document.getElementById('cpw-new').value,conf=document.getElementById('cpw-conf').value,msg=document.getElementById('cpw-msg');
+  if(cur!==getPw()){msg.className='cpw-msg err';msg.textContent='Mot de passe actuel incorrect.';return;}
+  if(nw.length<8){msg.className='cpw-msg err';msg.textContent='Minimum 8 caractères.';return;}
+  if(nw!==conf){msg.className='cpw-msg err';msg.textContent='Les mots de passe ne correspondent pas.';return;}
+  localStorage.setItem(STORE.PW_KEY,nw);msg.className='cpw-msg ok';msg.textContent='✓ Mot de passe mis à jour !';
+  addLog('warn','Mot de passe modifié');toast('✓ Mot de passe changé','success');
+  ['cpw-cur','cpw-new','cpw-conf'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>msg.textContent='',3000);
+}
+function changeUsername(){
+  const nu=document.getElementById('new-username').value.trim();if(nu.length<3){toast('Minimum 3 caractères','error');return;}
+  localStorage.setItem(STORE.USER_KEY,nu);
+  document.getElementById('session-user').textContent=nu;document.getElementById('sidebar-username').textContent=nu;document.getElementById('info-user').textContent=nu;
+  addLog('warn',`Identifiant changé en: ${nu}`);toast('✓ Identifiant mis à jour','success');
+}
+
+// ═══ BUILD DYNAMIC ═══
+const SERVICES_DATA=[{icon:'🎭',title:'Événements Corporates',desc:"Séminaires, conférences, assemblées générales, team building et lancements de produits."},{icon:'✨',title:'Galas & Cérémonies',desc:"Dîners de gala, remises de prix, soirées de prestige. Moments de distinction inoubliables."},{icon:'💍',title:'Mariages & Célébrations',desc:"De la cérémonie traditionnelle au mariage contemporain, une expérience inoubliable."},{icon:'🎵',title:'Concerts & Spectacles',desc:"Production artistique, scénographie, gestion des artistes et sécurité."},{icon:'🏛️',title:'Événements Institutionnels',desc:"Réceptions d'État, inaugurations, forums internationaux. Protocole rigoureux."},{icon:'🎪',title:'Décoration & Scénographie',desc:"Conception artistique, éclairage d'ambiance et scénographie sur mesure."}];
+const PROCESS_DATA=[{num:'01',title:'Brief & Vision',desc:"Nous écoutons vos besoins et contraintes pour définir ensemble la vision de votre événement."},{num:'02',title:'Conception',desc:"Notre équipe élabore un concept unique, de la scénographie au programme."},{num:'03',title:'Production',desc:"Coordination des prestataires, logistique et répétitions. Chaque détail maîtrisé."},{num:'04',title:'Exécution',desc:"Le jour J, notre équipe garantit une expérience fluide et mémorable."}];
+const TESTI_DATA=[{init:'MN',name:'Marie-Claire Ntoutoume',role:'DG, Gabon Export',text:"OSSPROGROUP a su transformer notre vision en une réalité qui a dépassé toutes nos espérances."},{init:'JO',name:'Jean-Pierre Obiang',role:'Ministre du Commerce',text:"Notre conférence internationale a été un véritable succès grâce à leur rigueur et créativité."},{init:'SA',name:'Sophie & Armand Mba',role:'Mariés en 2024',text:"Un mariage féerique, une organisation parfaite. OSSPROGROUP a rendu notre jour exceptionnel."}];
+const LOGOS_DATA=[{id:'client-logo-0',label:'Gabon Oil'},{id:'client-logo-1',label:'BGFI Bank'},{id:'client-logo-2',label:'TotalEnergies'},{id:'client-logo-3',label:'Airtel'},{id:'client-logo-4',label:'Olam Gabon'},{id:'client-logo-5',label:'CNAMGS'},{id:'client-logo-6',label:'SETRAG'},{id:'client-logo-7',label:'Min. Tourisme'}];
+
+function buildDynamic(){
+  const sc=document.getElementById('services-cards-container');
+  if(sc)sc.innerHTML=SERVICES_DATA.map((s,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">${s.icon}</span> Service ${i+1} — ${s.title}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Icône</label><input id="sv-icon-${i}" value="${s.icon}"></div><div class="field"><label>Titre</label><input id="sv-title-${i}" value="${s.title}"></div></div><div class="field-grid col1"><div class="field"><label>Description</label><textarea id="sv-desc-${i}" rows="3">${s.desc}</textarea></div></div></div></div>`).join('');
+  const pc=document.getElementById('process-cards-container');
+  if(pc)pc.innerHTML=PROCESS_DATA.map((p,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">${p.num}</span> Étape ${i+1} — ${p.title}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Titre</label><input id="pr-title-${i}" value="${p.title}"></div><div class="field"><label>Numéro</label><input id="pr-num-${i}" value="${p.num}"></div></div><div class="field-grid col1"><div class="field"><label>Description</label><textarea id="pr-desc-${i}" rows="3">${p.desc}</textarea></div></div></div></div>`).join('');
+  const tc=document.getElementById('testi-cards-container');
+  if(tc)tc.innerHTML=TESTI_DATA.map((t,i)=>`<div class="cms-card"><div class="cms-card-head" onclick="toggleCard(this)"><h3><span class="icon">💬</span> Témoignage ${i+1} — ${t.name}</h3><span class="toggle">▼</span></div><div class="cms-card-body"><div class="field-grid"><div class="field"><label>Nom</label><input id="ts-name-${i}" value="${t.name}"></div><div class="field"><label>Rôle</label><input id="ts-role-${i}" value="${t.role}"></div></div><div class="field-grid col1"><div class="field"><label>Citation</label><textarea id="ts-text-${i}" rows="3">${t.text}</textarea></div></div><div class="field"><label>Initiales</label><input id="ts-init-${i}" value="${t.init}" style="max-width:80px;"></div></div></div>`).join('');
+  const lg=document.getElementById('logos-grid-container');
+  if(lg)lg.innerHTML=LOGOS_DATA.map((l,i)=>`<div class="logo-slot"><label>${l.label}</label><div class="logo-preview" id="prev-clogo-${i}"><svg width="60" height="20" viewBox="0 0 60 20"><text x="0" y="15" font-family="sans-serif" font-size="9" fill="rgba(200,180,180,.4)">${l.label}</text></svg></div><input type="file" accept="image/*,.svg" class="hf" id="f-clogo-${i}" onchange="uploadClientLogo(this,${i})"><button class="img-btn" onclick="document.getElementById('f-clogo-${i}').click()">📷 Uploader</button></div>`).join('');
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pw').focus();});
+  document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  if(isSessionOk()){
+    document.getElementById('login-screen').style.display='none';document.getElementById('app').classList.add('show');
+    const u=sessionStorage.getItem('login_user')||DEFAULT_USER;
+    document.getElementById('session-user').textContent=u;document.getElementById('sidebar-username').textContent=u;
+    document.getElementById('info-user').textContent=u;document.getElementById('info-time').textContent=sessionStorage.getItem('login_time')||'—';
+    document.getElementById('info-attempts').textContent=getAttempts();
+    renderLog();buildDynamic();
+  }
+  document.querySelector('a.site-link-btn').addEventListener('click',e=>{e.preventDefault();siteTab=window.open(e.currentTarget.href,'_blank');});
+});
+
+</script>
+</body>\n</html>";
+
+
+
+// === SECURITY ===
+function changePassword(){
+  const cur=document.getElementById('cpw-cur').value,nw=document.getElementById('cpw-new').value,conf=document.getElementById('cpw-conf').value,msg=document.getElementById('cpw-msg');
+  if(cur!==getPw()){msg.className='cpw-msg err';msg.textContent='Mot de passe actuel incorrect.';return;}
+  if(nw.length<8){msg.className='cpw-msg err';msg.textContent='Minimum 8 caractères.';return;}
+  if(nw!==conf){msg.className='cpw-msg err';msg.textContent='Les mots de passe ne correspondent pas.';return;}
+  localStorage.setItem(STORE.PW_KEY,nw);msg.className='cpw-msg ok';msg.textContent='✓ Mot de passe mis à jour !';
+  addLog('warn','Mot de passe modifié');toast('✓ Mot de passe changé','success');
+  ['cpw-cur','cpw-new','cpw-conf'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>msg.textContent='',3000);
+}
+function changeUsername(){
+  const nu=document.getElementById('new-username').value.trim();
+  if(nu.length<3){toast('Minimum 3 caractères','error');return;}
+  localStorage.setItem(STORE.USER_KEY,nu);
+  document.getElementById('session-user').textContent=nu;document.getElementById('sidebar-username').textContent=nu;document.getElementById('info-user').textContent=nu;
+  addLog('warn',`Identifiant changé en: ${nu}`);toast('✓ Identifiant mis à jour','success');
+}
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pw').focus();});
+  document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  if(isSessionOk()){
+    document.getElementById('login-screen').style.display='none';document.getElementById('app').classList.add('show');
+    const u=sessionStorage.getItem('login_user')||DEFAULT_USER;
+    document.getElementById('session-user').textContent=u;document.getElementById('sidebar-username').textContent=u;
+    document.getElementById('info-user').textContent=u;document.getElementById('info-time').textContent=sessionStorage.getItem('login_time')||'—';
+    document.getElementById('info-attempts').textContent=getAttempts();
+    renderLog();buildDynamic();
+  }
+  document.querySelector('a.site-link-btn').addEventListener('click',e=>{e.preventDefault();siteTab=window.open(e.currentTarget.href,'_blank');});
+});
+
+</script>
+</body>\n</html>";
+
+// ═══════════════════════════════════════════════════════
+// CHANGES STORE
+// ═══════════════════════════════════════════════════════
+let CHANGES = {};
+try { CHANGES = JSON.parse(localStorage.getItem('ospg_changes')||'{}'); } catch(e){}
+
+function saveChange(key, val){
+  CHANGES[key] = val;
+  try { localStorage.setItem('ospg_changes', JSON.stringify(CHANGES)); } catch(e){}
+}
+function saveImageChange(key, dataUrl){
+  try {
+    localStorage.setItem('ospg_img_'+key, dataUrl);
+    CHANGES[key] = '__img__:'+key;
+    localStorage.setItem('ospg_changes', JSON.stringify(CHANGES));
+  } catch(e) {
+    CHANGES[key] = '__img__:'+key;
+    toast('Image trop grande pour le stockage local.','error');
+  }
+}
+function getImageChange(key){ return localStorage.getItem('ospg_img_'+key)||null; }
+
+// ═══════════════════════════════════════════════════════
+// SITE TAB REFERENCE
+// ═══════════════════════════════════════════════════════
+let siteTab = null;
+function getSiteTab(){ return siteTab && !siteTab.closed ? siteTab : null; }
+function applyToSite(ops){
+  const tab = getSiteTab();
+  if(!tab) return;
+  try{
+    ops.forEach(op=>{
+      const el = tab.document.getElementById(op.id);
+      if(!el) return;
+      if(op.type==='text') el.textContent = op.val;
+      if(op.type==='bg'){ el.style.backgroundImage=`url(${op.val})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center'; }
+      if(op.type==='src') el.src = op.val;
+    });
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// APPLY FUNCTIONS (save + live update)
+// ═══════════════════════════════════════════════════════
+function applyHero(){
+  const vals = {
+    'hero-tag-text': document.getElementById('c-hero-tag').value,
+    'hero-l1':       document.getElementById('c-hero-l1').value,
+    'hero-l3':       document.getElementById('c-hero-l3').value,
+    'hero-em-el':    document.getElementById('c-hero-em').value,
+    'hero-sub-el':   document.getElementById('c-hero-sub').value,
+  };
+  Object.entries(vals).forEach(([k,v])=>saveChange(k,v));
+  applyToSite(Object.entries(vals).map(([id,val])=>({id,type:'text',val})));
+  toast('✓ Hero sauvegardé','success'); showStatus('ss-hero'); addLog('ok','Hero modifié');
+}
+function applyAbout(){
+  const ops=[];
+  ['1','2','3','4'].forEach(n=>{
+    const v1=document.getElementById(`c-s${n}`).value, v2=document.getElementById(`c-s${n}l`).value;
+    saveChange(`stat-${n}`,v1); saveChange(`stat-${n}-lbl`,v2);
+    ops.push({id:`stat-${n}`,type:'text',val:v1},{id:`stat-${n}-lbl`,type:'text',val:v2});
+  });
+  applyToSite(ops);
+  toast('✓ Statistiques sauvegardées','success'); showStatus('ss-about'); addLog('ok','Stats modifiées');
+}
+function applyAboutText(){
+  const v1=document.getElementById('c-about-p1').value, v2=document.getElementById('c-about-p2').value;
+  saveChange('about-p1',v1); saveChange('about-p2',v2);
+  applyToSite([{id:'about-p1',type:'text',val:v1},{id:'about-p2',type:'text',val:v2}]);
+  toast('✓ Textes sauvegardés','success'); addLog('ok','Textes À propos modifiés');
+}
+function applyPortfolio(){
+  const ops=[];
+  ['1','2','3'].forEach(n=>['cat','title','year'].forEach(f=>{
+    const v=document.getElementById(`c-p${n}-${f}`).value;
+    saveChange(`proj-${n}-${f}`,v); ops.push({id:`proj-${n}-${f}`,type:'text',val:v});
+  }));
+  applyToSite(ops);
+  toast('✓ Portfolio sauvegardé','success'); showStatus('ss-portfolio'); addLog('ok','Portfolio modifié');
+}
+function applyServices(){
+  for(let i=0;i<6;i++){
+    saveChange(`sv-title-${i}`,document.getElementById(`sv-title-${i}`).value);
+    saveChange(`sv-desc-${i}`, document.getElementById(`sv-desc-${i}`).value);
+    saveChange(`sv-icon-${i}`, document.getElementById(`sv-icon-${i}`).value);
+  }
+  const tab=getSiteTab();
+  if(tab){ try{
+    const cards=tab.document.querySelectorAll('.service-card');
+    for(let i=0;i<6;i++){
+      if(!cards[i]) continue;
+      const h3=cards[i].querySelector('h3'),p=cards[i].querySelector('p'),ic=cards[i].querySelector('.service-icon');
+      if(h3) h3.textContent=document.getElementById(`sv-title-${i}`).value;
+      if(p)  p.textContent =document.getElementById(`sv-desc-${i}`).value;
+      if(ic) ic.textContent=document.getElementById(`sv-icon-${i}`).value;
+    }
+  }catch(e){} }
+  toast('✓ Services sauvegardés','success'); showStatus('ss-services'); addLog('ok','Services modifiés');
+}
+function applyProcess(){
+  for(let i=0;i<4;i++){
+    saveChange(`pr-title-${i}`,document.getElementById(`pr-title-${i}`).value);
+    saveChange(`pr-desc-${i}`, document.getElementById(`pr-desc-${i}`).value);
+    saveChange(`pr-num-${i}`,  document.getElementById(`pr-num-${i}`).value);
+  }
+  const tab=getSiteTab();
+  if(tab){ try{
+    const steps=tab.document.querySelectorAll('.step');
+    for(let i=0;i<4;i++){
+      if(!steps[i]) continue;
+      const h4=steps[i].querySelector('h4'),p=steps[i].querySelector('p'),sc=steps[i].querySelector('.step-circle');
+      if(h4) h4.textContent=document.getElementById(`pr-title-${i}`).value;
+      if(p)  p.textContent =document.getElementById(`pr-desc-${i}`).value;
+      if(sc) sc.textContent=document.getElementById(`pr-num-${i}`).value;
+    }
+  }catch(e){} }
+  toast('✓ Méthode sauvegardée','success'); showStatus('ss-process'); addLog('ok','Méthode modifiée');
+}
+function applyTestis(){
+  for(let i=0;i<3;i++){
+    saveChange(`ts-text-${i}`,document.getElementById(`ts-text-${i}`).value);
+    saveChange(`ts-name-${i}`,document.getElementById(`ts-name-${i}`).value);
+    saveChange(`ts-role-${i}`,document.getElementById(`ts-role-${i}`).value);
+    saveChange(`ts-init-${i}`,document.getElementById(`ts-init-${i}`).value);
+  }
+  const tab=getSiteTab();
+  if(tab){ try{
+    const cards=tab.document.querySelectorAll('.testi-card');
+    for(let i=0;i<3;i++){
+      if(!cards[i]) continue;
+      const txt=cards[i].querySelector('.testi-text'),name=cards[i].querySelector('.testi-name'),
+            role=cards[i].querySelector('.testi-role'),av=cards[i].querySelector('.testi-avatar');
+      if(txt)  txt.textContent =document.getElementById(`ts-text-${i}`).value;
+      if(name) name.textContent=document.getElementById(`ts-name-${i}`).value;
+      if(role) role.textContent=document.getElementById(`ts-role-${i}`).value;
+      if(av)   av.textContent  =document.getElementById(`ts-init-${i}`).value;
+    }
+  }catch(e){} }
+  toast('✓ Témoignages sauvegardés','success'); showStatus('ss-testi'); addLog('ok','Témoignages modifiés');
+}
+function applyContact(){
+  const map={'contact-address':'c-addr','contact-phone':'c-phone','contact-email':'c-email','contact-hours':'c-hours'};
+  const ops=[];
+  Object.entries(map).forEach(([id,fid])=>{ const v=document.getElementById(fid).value; saveChange(id,v); ops.push({id,type:'text',val:v}); });
+  applyToSite(ops);
+  toast('✓ Contact sauvegardé','success'); showStatus('ss-contact'); addLog('ok','Contact modifié');
+}
+function applySocial(){
+  ['fb','li','ig','yt'].forEach(k=>{ const v=document.getElementById(`c-${k}`).value; if(v) saveChange(`social-${k}`,v); });
+  toast('✓ Réseaux sauvegardés','success'); addLog('ok','Réseaux modifiés');
+}
+function applyFooter(){
+  const v=document.getElementById('c-copy').value;
+  saveChange('footer-copy',v);
+  applyToSite([{id:'footer-copy',type:'text',val:v}]);
+  toast('✓ Footer sauvegardé','success'); addLog('ok','Footer modifié');
+}
+
+// ═══════════════════════════════════════════════════════
+// IMAGE UPLOAD (save + live update)
+// ═══════════════════════════════════════════════════════
+function readFile(file,cb){ const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsDataURL(file); }
+
+function uploadSlide(input,prevId,slideId){
+  const f=input.files[0]; if(!f) return;
+  readFile(f,url=>{
+    const p=document.getElementById(prevId); p.classList.add('loaded');
+    let img=p.querySelector('img'); if(!img){img=document.createElement('img');p.appendChild(img);} img.src=url;
+    saveImageChange(slideId,url);
+    applyToSite([{id:slideId,type:'bg',val:url}]);
+    toast('✓ Slide sauvegardée','success'); addLog('ok',`Slide ${slideId} modifiée`);
+  });
+}
+function uploadImg(input,prevId,siteId){
+  const f=input.files[0]; if(!f) return;
+  readFile(f,url=>{
+    const p=document.getElementById(prevId); p.classList.add('loaded');
+    let img=p.querySelector('img'); if(!img){img=document.createElement('img');p.appendChild(img);} img.src=url;
+    saveImageChange(siteId,url);
+    applyToSite([{id:siteId,type:'src',val:url}]);
+    toast('✓ Image sauvegardée','success'); addLog('ok',`Image ${siteId} modifiée`);
+  });
+}
+function uploadBg(input,prevId,siteId){
+  const f=input.files[0]; if(!f) return;
+  readFile(f,url=>{
+    const p=document.getElementById(prevId); p.classList.add('loaded');
+    let img=p.querySelector('img'); if(!img){img=document.createElement('img');p.appendChild(img);} img.src=url;
+    saveImageChange(siteId,url);
+    applyToSite([{id:siteId,type:'bg',val:url}]);
+    toast('✓ Photo sauvegardée','success'); addLog('ok',`Photo ${siteId} modifiée`);
+  });
+}
+function uploadClientLogo(input,idx){
+  const f=input.files[0]; if(!f) return;
+  readFile(f,url=>{
+    const p=document.getElementById(`prev-clogo-${idx}`); p.classList.add('loaded');
+    p.innerHTML=`<img src="${url}" style="max-width:90%;max-height:90%;object-fit:contain;">`;
+    saveImageChange(`client-logo-${idx}`,url);
+    const tab=getSiteTab();
+    if(tab){ try{ const el=tab.document.getElementById(`client-logo-${idx}`); if(el) el.innerHTML=`<img src="${url}" style="max-height:44px;max-width:120px;object-fit:contain;filter:grayscale(20%);" alt="logo">`; }catch(e){} }
+    toast(`✓ Logo ${idx+1} sauvegardé`,'success'); addLog('ok',`Logo partenaire ${idx+1} modifié`);
+  });
+}
+function uploadMainLogo(input){
+  const f=input.files[0]; if(!f) return;
+  readFile(f,url=>{
+    const p=document.getElementById('prev-main-logo'); p.classList.add('loaded');
+    let img=p.querySelector('img'); if(!img){img=document.createElement('img');p.appendChild(img);} img.src=url;
+    img.style.cssText='max-height:100%;max-width:100%;object-fit:contain;';
+    saveImageChange('main-logo',url);
+    toast('✓ Logo principal sauvegardé','success'); addLog('ok','Logo principal modifié');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT — build HTML with all changes using DOMParser
+// ═══════════════════════════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════
+// SECURITY
+
+// Site tab management
+document.querySelector('a.site-link-btn').addEventListener('click',e=>{
+  e.preventDefault();
+  siteTab=window.open(e.currentTarget.href,'_blank');
+});
+
+</script>
+\n\n<!-- \u2550\u2550\u2550 AUTH STYLES \u2550\u2550\u2550 -->\n<style>\n#auth-screen{position:fixed;inset:0;z-index:99998;background:#060404;display:none;align-items:center;justify-content:center;flex-direction:column;}\n#auth-screen.show{display:flex;animation:authFade .35s ease;}\n@keyframes authFade{from{opacity:0}to{opacity:1}}\n.auth-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(139,26,26,.12) 0%,transparent 70%),repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(139,26,26,.03) 60px),repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(139,26,26,.025) 60px);}\n.auth-box{position:relative;z-index:1;width:400px;border:1px solid rgba(139,26,26,.3);background:rgba(12,6,6,.97);backdrop-filter:blur(20px);padding:3rem;box-shadow:0 0 80px rgba(139,26,26,.15);animation:authBoxIn .5s cubic-bezier(.4,0,.2,1);}\n@keyframes authBoxIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}\n.auth-logo{font-family:\"Bebas Neue\",sans-serif;font-size:1.6rem;letter-spacing:.14em;color:#f0eaea;text-align:center;margin-bottom:.3rem;}\n.auth-logo span{color:#8b1a1a;}\n.auth-subtitle{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:#6e5a5a;text-align:center;margin-bottom:2rem;display:flex;align-items:center;justify-content:center;gap:.8rem;}\n.auth-subtitle::before,.auth-subtitle::after{content:\"\";display:block;height:1px;width:30px;background:rgba(139,26,26,.3);}\n.auth-lock{display:flex;justify-content:center;margin-bottom:2rem;}\n.lock-icon{width:52px;height:52px;border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:rgba(139,26,26,.08);animation:lockPulse 3s ease-in-out infinite;}\n@keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(139,26,26,.3)}50%{box-shadow:0 0 0 12px rgba(139,26,26,0)}}\n.auth-field-g{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;}\n.auth-field-g label{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#6e5a5a;}\n.auth-field-g input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.22);color:#f0eaea;padding:.9rem 1.1rem;font-family:\"DM Sans\",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,box-shadow .3s;width:100%;}\n.auth-field-g input:focus{border-color:#8b1a1a;box-shadow:0 0 0 3px rgba(139,26,26,.12);}\n.auth-field-g input.error{border-color:#c0392b;animation:shake .4s ease;}\n@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}\n.auth-error{font-size:.72rem;color:#c0392b;letter-spacing:.08em;min-height:1.2rem;margin-bottom:.6rem;}\n.auth-submit{background:#8b1a1a;color:#f0eaea;border:none;width:100%;padding:1rem;font-family:\"DM Sans\",sans-serif;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s,transform .2s;}\n.auth-submit:hover{background:#b22222;transform:translateY(-1px);}\n.auth-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}\n.auth-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid rgba(139,26,26,.2);color:#6e5a5a;width:30px;height:30px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:border-color .3s,color .3s;}\n.auth-close-x:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.auth-attempts{font-size:.65rem;color:rgba(110,90,90,.5);text-align:center;margin-top:1rem;letter-spacing:.1em;}\n.auth-hint{font-size:.6rem;color:rgba(110,90,90,.3);text-align:center;margin-top:.5rem;letter-spacing:.08em;}\n/* Change PW modal */\n#change-pw-modal{position:fixed;inset:0;z-index:99999;background:rgba(6,4,4,.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;}\n#change-pw-modal.show{display:flex;}\n.cpw-box{width:380px;border:1px solid rgba(139,26,26,.3);background:#0c0606;padding:2.5rem;position:relative;box-shadow:0 0 60px rgba(139,26,26,.15);}\n.cpw-box h3{font-family:\"Bebas Neue\",sans-serif;font-size:1.4rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:1.5rem;}\n.cpw-box h3 span{color:#8b1a1a;}\n.cpw-field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}\n.cpw-field label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6e5a5a;}\n.cpw-field input{background:rgba(24,10,10,.9);border:1px solid rgba(139,26,26,.2);color:#f0eaea;padding:.8rem 1rem;font-family:\"DM Sans\",sans-serif;font-size:.88rem;outline:none;transition:border-color .3s;width:100%;}\n.cpw-field input:focus{border-color:#8b1a1a;}\n.cpw-btns{display:flex;gap:.8rem;margin-top:1.2rem;}\n.cpw-save{flex:1;background:#8b1a1a;color:#f0eaea;border:none;padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .3s;}\n.cpw-save:hover{background:#b22222;}\n.cpw-cancel{flex:1;background:transparent;color:#6e5a5a;border:1px solid rgba(139,26,26,.2);padding:.8rem;font-family:\"DM Sans\",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:border-color .3s,color .3s;}\n.cpw-cancel:hover{border-color:#8b1a1a;color:#8b1a1a;}\n.cpw-msg{font-size:.72rem;min-height:1rem;margin-top:.5rem;letter-spacing:.06em;}\n.cpw-msg.ok{color:#4caf50;}.cpw-msg.err{color:#c0392b;}\n/* session badge */\n.auth-user-badge{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:#4caf50;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);padding:.2rem .7rem;display:flex;align-items:center;gap:.4rem;white-space:nowrap;}\n.auth-user-badge::before{content:\"\u25cf\";font-size:.45rem;}\n/* security section in export tab */\n.security-section{margin-top:1rem;padding:1.5rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.04);}\n.security-section h4{font-family:\"Bebas Neue\",sans-serif;font-size:1.1rem;color:#f0eaea;letter-spacing:.1em;margin-bottom:.5rem;}\n.security-section p{font-size:.75rem;color:#6e5a5a;line-height:1.8;margin-bottom:.8rem;}\n.sec-btn{display:flex;align-items:center;gap:.6rem;padding:.75rem 1rem;border:1px solid rgba(139,26,26,.2);background:rgba(139,26,26,.07);font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#6e5a5a;cursor:pointer;transition:all .3s;width:100%;font-family:\"DM Sans\",sans-serif;margin-bottom:.4rem;}\n.sec-btn:hover{border-color:rgba(139,26,26,.4);color:#8b1a1a;background:rgba(139,26,26,.12);}\n.sec-btn.danger:hover{border-color:#c0392b;color:#c0392b;}\n</style>\n\n<!-- AUTH SCREEN -->\n<div id=\"auth-screen\">\n  <div class=\"auth-bg\"></div>\n  <div class=\"auth-box\">\n    <button class=\"auth-close-x\" onclick=\"closeAuth()\">\u2715</button>\n    <div class=\"auth-logo\"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;margin:0 auto;" /></div>\n    <div class=\"auth-subtitle\">Acc\u00e8s Administration</div>\n    <div class=\"auth-lock\"><div class=\"lock-icon\" id=\"lock-icon\">\ud83d\udd12</div></div>\n    <div class=\"auth-field-g\">\n      <label>Mot de passe</label>\n      <input type=\"password\" id=\"auth-pw-input\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\">\n    </div>\n    <div class=\"auth-error\" id=\"auth-error\"></div>\n    <button class=\"auth-submit\" id=\"auth-submit-btn\" onclick=\"submitAuth()\">Acc\u00e9der au panneau</button>\n    <div class=\"auth-attempts\" id=\"auth-attempts\"></div>\n    <div class=\"auth-hint\">Triple-clic sur le copyright \u00b7 Ctrl+Shift+A</div>\n  </div>\n</div>\n\n<!-- CHANGE PASSWORD MODAL -->\n<div id=\"change-pw-modal\">\n  <div class=\"cpw-box\">\n    <h3>Changer le <span>mot de passe</span></h3>\n    <div class=\"cpw-field\"><label>Mot de passe actuel</label><input type=\"password\" id=\"cpw-current\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Nouveau mot de passe</label><input type=\"password\" id=\"cpw-new\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-field\"><label>Confirmer</label><input type=\"password\" id=\"cpw-confirm\" placeholder=\"\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\"></div>\n    <div class=\"cpw-msg\" id=\"cpw-msg\"></div>\n    <div class=\"cpw-btns\">\n      <button class=\"cpw-save\" onclick=\"savePassword()\">Enregistrer</button>\n      <button class=\"cpw-cancel\" id=\"cpw-close\">Annuler</button>\n    </div>\n  </div>\n</div>\n\n\n<!-- Admin access shortcut (hidden, revealed by triple-click on copyright) -->\n<a id=\"admin-page-link\" href=\"ossprogroup-admin.html\" target=\"_blank\" style=\"display:none;position:fixed;bottom:2rem;left:2rem;z-index:9990;background:#8b1a1a;color:#f0eaea;padding:.7rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(240,234,234,.15);transition:background .3s;\">\n  \u2699 Admin CMS\n</a>\n\n\n</body>\n</html>";
+
+// ═══════════════════════════════════════════════════════
+// CHANGES STORE — persists all edits
+// ═══════════════════════════════════════════════════════
+let CHANGES = {};
+try { CHANGES = JSON.parse(localStorage.getItem('ospg_changes')||'{}'); } catch(e){}
+
+function saveChange(key, val){
+  CHANGES[key] = val;
+  localStorage.setItem('ospg_changes', JSON.stringify(CHANGES));
+}
+function saveImageChange(key, dataUrl){
+  // Store images separately to avoid quota issues with main changes object
+  try {
+    localStorage.setItem('ospg_img_'+key, dataUrl);
+    CHANGES[key] = '__img__:'+key;
+    localStorage.setItem('ospg_changes', JSON.stringify(CHANGES));
+  } catch(e) {
+    toast('Image trop lourde pour le stockage local. Elle sera perdue après fermeture.','error');
+    CHANGES[key] = '__img__:'+key;
+  }
+}
+function getImageChange(key){
+  return localStorage.getItem('ospg_img_'+key) || null;
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT — build and download the site with all changes
+// ═══════════════════════════════════════════════════════
+
+
+
+</script>
+</body>
+</html>

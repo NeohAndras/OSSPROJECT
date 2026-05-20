@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OSSPROGROUP — Devis (Proforma)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111111;
+      --accent:#E52421;
+      --muted:#666;
+      --border:#e6e6e6;
+      --card:#ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"DM Sans",sans-serif;
+      font-weight:400;
+      overflow-x:hidden;
+    }
+    nav{
+      position:sticky; top:0; z-index:100;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+    }
+    .nav-inner{
+      max-width:1200px; margin:0 auto;
+      padding:14px 20px;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .nav-logo{
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none; color:var(--text);
+    }
+    .nav-logo img{height:44px; width:auto; display:block;}
+    .nav-logo .mark{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.08em;
+      font-size:1.7rem;
+    }
+    .nav-logo .mark span{color:var(--accent);}
+    .nav-links{display:flex; gap:16px; flex-wrap:wrap;}
+    .nav-links a{
+      text-decoration:none;
+      color:var(--text);
+      font-weight:600;
+      font-size:.82rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      padding:8px 10px;
+      border:1px solid transparent;
+      border-radius:10px;
+    }
+    .nav-links a:hover{
+      border-color:rgba(229,36,33,.25);
+      color:var(--accent);
+      background:rgba(229,36,33,.04);
+    }
+
+    main{max-width:1200px; margin:0 auto; padding:28px 20px 60px;}
+    .hero{
+      text-align:center;
+      padding:26px 14px 18px;
+      border:1px solid var(--border);
+      background:linear-gradient(to bottom, #fff, #fafafa);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+    }
+    .hero .kicker{
+      font-size:.78rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:var(--accent);
+      display:flex; align-items:center; justify-content:center; gap:12px;
+      margin-bottom:12px;
+      font-weight:700;
+    }
+    .hero .kicker:before, .hero .kicker:after{
+      content:"";
+      height:1px;
+      width:40px;
+      background:rgba(229,36,33,.6);
+    }
+    .hero h1{
+      font-family:"Bebas Neue",sans-serif;
+      font-size:clamp(3rem,5vw,4.4rem);
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      line-height:.9;
+      margin-bottom:10px;
+    }
+    .hero p{
+      color:var(--muted);
+      line-height:1.8;
+      font-size:1.02rem;
+      max-width:900px;
+      margin:0 auto;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:18px;
+      margin-top:18px;
+      align-items:start;
+    }
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .panel{
+      border:1px solid var(--border);
+      border-radius:18px;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-h{
+      padding:16px 18px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    .panel-h h2{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:1.6rem;
+      line-height:1.05;
+      color:#111;
+    }
+    .panel-h .sub{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.5;
+      margin-top:4px;
+      max-width:260px;
+      text-align:right;
+    }
+    .panel-b{padding:16px 18px;}
+
+    label{
+      display:block;
+      font-size:.68rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:#444;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea, input[type="number"]{
+      width:100%;
+      border:1px solid rgba(0,0,0,.12);
+      border-radius:14px;
+      padding:11px 12px;
+      outline:none;
+      font-family:"DM Sans",sans-serif;
+      font-size:.95rem;
+      font-weight:400;
+      background:#fff;
+    }
+    textarea{min-height:92px; resize:vertical;}
+
+    .form-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media(max-width:520px){
+      .form-row{grid-template-columns:1fr;}
+    }
+
+    .cart-lines{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .cart-line{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      border:1px dashed rgba(0,0,0,.15);
+      border-radius:14px;
+      padding:10px 10px;
+    }
+    .cart-line .left{
+      max-width:70%;
+    }
+    .cart-line .t{
+      font-weight:900;
+      color:#111;
+      letter-spacing:.01em;
+      margin-bottom:4px;
+      line-height:1.2;
+    }
+    .cart-line .k{
+      color:var(--muted);
+      font-size:.88rem;
+      line-height:1.35;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cart-line .p{
+      font-weight:900;
+      color:var(--accent);
+      white-space:nowrap;
+      font-size:.95rem;
+      letter-spacing:.01em;
+    }
+
+    .qty-wrap{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:flex-end;
+      flex-shrink:0;
+    }
+    .qty-wrap input[type="number"]{
+      width:110px;
+      padding:9px 10px;
+      border-radius:12px;
+    }
+
+    .summary{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background:rgba(0,0,0,.02);
+      border:1px dashed rgba(0,0,0,.15);
+      border-radius:16px;
+      padding:12px 12px;
+      margin-top:12px;
+    }
+    .summary .row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:.95rem;
+      color:#222;
+    }
+    .summary .row strong{color:#111;}
+    .summary .total{
+      font-size:1.1rem;
+      font-weight:900;
+      color:var(--accent);
+      letter-spacing:.02em;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      padding:12px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      margin-top:14px;
+      transition:transform .15s, background .15s;
+    }
+    .btn:hover{transform:translateY(-2px); background:#c21e1b;}
+    .btn:disabled{opacity:.55; cursor:not-allowed; transform:none;}
+
+    .btn.secondary{
+      background:#111;
+      margin-top:10px;
+    }
+    .btn.secondary:hover{background:#000;}
+
+    .note{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+      margin-top:10px;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%; bottom:18px;
+      transform:translateX(-50%) translateY(18px);
+      background:#111;
+      color:#fff;
+      border:1px solid rgba(229,36,33,.4);
+      border-radius:14px;
+      padding:12px 16px;
+      box-shadow:0 15px 60px rgba(0,0,0,.2);
+      opacity:0; pointer-events:none;
+      transition:opacity .18s, transform .18s;
+      z-index:9999;
+      max-width:92vw;
+      line-height:1.45;
+      font-size:.92rem;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" />
+        <div class="mark">OSSPRO<span>GROUP</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="catalog.html" style="border-color:rgba(229,36,33,.25);color:var(--accent);background:rgba(229,36,33,.06);">Location</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="kicker">Devis</div>
+      <h1>Créer la proforma</h1>
+      <p>
+        Vérifiez votre sélection, renseignez vos informations, puis cliquez sur « Créer la proforma ».
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Votre devis</h2>
+          <div class="sub" id="currencySub">Prix par jour</div>
+        </div>
+
+        <div class="panel-b">
+          <label for="days">Durée (jours)</label>
+          <div class="form-row" style="grid-template-columns:1fr 1fr; margin-top:8px;">
+            <select id="days">
+              <option value="1">1 jour</option>
+              <option value="2">2 jours</option>
+              <option value="3">3 jours</option>
+              <option value="4">4 jours</option>
+              <option value="5">5 jours</option>
+              <option value="7">7 jours</option>
+            </select>
+            <button class="btn secondary" style="margin-top:0;" id="btn-clear" type="button">Modifier</button>
+          </div>
+
+          <div class="summary" aria-live="polite">
+            <div class="row"><span>Sous-total / jour</span><strong id="sumPerDay">0</strong></div>
+            <div class="row"><span>Total devis</span><strong class="total" id="sumTotal">0</strong></div>
+            <div class="note">Nous calculons le prix selon les jours demandés.</div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <label style="margin-bottom:8px;">Sélection</label>
+            <div class="cart-lines" id="cart-lines"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-h">
+          <h2>Informations client</h2>
+          <div class="sub">Email requis pour recevoir la proforma</div>
+        </div>
+
+        <div class="panel-b" id="customer-panel">
+          <div class="form-row">
+            <div>
+              <label for="cust-name">Prénom / Nom</label>
+              <input id="cust-name" type="text" placeholder="Ex: John Doe" />
+            </div>
+            <div>
+              <label for="cust-phone">Téléphone (optionnel)</label>
+              <input id="cust-phone" type="tel" placeholder="+241 ..." />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div style="grid-column:1 / -1;">
+              <label for="cust-email">Email</label>
+              <input id="cust-email" type="email" placeholder="you@email.com" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label for="event-type">Type d’événement (optionnel)</label>
+              <input id="event-type" type="text" placeholder="Ex: Conférence corporate" />
+            </div>
+            <div>
+              <label for="event-location">Lieu (optionnel)</label>
+              <input id="event-location" type="text" placeholder="Ex: Libreville" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div style="grid-column:1 / -1;">
+              <label for="msg">Message (optionnel)</label>
+              <textarea id="msg" placeholder="Dates exactes, besoins complémentaires..."></textarea>
+            </div>
+          </div>
+
+          <button class="btn" id="btn-proforma" type="button" disabled>Créer la proforma</button>
+
+          <div class="note" id="status-note">
+            Remplissez votre nom et email, puis cliquez sur « Créer la proforma ».
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const toastEl = document.getElementById('toast');
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=>toastEl.classList.remove('show'), 3500);
+    }
+
+    const btnClear = document.getElementById('btn-clear');
+    const btnProforma = document.getElementById('btn-proforma');
+
+    const daysEl = document.getElementById('days');
+    const cartLinesEl = document.getElementById('cart-lines');
+
+    const sumPerDayEl = document.getElementById('sumPerDay');
+    const sumTotalEl = document.getElementById('sumTotal');
+    const currencySubEl = document.getElementById('currencySub');
+
+    const custNameEl = document.getElementById('cust-name');
+    const custEmailEl = document.getElementById('cust-email');
+    const custPhoneEl = document.getElementById('cust-phone');
+    const eventTypeEl = document.getElementById('event-type');
+    const eventLocationEl = document.getElementById('event-location');
+    const msgEl = document.getElementById('msg');
+
+    const CART_KEY = 'osppro_cart_v1';
+
+    let catalog = null;
+    let currencyLabel = 'XAF';
+
+    // editable cart: id -> qty
+    const cart = new Map();
+
+    function formatMoney(n){
+      const num = Number(n);
+      if(!Number.isFinite(num)) return '0 ' + (currencyLabel || 'XAF');
+      return new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0}).format(num) + ' ' + (currencyLabel || 'XAF');
+    }
+
+    function getCartPayloadItems(){
+      return Array.from(cart.entries()).map(([id, qty]) => ({ id, qty }));
+    }
+
+    function updateProformaButtonState(){
+      const nameOk = custNameEl.value.trim().length > 0;
+      const emailOk = custEmailEl.value.trim().length > 0;
+      btnProforma.disabled = !(nameOk && emailOk && cart.size > 0);
+    }
+
+    // Ensure cart exists
+    function loadCartFromStorage(){
+      const raw = localStorage.getItem(CART_KEY);
+      if(!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function renderCart(){
+      cartLinesEl.innerHTML = '';
+
+      if(!catalog || cart.size === 0){
+        cartLinesEl.innerHTML = '<div class="note">Votre panier est vide. Retournez au catalogue.</div>';
+        return;
+      }
+
+      const lines = [];
+      for(const [id, qty] of cart.entries()){
+        const item = catalog.items.find(it => it.id === id);
+        if(!item) continue;
+        lines.push({ id, qty, item });
+      }
+
+      if(!lines.length){
+        cartLinesEl.innerHTML = '<div class="note">Aucun article valide. Retournez au catalogue.</div>';
+        return;
+      }
+
+      for(const l of lines){
+        const kind = l.item.kind === 'technician' ? 'Technicien' : 'Matériel';
+        const perDay = (Number(l.item.priceFcfaPerDay) || 0);
+        const lineTotalPerDay = perDay * l.qty;
+
+        const row = document.createElement('div');
+        row.className = 'cart-line';
+
+        row.innerHTML = `
+          <div class="left">
+            <div class="t">${l.item.title}</div>
+            <div class="k">${kind} • Qté ${l.qty}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+            <div class="p">${formatMoney(lineTotalPerDay)} / jour</div>
+            <div class="qty-wrap">
+              <input type="number" min="1" step="1" value="${l.qty}" data-qty="${l.id}" />
+            </div>
+          </div>
+        `;
+
+        row.querySelector('input[type="number"]').addEventListener('input', (e) => {
+          const id = e.target.getAttribute('data-qty');
+          const v = Math.max(1, Math.floor(Number(e.target.value) || 1));
+          cart.set(id, v);
+          renderCart();
+          updateTotals();
+          updateProformaButtonState();
+        });
+
+        cartLinesEl.appendChild(row);
+      }
+    }
+
+    function updateTotals(){
+      if(!catalog){
+        sumPerDayEl.textContent = formatMoney(0);
+        sumTotalEl.textContent = formatMoney(0);
+        return;
+      }
+
+      let perDay = 0;
+      for(const [id, qty] of cart.entries()){
+        const item = catalog.items.find(it => it.id === id);
+        if(!item) continue;
+        perDay += (Number(item.priceFcfaPerDay) || 0) * qty;
+      }
+
+      const days = Number(daysEl.value) || 1;
+      const total = perDay * days;
+
+      sumPerDayEl.textContent = formatMoney(perDay);
+      sumTotalEl.textContent = formatMoney(total);
+      updateProformaButtonState();
+    }
+
+    async function loadCatalog(){
+      const resp = await fetch('/api/shop/catalog');
+      const data = await resp.json();
+      if(!resp.ok || !data.ok) throw new Error(data.error || 'Catalog load failed');
+      catalog = data.catalog;
+      currencyLabel = catalog?.meta?.currencyLabel || 'XAF';
+      currencySubEl.textContent = 'Prix en ' + currencyLabel + ' • par jour';
+    }
+
+    async function createProforma(){
+      if(cart.size === 0){
+        toast('Votre panier est vide.');
+        return;
+      }
+
+      const customer = {
+        name: custNameEl.value.trim(),
+        email: custEmailEl.value.trim(),
+        phone: custPhoneEl.value.trim(),
+      };
+
+      if(!customer.name || !customer.email){
+        toast('Veuillez renseigner votre nom et email.');
+        return;
+      }
+
+      btnProforma.disabled = true;
+      toast('Traitement de la demande…');
+
+      const days = Number(daysEl.value) || 1;
+      const payload = {
+        customer,
+        event: {
+          eventType: eventTypeEl.value.trim(),
+          location: eventLocationEl.value.trim(),
+        },
+        days,
+        cart: getCartPayloadItems(),
+        message: msgEl.value.trim(),
+      };
+
+      const resp = await fetch('/api/shop/proforma', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await resp.json().catch(()=>({}));
+
+      if(!resp.ok || !data.ok){
+        const errMsg = String(data.error || data.details || 'Erreur inconnue');
+        toast('Erreur : ' + errMsg);
+        btnProforma.disabled = false;
+        return;
+      }
+
+      toast('✓ Demande confirmée. Référence : ' + data.proformaNo);
+
+      // Clear cart so user can't resubmit accidentally
+      localStorage.removeItem(CART_KEY);
+      btnProforma.disabled = true;
+    }
+
+    btnClear.addEventListener('click', () => {
+      window.location.href = 'catalog.html';
+    });
+
+    daysEl.addEventListener('change', () => {
+      updateTotals();
+    });
+
+    [custNameEl, custEmailEl, custPhoneEl, eventTypeEl, eventLocationEl, msgEl].forEach(el => {
+      el.addEventListener('input', () => updateProformaButtonState());
+    });
+
+    btnProforma.addEventListener('click', createProforma);
+
+    (async function init(){
+      const saved = loadCartFromStorage();
+      if(!saved || !Array.isArray(saved.items) || !saved.items.length){
+        toast('Votre panier n’est plus disponible. Retour au catalogue…');
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      // days
+      const d = Number(saved.days);
+      if(Number.isFinite(d)) daysEl.value = String(Math.max(1, Math.min(30, Math.floor(d))));
+
+      // cart map
+      for(const it of saved.items){
+        if(!it || typeof it.id !== 'string') continue;
+        const qty = Math.max(1, Math.floor(Number(it.qty) || 1));
+        cart.set(it.id, qty);
+      }
+
+      try{
+        await loadCatalog();
+        renderCart();
+        updateTotals();
+        updateProformaButtonState();
+      }catch(e){
+        toast('Impossible de charger le catalogue : ' + (e?.message || e));
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>

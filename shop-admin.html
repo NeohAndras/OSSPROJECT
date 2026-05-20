@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OSSPROGROUP — Admin Boutique (CMS)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#080808;
+      --surface:#0f0a0a;
+      --card:#161010;
+      --border:rgba(139,26,26,.18);
+      --red:#8b1a1a;
+      --red-light:#b22222;
+      --white:#f0eaea;
+      --muted:#7a6060;
+      --text:#c4b4b4;
+      --shadow: 0 12px 55px rgba(0,0,0,.55);
+      --radius: 2px;
+      --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:"DM Sans",sans-serif;
+      font-weight:300;
+      overflow-x:hidden;
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:linear-gradient(to bottom, rgba(8,8,8,.98), rgba(8,8,8,.85));
+      border-bottom:1px solid var(--border);
+      padding:1rem 1.2rem;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:.2rem;
+    }
+    .brand .t{
+      font-family:"Bebas Neue",sans-serif;
+      font-size:1.6rem;
+      letter-spacing:.1em;
+      color:var(--white);
+      margin:0;
+    }
+    .brand .s{
+      font-size:.72rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:0;
+    }
+    .actions{
+      display:flex;
+      gap:.7rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    button{
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+      padding:.7rem 1rem;
+      font-family:"DM Sans",sans-serif;
+      font-size:.72rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:border-color .25s,color .25s, background .25s;
+      border-radius:var(--radius);
+    }
+    button:hover{
+      border-color:var(--red);
+      color:var(--red);
+      background:rgba(139,26,26,.08);
+    }
+    .primary{
+      background:var(--red);
+      color:var(--white);
+      border-color:var(--red);
+    }
+    .primary:hover{
+      background:var(--red-light);
+      color:var(--white);
+    }
+    .danger{
+      border-color:#c0392b;
+      color:#c0392b;
+    }
+    .danger:hover{
+      background:rgba(192,57,43,.1);
+    }
+    main{
+      padding:1.2rem;
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:1rem;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:1rem;
+      align-items:start;
+    }
+    @media(max-width:980px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      background:rgba(22,16,16,.9);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:1rem;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.12) inset;
+    }
+    .card h2{
+      font-family:"Bebas Neue",sans-serif;
+      font-size:1.25rem;
+      color:var(--white);
+      letter-spacing:.1em;
+      margin:.1rem 0 1rem;
+      text-transform:uppercase;
+    }
+    .hint{
+      font-size:.78rem;
+      color:var(--muted);
+      line-height:1.6;
+      margin-top:.1rem;
+    }
+    .small{
+      font-size:.72rem;
+      color:rgba(122,96,96,.95);
+      line-height:1.6;
+    }
+    .pill{
+      background:rgba(139,26,26,.1);
+      border:1px solid rgba(139,26,26,.2);
+      color:var(--red);
+      padding:.3rem .6rem;
+      border-radius:20px;
+      letter-spacing:.02em;
+      display:inline-block;
+      margin-top:.5rem;
+    }
+    .status{
+      margin-top:.7rem;
+      font-size:.78rem;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+      flex-wrap:wrap;
+    }
+
+    .form{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:.9rem;
+    }
+    @media(max-width:720px){
+      .form{grid-template-columns:1fr;}
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:.35rem;
+      min-width:0;
+    }
+    .field label{
+      font-size:.68rem;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      color:rgba(122,96,96,.95);
+      font-weight:700;
+    }
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;
+      background:rgba(20,8,8,.85);
+      border:1px solid rgba(139,26,26,.2);
+      color:var(--white);
+      padding:.75rem .9rem;
+      border-radius:2px;
+      outline:none;
+      font-family:var(--mono);
+      font-size:.88rem;
+      line-height:1.4;
+      resize:vertical;
+      min-width:0;
+    }
+    textarea{min-height:92px;font-family:var(--mono);}
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(178,34,34,.85);
+      box-shadow:0 0 0 3px rgba(178,34,34,.12);
+    }
+
+    .row{
+      display:flex;
+      gap:1rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:.55rem;
+    }
+    .item{
+      border:1px solid rgba(139,26,26,.2);
+      border-radius:2px;
+      padding:.6rem .7rem;
+      cursor:pointer;
+      background:rgba(8,4,4,.35);
+      transition:background .2s,border-color .2s, transform .08s;
+      display:flex;
+      gap:.7rem;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .item:hover{
+      border-color:rgba(139,26,26,.45);
+      background:rgba(139,26,26,.08);
+      transform:translateY(-1px);
+    }
+    .item.active{
+      border-color:rgba(178,34,34,.95);
+      background:rgba(178,34,34,.12);
+    }
+    .item b{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.08em;
+      color:var(--white);
+      text-transform:uppercase;
+      font-size:1.1rem;
+      display:block;
+      margin-bottom:.1rem;
+    }
+    .item .meta{
+      font-size:.72rem;
+      color:var(--muted);
+      line-height:1.4;
+      max-width:680px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:.7rem;
+      flex-wrap:wrap;
+      margin-top:1rem;
+    }
+    .btnRow button{flex:1;min-width:220px;}
+
+    /* image selector */
+    .imgRow{
+      display:grid;
+      grid-template-columns: 190px 1fr;
+      gap:1rem;
+      align-items:start;
+      margin-top:1rem;
+    }
+    @media(max-width:720px){
+      .imgRow{grid-template-columns:1fr;}
+    }
+    .imgPreview{
+      width:190px;
+      height:120px;
+      border:1px dashed rgba(139,26,26,.35);
+      background:rgba(10,5,5,.5);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .imgPreview img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter:saturate(1.05);
+      display:block;
+    }
+    .imgPreview .ph{
+      color:rgba(185,169,169,.9);
+      font-size:.78rem;
+      line-height:1.4;
+      text-align:center;
+      padding:0 10px;
+    }
+
+    .toast{
+      position:fixed;
+      right:1.2rem;
+      bottom:1.2rem;
+      padding:.8rem 1rem;
+      border:1px solid var(--border);
+      background:rgba(22,16,16,.95);
+      color:var(--white);
+      z-index:9999;
+      display:none;
+      max-width:420px;
+      box-shadow:0 10px 40px rgba(0,0,0,.5);
+      line-height:1.4;
+      font-size:.78rem;
+    }
+    .toast.show{display:block;}
+    .toast.ok{border-color:rgba(45,106,45,.6);}
+    .toast.err{border-color:rgba(192,57,43,.7);}
+
+    /* Auth screen */
+    #auth-screen{
+      position:fixed;
+      inset:0;
+      z-index:99998;
+      background:#060404;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      padding:1rem;
+    }
+    #auth-screen.show{display:flex;}
+    .auth-box{
+      width:420px;
+      border:1px solid rgba(139,26,26,.3);
+      background:rgba(12,6,6,.97);
+      color:var(--white);
+      padding:2.2rem 1.6rem;
+      box-shadow:0 0 100px rgba(139,26,26,.18);
+    }
+    .auth-title{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:1.7rem;
+      text-align:center;
+      margin-bottom:.25rem;
+    }
+    .auth-title span{color:var(--red-light);}
+    .auth-sub{
+      text-align:center;
+      margin:.5rem 0 1.4rem;
+      font-size:.7rem;
+      color:rgba(185,169,169,.6);
+      letter-spacing:.25em;
+      text-transform:uppercase;
+      line-height:1.6;
+    }
+    .auth-field{
+      display:flex;
+      flex-direction:column;
+      gap:.35rem;
+      margin-bottom:.9rem;
+    }
+    .auth-field label{
+      font-size:.62rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:rgba(185,169,169,.75);
+      font-weight:700;
+    }
+    .auth-field input{
+      width:100%;
+      background:rgba(24,10,10,.9);
+      border:1px solid rgba(139,26,26,.22);
+      color:var(--white);
+      padding:.9rem 1rem;
+      font-family:var(--mono);
+      font-size:.9rem;
+      outline:none;
+      border-radius:2px;
+    }
+    .auth-field input:focus{
+      border-color:var(--red-light);
+      box-shadow:0 0 0 3px rgba(178,34,34,.12);
+    }
+    .auth-err{
+      color:#c0392b;
+      font-size:.75rem;
+      min-height:1.2rem;
+      margin-bottom:.7rem;
+      letter-spacing:.05em;
+    }
+    .auth-actions{display:flex; gap:.7rem; flex-wrap:wrap;}
+    .auth-actions button{
+      flex:1;
+      min-width:180px;
+    }
+  </style>
+</head>
+<body>
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" aria-hidden="true">
+    <div class="auth-box">
+      <div class="auth-title">OSSPRO<span>GROUP</span></div>
+      <div class="auth-sub">Admin Boutique • Éditeur catalogue</div>
+
+      <div class="auth-field">
+        <label>Mot de passe</label>
+        <input id="auth-pw" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <div class="auth-err" id="auth-err"></div>
+
+      <div class="auth-actions">
+        <button class="primary" onclick="submitAuth()">Accéder</button>
+        <button onclick="location.reload()">Annuler</button>
+      </div>
+      <div class="small" style="margin-top:.8rem;text-align:center;color:rgba(185,169,169,.55);">
+        Mot de passe par défaut : <span style="color:rgba(240,234,234,.9);font-family:var(--mono)">ossprogroup2025</span>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <p class="t">OSSPROGROUP</p>
+      <p class="s">Admin — Boutique (shop_catalog.json)</p>
+    </div>
+    <div class="actions">
+      <button id="btnLoad" onclick="loadCatalog()">Charger</button>
+      <button class="primary" id="btnSave" onclick="saveCatalog()">Enregistrer</button>
+      <button class="danger" onclick="resetEditor()">Réinitialiser</button>
+    </div>
+  </header>
+
+  <main style="display:none;" id="app">
+    <div class="grid">
+      <!-- LEFT: categories + items list -->
+      <div class="card">
+        <h2>Catégories</h2>
+        <div class="hint">Sélectionnez une catégorie, puis éditez / gérez ses articles.</div>
+
+        <div class="list" id="categoriesList" style="margin-top:1rem;"></div>
+
+        <div class="btnRow" style="margin-top:1rem;">
+          <button onclick="addCategory()">+ Ajouter une catégorie</button>
+          <button class="danger" onclick="deleteActiveCategory()">Supprimer la catégorie</button>
+        </div>
+
+        <div class="pill" id="catMeta"></div>
+      </div>
+
+      <!-- RIGHT: items -->
+      <div class="card">
+        <h2>Articles</h2>
+        <div class="hint">Images : choisissez un fichier dans <b>ossprogroup/MEDIA</b>.</div>
+
+        <div class="row" style="margin-top:.8rem;">
+          <div class="field" style="flex:1;min-width:240px;">
+            <label>Recherche</label>
+            <input type="text" id="searchInput" placeholder="Ex: projecteur, technicien, truss..." oninput="renderItemsList()" />
+          </div>
+        </div>
+
+        <div class="list" id="itemsList" style="margin-top:1rem;"></div>
+
+        <div class="btnRow" style="margin-top:1rem;">
+          <button onclick="addItem()">+ Ajouter un article</button>
+          <button class="danger" onclick="deleteActiveItem()">Supprimer l’article</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Éditeur d’article</h2>
+
+      <div class="form" style="margin-bottom:1rem;">
+        <div class="field">
+          <label>ID (unique)</label>
+          <input type="text" id="it-id" placeholder="Ex: mat-lum-spot-200w" />
+          <div class="small" style="margin-top:.2rem;">Le serveur utilise cet ID pour calculer les proformas.</div>
+        </div>
+
+        <div class="field">
+          <label>Type</label>
+          <select id="it-kind">
+            <option value="material">Matériel</option>
+            <option value="technician">Technicien</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Catégorie</label>
+          <select id="it-categoryId"></select>
+        </div>
+
+        <div class="field">
+          <label>Prix FCFA / jour</label>
+          <input type="number" id="it-price" min="0" step="1" placeholder="Ex: 25000" />
+        </div>
+
+        <div class="field" style="grid-column:1 / -1;">
+          <label>Titre</label>
+          <input type="text" id="it-title" placeholder="Ex: Projecteur LED 200W (pack individuel)" />
+        </div>
+
+        <div class="field" style="grid-column:1 / -1;">
+          <label>Description (optionnel)</label>
+          <textarea id="it-description" placeholder="Courte description visible sur catalog.html"></textarea>
+        </div>
+      </div>
+
+      <div class="imgRow">
+        <div class="field">
+          <label>Image (fichier MEDIA/)</label>
+          <select id="it-image"></select>
+          <div class="small" style="margin-top:.4rem;">Stocke uniquement le nom de fichier (ex: Briefing.avif).</div>
+        </div>
+
+        <div>
+          <div class="imgPreview" id="it-image-preview">
+            <div class="ph">Aperçu<br/>—</div>
+          </div>
+
+          <div class="btnRow" style="margin-top:1rem;">
+            <button class="primary" onclick="upsertActiveItem()">✓ Mettre à jour l’article</button>
+            <button onclick="clearItemEditor()">Réinitialiser l’éditeur</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="status" id="editorStatus"></div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <h2>Validation rapide</h2>
+      <div class="hint">
+        Le serveur attend <b>{ meta?, categories[], items[] }</b> avec items :
+        <code>id, kind, categoryId, title, priceFcfaPerDay</code>.
+      </div>
+      <div class="btnRow" style="margin-top:1rem;">
+        <button onclick="validateAndToast()">✓ Valider le catalogue (sans enregistrer)</button>
+        <button class="danger" onclick="loadCatalog()">↺ Recharger depuis fichier</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORE = {
+      PW_KEY:'ospg_cms_pw',
+      USER_KEY:'ospg_cms_user',
+      LOCKOUT_KEY:'ospg_cms_lockout',
+      ATTEMPTS_KEY:'ospg_cms_attempts',
+      LOG_KEY:'ospg_cms_log',
+      SESSION_KEY:'ospg_cms_session'
+    };
+    const DEFAULT_PW = 'ossprogroup2025';
+    const MAX_ATTEMPTS = 5;
+    const LOCKOUT_MIN = 10;
+
+    const authScreen = document.getElementById('auth-screen');
+    const appEl = document.getElementById('app');
+    const authPwEl = document.getElementById('auth-pw');
+    const authErrEl = document.getElementById('auth-err');
+
+    function getPw(){ return localStorage.getItem(STORE.PW_KEY) || DEFAULT_PW; }
+    function getAttempts(){ return parseInt(localStorage.getItem(STORE.ATTEMPTS_KEY) || '0', 10); }
+    function setAttempts(n){ localStorage.setItem(STORE.ATTEMPTS_KEY, String(n)); }
+    function isSessionOk(){ return sessionStorage.getItem(STORE.SESSION_KEY) === 'ok'; }
+    function setSessionOk(){ sessionStorage.setItem(STORE.SESSION_KEY, 'ok'); }
+
+    function isLockedOut(){
+      const t = parseInt(localStorage.getItem(STORE.LOCKOUT_KEY) || '0', 10);
+      if(!t) return false;
+      const m = (Date.now() - t) / 60000;
+      if(m >= LOCKOUT_MIN){
+        localStorage.removeItem(STORE.LOCKOUT_KEY);
+        localStorage.removeItem(STORE.ATTEMPTS_KEY);
+        return false;
+      }
+      return Math.ceil(LOCKOUT_MIN - m);
+    }
+
+    function openAuth(){
+      authScreen.classList.add('show');
+      authScreen.setAttribute('aria-hidden','false');
+      authPwEl.value = '';
+      authErrEl.textContent = '';
+      setTimeout(()=>authPwEl.focus(), 80);
+    }
+    function closeAuth(){
+      authScreen.classList.remove('show');
+      authScreen.setAttribute('aria-hidden','true');
+      appEl.style.display = 'block';
+    }
+
+    function submitAuth(){
+      authErrEl.textContent = '';
+      const lock = isLockedOut();
+      if(lock){
+        authErrEl.textContent = 'Compte verrouillé. Réessayez dans ' + lock + ' min.';
+        authPwEl.disabled = true;
+        return;
+      }
+
+      const entered = authPwEl.value;
+      if(!entered){
+        authErrEl.textContent = 'Mot de passe requis.';
+        return;
+      }
+
+      const ok = entered === getPw();
+      if(ok){
+        setSessionOk();
+        setAttempts(0);
+        localStorage.removeItem(STORE.LOCKOUT_KEY);
+        closeAuth();
+        initApp();
+      }else{
+        const next = getAttempts()+1;
+        setAttempts(next);
+        const remain = MAX_ATTEMPTS - next;
+        if(next >= MAX_ATTEMPTS){
+          localStorage.setItem(STORE.LOCKOUT_KEY, String(Date.now()));
+          authErrEl.textContent = 'Compte verrouillé pendant ' + LOCKOUT_MIN + ' minutes.';
+          authPwEl.disabled = true;
+        }else{
+          authErrEl.textContent = 'Mot de passe incorrect. Tentatives restantes: ' + remain;
+          authPwEl.value = '';
+          setTimeout(()=>authPwEl.focus(), 50);
+        }
+      }
+    }
+
+    // Toast
+    const toastEl = document.getElementById('toast');
+    let toastTimer = null;
+    function toast(msg, type){
+      toastEl.textContent = msg;
+      toastEl.className = 'toast show ' + (type === 'ok' ? 'ok' : type === 'err' ? 'err' : '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toastEl.className = 'toast', 2600);
+    }
+
+    // State
+    let catalog = null;
+    let lastLoadedJsonText = '';
+
+    let activeCategoryId = null;
+    let activeItemId = null;
+
+    let MEDIA_FILES = [];
+
+    // Elements
+    const el = {
+      categoriesList: document.getElementById('categoriesList'),
+      itemsList: document.getElementById('itemsList'),
+      catMeta: document.getElementById('catMeta'),
+      searchInput: document.getElementById('searchInput'),
+
+      itId: document.getElementById('it-id'),
+      itKind: document.getElementById('it-kind'),
+      itCategoryId: document.getElementById('it-categoryId'),
+      itPrice: document.getElementById('it-price'),
+      itTitle: document.getElementById('it-title'),
+      itDescription: document.getElementById('it-description'),
+      itImage: document.getElementById('it-image'),
+      itImagePreview: document.getElementById('it-image-preview'),
+      editorStatus: document.getElementById('editorStatus')
+    };
+
+    function setEditorStatus(html){
+      el.editorStatus.innerHTML = html;
+    }
+
+    // Media
+    async function loadMediaFiles(){
+      const resp = await fetch('/api/media/list?type=assets');
+      const data = await resp.json();
+      if(!resp.ok || !data.ok) throw new Error(data?.error || 'Failed to load media list');
+      MEDIA_FILES = data.files || [];
+    }
+
+    function renderImageSelect(){
+      el.itImage.innerHTML = '';
+      for(const f of MEDIA_FILES){
+        const opt = document.createElement('option');
+        opt.value = String(f);
+        opt.textContent = String(f);
+        el.itImage.appendChild(opt);
+      }
+    }
+
+    function updateImagePreview(){
+      const fn = el.itImage.value;
+      if(!fn){
+        el.itImagePreview.innerHTML = '<div class="ph">Aperçu<br/>—</div>';
+        return;
+      }
+      el.itImagePreview.innerHTML = '<img src="MEDIA/' + fn + '" alt="preview">';
+    }
+
+    // JSON validation (format)
+    function validateJsonText(text){
+      let parsed;
+      try{ parsed = JSON.parse(text); } catch(e){ return { ok:false, error:'JSON invalide : ' + e.message }; }
+      if(!parsed || typeof parsed !== 'object') return { ok:false, error:'Body doit être un objet JSON' };
+      if(!Array.isArray(parsed.items) || !Array.isArray(parsed.categories)) return { ok:false, error:'Structure requise : { items:[], categories:[] }' };
+      return { ok:true, parsed };
+    }
+
+    function validateCatalogObject(cat){
+      if(!cat || typeof cat !== 'object') return { ok:false, error:'Catalog invalide' };
+      if(!Array.isArray(cat.items) || !Array.isArray(cat.categories)) return { ok:false, error:'categories[] et items[] requis' };
+
+      const catIds = new Set(cat.categories.map(c=>c && c.id).filter(Boolean));
+      for(const it of cat.items){
+        if(!it || typeof it !== 'object') return { ok:false, error:'Item invalide' };
+        const id = String(it.id || '').trim();
+        const kind = String(it.kind || '').trim();
+        const categoryId = String(it.categoryId || '').trim();
+        const title = String(it.title || '').trim();
+        const num = Number(it.priceFcfaPerDay);
+
+        if(!id) return { ok:false, error:'Item sans id' };
+        if(!kind) return { ok:false, error:'Item '+id+' sans kind' };
+        if(!categoryId) return { ok:false, error:'Item '+id+' sans categoryId' };
+        if(!catIds.has(categoryId)) return { ok:false, error:'Item '+id+' categoryId non trouvée: '+categoryId };
+        if(!title) return { ok:false, error:'Item '+id+' sans title' };
+        if(!Number.isFinite(num)) return { ok:false, error:'Item '+id+' priceFcfaPerDay invalide' };
+      }
+      return { ok:true };
+    }
+
+    // Load/Save
+    async function loadCatalog(){
+      toast('Chargement…');
+      try{
+        const resp = await fetch('/api/admin/shop/catalog', { method:'GET' });
+        const data = await resp.json();
+        if(!resp.ok || !data.ok) throw new Error(data?.error || 'Erreur de chargement');
+        catalog = data.catalog;
+        lastLoadedJsonText = JSON.stringify(catalog, null, 2);
+
+        activeCategoryId = (catalog.categories && catalog.categories[0] && catalog.categories[0].id) || null;
+        activeItemId = null;
+
+        renderCategoriesList();
+        renderCategorySelects();
+        renderItemsList();
+
+        toast('Catalogue chargé', 'ok');
+      }catch(e){
+        toast('Erreur : ' + (e?.message || e), 'err');
+      }
+    }
+
+    async function saveCatalog(){
+      if(!catalog){
+        toast('Chargez d’abord le catalogue.', 'err');
+        return;
+      }
+      toast('Enregistrement…');
+      const payload = JSON.stringify(catalog);
+
+      const v = validateCatalogObject(catalog);
+      if(!v.ok){
+        toast(v.error, 'err');
+        return;
+      }
+
+      try{
+        const resp = await fetch('/api/admin/shop/catalog', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: payload
+        });
+        const data = await resp.json().catch(()=>null);
+        if(!resp.ok || !data || !data.ok){
+          throw new Error(data?.error || 'Erreur serveur');
+        }
+        lastLoadedJsonText = payload;
+        toast('Catalogue sauvegardé', 'ok');
+      }catch(e){
+        toast('Erreur : ' + (e?.message || e), 'err');
+      }
+    }
+
+    function resetEditor(){
+      if(!lastLoadedJsonText){
+        toast('Rien à réinitialiser.', 'err');
+        return;
+      }
+      const v = validateJsonText(lastLoadedJsonText);
+      if(!v.ok){
+        toast('Catalogue invalide stocké localement.', 'err');
+        return;
+      }
+      catalog = structuredClone(v.parsed);
+      activeCategoryId = (catalog.categories && catalog.categories[0] && catalog.categories[0].id) || null;
+      activeItemId = null;
+
+      renderCategoriesList();
+      renderCategorySelects();
+      renderItemsList();
+      clearItemEditor();
+      toast('Réinitialisé', 'ok');
+    }
+
+    // Categories UI (DOM nodes, no HTML escaping helpers)
+    function renderCategoriesList(){
+      el.categoriesList.innerHTML = '';
+      if(!catalog?.categories?.length){
+        const p = document.createElement('div');
+        p.className = 'small';
+        p.textContent = 'Aucune catégorie.';
+        el.categoriesList.appendChild(p);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      for(const c of catalog.categories){
+        const itemEl = document.createElement('div');
+        itemEl.className = 'item' + (c.id === activeCategoryId ? ' active' : '');
+        itemEl.onclick = () => setActiveCategory(c.id);
+
+        const left = document.createElement('div');
+
+        const b = document.createElement('b');
+        b.textContent = c.label || c.id;
+        left.appendChild(b);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+
+        const count = (catalog.items||[]).filter(it=>it.categoryId === c.id).length;
+
+        const idLine = document.createElement('div');
+        idLine.textContent = 'id: ' + c.id;
+
+        const articlesLine = document.createElement('div');
+        articlesLine.textContent = 'articles: ' + count;
+
+        const routeLine = document.createElement('div');
+        routeLine.textContent = 'route: ' + (c.route || '');
+
+        meta.appendChild(idLine);
+        meta.appendChild(articlesLine);
+        meta.appendChild(routeLine);
+        left.appendChild(meta);
+
+        const right = document.createElement('div');
+        right.style.textAlign = 'right';
+        right.style.color = 'rgba(185,169,169,.7)';
+        right.style.fontSize = '.7rem';
+        right.textContent = String(count);
+
+        itemEl.appendChild(left);
+        itemEl.appendChild(right);
+
+        frag.appendChild(itemEl);
+      }
+      el.categoriesList.appendChild(frag);
+    }
+
+    function setActiveCategory(id){
+      activeCategoryId = id;
+      activeItemId = null;
+      renderCategoriesList();
+      renderItemsList();
+      clearItemEditor();
+      el.catMeta.textContent = 'Catégorie active : ' + id;
+    }
+
+    function renderCategorySelects(){
+      el.itCategoryId.innerHTML = '';
+      for(const c of (catalog.categories || [])){
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.label || c.id;
+        if(c.id === activeCategoryId) opt.selected = true;
+        el.itCategoryId.appendChild(opt);
+      }
+      if(activeCategoryId && !el.itCategoryId.value){
+        el.itCategoryId.value = activeCategoryId;
+      }
+    }
+
+    function addCategory(){
+      if(!catalog) return;
+      const newId = 'cat-' + Math.random().toString(16).slice(2,8);
+      catalog.categories.push({ id:newId, label:'Nouvelle catégorie', route:'' });
+      setActiveCategory(newId);
+      renderCategorySelects();
+      renderItemsList();
+      toast('Catégorie ajoutée', 'ok');
+    }
+
+    function deleteActiveCategory(){
+      if(!catalog || !activeCategoryId) return;
+      const ok = confirm('Supprimer la catégorie '+activeCategoryId+' ? Les articles seront aussi supprimés.');
+      if(!ok) return;
+
+      catalog.categories = catalog.categories.filter(c=>c.id !== activeCategoryId);
+      catalog.items = catalog.items.filter(it=>it.categoryId !== activeCategoryId);
+
+      activeCategoryId = (catalog.categories && catalog.categories[0] && catalog.categories[0].id) || null;
+      activeItemId = null;
+
+      renderCategoriesList();
+      renderCategorySelects();
+      renderItemsList();
+      clearItemEditor();
+      toast('Catégorie supprimée', 'ok');
+    }
+
+    // Items UI
+    function renderItemsList(){
+      el.itemsList.innerHTML = '';
+      if(!catalog?.items || !catalog?.categories) return;
+
+      const q = String(el.searchInput.value || '').trim().toLowerCase();
+
+      const catItems = catalog.items
+        .filter(it=>it.categoryId === activeCategoryId)
+        .filter(it=>{
+          if(!q) return true;
+          const t = String(it.title || '').toLowerCase();
+          const d = String(it.description || '').toLowerCase();
+          const id = String(it.id || '').toLowerCase();
+          return t.includes(q) || d.includes(q) || id.includes(q);
+        });
+
+      if(!catItems.length){
+        const d = document.createElement('div');
+        d.className = 'small';
+        d.textContent = 'Aucun article pour cette catégorie (ou filtre).';
+        el.itemsList.appendChild(d);
+        return;
+      }
+
+      for(const it of catItems){
+        const itemEl = document.createElement('div');
+        itemEl.className = 'item' + (it.id === activeItemId ? ' active' : '');
+        itemEl.onclick = () => setActiveItem(it.id);
+
+        const left = document.createElement('div');
+
+        const b = document.createElement('b');
+        b.textContent = it.title || it.id;
+        left.appendChild(b);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+
+        const kindLabel = it.kind === 'technician' ? 'Technicien' : 'Matériel';
+
+        const idLine = document.createElement('div');
+        idLine.textContent = 'id: ' + it.id;
+
+        const typeLine = document.createElement('div');
+        typeLine.textContent = 'type: ' + kindLabel;
+
+        const priceLine = document.createElement('div');
+        priceLine.textContent = 'prix: ' + it.priceFcfaPerDay + ' FCFA/jour';
+
+        meta.appendChild(idLine);
+        meta.appendChild(typeLine);
+        meta.appendChild(priceLine);
+
+        left.appendChild(meta);
+
+        const right = document.createElement('div');
+        right.style.textAlign = 'right';
+        right.style.color = 'rgba(185,169,169,.7)';
+        right.style.fontSize = '.7rem';
+        right.textContent = it.kind === 'technician' ? 'T' : 'M';
+
+        itemEl.appendChild(left);
+        itemEl.appendChild(right);
+
+        el.itemsList.appendChild(itemEl);
+      }
+    }
+
+    function setActiveItem(id){
+      activeItemId = id;
+      renderItemsList();
+      loadItemIntoEditor(id);
+    }
+
+    function loadItemIntoEditor(id){
+      const it = catalog.items.find(x=>x.id === id);
+      if(!it) return;
+
+      el.itId.value = it.id || '';
+      el.itKind.value = it.kind || 'material';
+      el.itCategoryId.value = it.categoryId || (activeCategoryId || '');
+      el.itPrice.value = (typeof it.priceFcfaPerDay === 'number' ? it.priceFcfaPerDay : Number(it.priceFcfaPerDay || 0));
+      el.itTitle.value = it.title || '';
+      el.itDescription.value = it.description || '';
+
+      const imageName = typeof it.image === 'string' ? it.image : '';
+      if(imageName){
+        if(!MEDIA_FILES.includes(imageName)){
+          MEDIA_FILES.push(imageName);
+          renderImageSelect();
+        }
+        el.itImage.value = imageName;
+      }else{
+        el.itImage.value = MEDIA_FILES[0] || '';
+      }
+      updateImagePreview();
+      setEditorStatus('');
+    }
+
+    function clearItemEditor(){
+      activeItemId = null;
+      el.itId.value = '';
+      el.itKind.value = 'material';
+      el.itCategoryId.value = activeCategoryId || '';
+      el.itPrice.value = '';
+      el.itTitle.value = '';
+      el.itDescription.value = '';
+      el.itImage.value = MEDIA_FILES[0] || '';
+      updateImagePreview();
+      setEditorStatus('');
+    }
+
+    function addItem(){
+      if(!catalog || !activeCategoryId){
+        toast('Choisissez une catégorie d’abord.', 'err');
+        return;
+      }
+      const newId = 'item-' + Math.random().toString(16).slice(2,8);
+      const it = {
+        id: newId,
+        kind: 'material',
+        categoryId: activeCategoryId,
+        title: 'Nouvel article',
+        description: '',
+        priceFcfaPerDay: 0,
+        image: MEDIA_FILES[0] || ''
+      };
+      catalog.items.push(it);
+      activeItemId = newId;
+
+      renderItemsList();
+      renderCategorySelects();
+      loadItemIntoEditor(newId);
+      toast('Article ajouté', 'ok');
+    }
+
+    function deleteActiveItem(){
+      if(!catalog || !activeItemId) return;
+      const ok = confirm('Supprimer l’article '+activeItemId+' ?');
+      if(!ok) return;
+      catalog.items = catalog.items.filter(it=>it.id !== activeItemId);
+      activeItemId = null;
+
+      renderItemsList();
+      clearItemEditor();
+      toast('Article supprimé', 'ok');
+    }
+
+    function collectEditorToItem(){
+      const id = String(el.itId.value || '').trim();
+      const kind = String(el.itKind.value || '').trim();
+      const categoryId = String(el.itCategoryId.value || '').trim();
+      const price = Number(el.itPrice.value);
+      const title = String(el.itTitle.value || '').trim();
+      const description = String(el.itDescription.value || '');
+      const image = String(el.itImage.value || '').trim();
+
+      return { id, kind, categoryId, title, priceFcfaPerDay: price, description, image };
+    }
+
+    function upsertActiveItem(){
+      if(!catalog) return;
+      const it = collectEditorToItem();
+
+      if(!it.id){ toast('ID requis.', 'err'); return; }
+      if(!it.kind || !['material','technician'].includes(it.kind)){ toast('Type invalide.', 'err'); return; }
+      if(!it.categoryId){ toast('categoryId requis.', 'err'); return; }
+      if(!it.title){ toast('Titre requis.', 'err'); return; }
+      if(!Number.isFinite(it.priceFcfaPerDay)){ toast('Prix FCFA/jour invalide.', 'err'); return; }
+      if(!catalog.categories.some(c=>c.id === it.categoryId)){ toast('Catégorie introuvable: '+it.categoryId, 'err'); return; }
+
+      if(it.id !== activeItemId){
+        const existing = catalog.items.find(x=>x.id === it.id);
+        if(existing){ toast('Cet ID existe déjà: '+it.id, 'err'); return; }
+      }
+
+      const oldId = activeItemId;
+      const idx = catalog.items.findIndex(x=>x.id === oldId);
+
+      if(idx >= 0){
+        catalog.items[idx] = it;
+        activeItemId = it.id;
+      }else{
+        catalog.items.push(it);
+        activeItemId = it.id;
+      }
+
+      renderCategoriesList();
+      renderCategorySelects();
+      renderItemsList();
+      setActiveCategory(activeItemId ? it.categoryId : activeCategoryId);
+      updateImagePreview();
+      setEditorStatus('<span style="color:rgba(45,106,45,.9);font-weight:700;">✓ Article mis à jour</span>');
+      toast('✓ Article mis à jour', 'ok');
+    }
+
+    function validateAndToast(){
+      if(!catalog){ toast('Chargez d’abord le catalogue.', 'err'); return; }
+      const v = validateCatalogObject(catalog);
+      if(v.ok) toast('✓ Catalogue valide ✅', 'ok');
+      else toast('Erreur: ' + v.error, 'err');
+    }
+
+    // Init
+    async function initApp(){
+      appEl.style.display = 'block';
+      try{
+        await loadMediaFiles();
+        renderImageSelect();
+        updateImagePreview();
+        el.itImage.addEventListener('change', updateImagePreview);
+        await loadCatalog();
+      }catch(e){
+        toast('Erreur init: ' + (e?.message || e), 'err');
+      }
+    }
+
+    window.loadCatalog = loadCatalog;
+    window.saveCatalog = saveCatalog;
+    window.resetEditor = resetEditor;
+
+    window.addCategory = addCategory;
+    window.deleteActiveCategory = deleteActiveCategory;
+
+    window.setActiveItem = setActiveItem;
+    window.addItem = addItem;
+    window.deleteActiveItem = deleteActiveItem;
+
+    window.upsertActiveItem = upsertActiveItem;
+    window.clearItemEditor = clearItemEditor;
+    window.validateAndToast = validateAndToast;
+
+    window.renderItemsList = renderItemsList;
+
+    window.submitAuth = submitAuth;
+    window.loadCatalog = loadCatalog;
+
+    // start
+    (function start(){
+      if(isSessionOk()){
+        appEl.style.display = 'block';
+        initApp();
+      }else{
+        openAuth();
+        appEl.style.display = 'none';
+      }
+    })();
+  </script>
+</body>
+</html>

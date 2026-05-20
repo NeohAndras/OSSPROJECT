@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSPROGROUP — Actualités</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--text:#111111;--accent:#E52421;--light-gray:#F1F1F1;--dark-bg:#111111;--dark-text:#ffffff;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;font-weight:400;overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(255,255,255,0.98);border-bottom:1px solid #eaeaea;transition:all .3s ease;}
+.nav-logo{font-family:"Bebas Neue",sans-serif;font-size:2rem;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:.8rem;letter-spacing:.05em;}
+.nav-logo img{height:44px;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center;}
+.nav-links a{color:var(--text);text-decoration:none;font-size:.9rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;transition:color .3s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-cta{background:var(--accent);color:#fff!important;padding:.8rem 1.8rem;border-radius:2px;}
+.nav-cta:hover{background:#c21e1b!important;}
+.dropdown{position:relative;}
+.dropdown-content{display:none;position:absolute;top:100%;left:0;background:#fff;min-width:240px;box-shadow:0 8px 16px rgba(0,0,0,0.08);flex-direction:column;padding:1rem 0;border-top:2px solid var(--accent);}
+.dropdown:hover .dropdown-content{display:flex;}
+.dropdown-content a{padding:.8rem 1.5rem;color:var(--text)!important;font-size:.85rem;text-transform:none;letter-spacing:.05em;}
+.dropdown-content a:hover{background:var(--light-gray);color:var(--accent)!important;padding-left:1.8rem;}
+@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{gap:1.2rem;}}
+@media(max-width:640px){nav{padding:1rem 1.2rem;}.nav-links{display:none;}}
+main{padding-top:92px;}
+.hero{padding:10rem 4rem 4rem;text-align:center;max-width:1100px;margin:0 auto;}
+.hero .h-tag{font-size:.8rem;letter-spacing:.32em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1.5rem;}
+.hero .h-tag::before,.hero .h-tag::after{content:"";width:36px;height:1px;background:var(--accent);}
+.hero h1{font-family:"Bebas Neue",sans-serif;font-size:clamp(3.2rem,6vw,6rem);line-height:.9;letter-spacing:.02em;margin-bottom:1.5rem;}
+.hero h1 em{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--accent);font-size:.7em;display:block;line-height:1.1;}
+.hero p{font-size:1.05rem;line-height:1.8;color:#555;max-width:760px;margin:0 auto;}
+#content{padding:0 4rem 6rem;max-width:1200px;margin:0 auto;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.grid{grid-template-columns:1fr;padding:0 1.2rem;}}
+.post{
+  border:1px solid #eee;border-radius:12px;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,0.04);
+  overflow:hidden;transition:transform .25s, border-color .25s, box-shadow .25s;
+}
+.post:hover{transform:translateY(-6px);border-color:rgba(229,36,33,0.35);box-shadow:0 20px 60px rgba(0,0,0,0.07);}
+.post-img{height:180px;background:#111;background-size:cover;background-position:center;position:relative;}
+.post-img::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.1) 55%,transparent 100%);}
+.post-body{padding:1.2rem 1.2rem 1.25rem;}
+.post-title{font-family:"Bebas Neue",sans-serif;font-size:1.7rem;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.6rem;}
+.post-meta{color:#666;font-size:.95rem;margin-bottom:.8rem;line-height:1.5;}
+.post-excerpt{color:#555;line-height:1.9;font-size:1.02rem;margin-bottom:1rem;}
+.post a{
+  display:inline-flex;align-items:center;gap:.6rem;
+  text-decoration:none;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--accent);
+}
+.post a:hover{text-decoration:underline;}
+
+footer{background:var(--dark-bg);color:#fff;padding:6rem 4rem 0;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5rem;margin-bottom:5rem;max-width:1400px;margin-left:auto;margin-right:auto;}
+.footer-logo{font-family:"Bebas Neue",sans-serif;font-size:2.5rem;color:#fff;text-decoration:none;display:inline-block;margin-bottom:1.5rem;letter-spacing:.05em;}
+.footer-logo span{color:var(--accent);}
+.footer-logo img{display:block;max-width:180px;max-height:44px;height:auto;width:auto;object-fit:contain;}
+.footer-desc{color:#888;line-height:1.8;font-size:.95rem;max-width:300px;margin-bottom:2rem;}
+.social-icons{display:flex;gap:1rem;}
+.social-icon{width:40px;height:40px;border:1px solid #444;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;transition:all .3s;}
+.social-icon:hover{border-color:var(--accent);background:var(--accent);}
+.footer-col h4{font-family:"Bebas Neue",sans-serif;font-size:1.5rem;margin-bottom:2rem;color:#fff;letter-spacing:.05em;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:1rem;}
+.footer-col ul li a{color:#888;text-decoration:none;transition:color .3s;font-size:.95rem;}
+.footer-col ul li a:hover{color:var(--accent);}
+.footer-bottom{background:#A58F7D;margin:0 -4rem;padding:1.5rem 4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.85rem;color:#fff;font-weight:500;margin-top:2.5rem;}
+.footer-legal-links{display:flex;gap:2rem;}
+.footer-legal-links a{color:#fff;text-decoration:none;}
+.footer-legal-links a:hover{text-decoration:underline;}
+@media(max-width:900px){
+  .footer-top{grid-template-columns:1fr 1fr;gap:3rem;}
+  .footer-bottom{flex-direction:column;text-align:center;margin:0 -2rem;padding:1.5rem 2rem;}
+  .footer-legal-links{justify-content:center;}
+}
+#main-nav > a{display:flex;align-items:center;gap:0.8rem;}
+</style>\n</head>
+<body>
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo">
+  </a>
+  <ul class="nav-links">
+    <li class="dropdown">
+      <a href="solutions.html">Solutions Techniques ▾</a>
+      <div class="dropdown-content">
+        <a href="lumiere.html">Lumière</a>
+        <a href="distribution-electrique.html">Distribution Électrique</a>
+        <a href="sonorisation.html">Sonorisation</a>
+        <a href="scene-mobile.html">Scène Mobile</a>
+        <a href="video.html">Vidéo</a>
+        <a href="integration-led.html">Intégration LED</a>
+        <a href="captation.html">Captation</a>
+        <a href="logistique.html">Logistique</a>
+      </div>
+    </li>
+    <li><a href="projets.html">Nos Projets</a></li>
+    <li class="dropdown">
+      <a href="agence.html">L'Agence ▾</a>
+      <div class="dropdown-content">
+        <a href="a-propos.html">À propos de nous</a>
+        <a href="carrieres.html">Carrières</a>
+        <a href="actualites.html">Actualités</a>
+      </div>
+    </li>
+    <li><a href="catalog.html" class="nav-boutique">Boutique</a></li>
+    <li><a href="contact.html" class="nav-cta">S'inscrire / Contact</a></li>
+    <li><a href="#" class="lang-switch" aria-label="Langue">FR</a></li>
+  </ul>
+</nav>
+
+<main>
+  <section class="hero">
+    <div class="h-tag">L'Agence · Actualités</div>
+    <h1>À la une <em>OSSPROGROUP</em></h1>
+    <p>
+      Suivez nos mises à jour : nouveautés, retours d’expérience et focus sur nos méthodes de production.
+    </p>
+  </section>
+
+  <section id="content">
+    <div class="grid">
+      <article class="post">
+        <div class="post-img" style="background-image:url('MEDIA/Briefing.avif');"></div>
+        <div class="post-body">
+          <div class="post-title">Méthode Technique</div>
+          <div class="post-meta">Mise à jour · 2026</div>
+          <div class="post-excerpt">Comment nous structurons l’étude, la coordination et le contrôle qualité sur site.</div>
+          <a href="#">Lire →</a>
+        </div>
+      </article>
+
+      <article class="post">
+        <div class="post-img" style="background-image:url('MEDIA/concert.avif');"></div>
+        <div class="post-body">
+          <div class="post-title">Studio & Régie</div>
+          <div class="post-meta">Focus · 2026</div>
+          <div class="post-excerpt">Régies vidéo, synchronisation et qualité d’image : les points clés.</div>
+          <a href="#">Lire →</a>
+        </div>
+      </article>
+
+      <article class="post">
+        <div class="post-img" style="background-image:url('MEDIA/Event 1.avif');"></div>
+        <div class="post-body">
+          <div class="post-title">Production 360°</div>
+          <div class="post-meta">Retour d’expérience · 2026</div>
+          <div class="post-excerpt">Transport, montage, tests : comment rendre le show fluide de bout en bout.</div>
+          <a href="#">Lire →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="index.html" class="footer-logo"><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo" style="height:44px;width:auto;display:block;">
+      </a>
+      <p class="footer-desc">L'excellence évènementielle au cœur de l'Afrique. Nous livrons des productions maîtrisées.</p>
+      <div class="social-icons">
+        <a href="#" class="social-icon">in</a>
+        <a href="#" class="social-icon">ig</a>
+        <a href="#" class="social-icon">fb</a>
+        <a href="#" class="social-icon">yt</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>SOLUTIONS</h4>
+      <ul>
+        <li><a href="lumiere.html">Lumière</a></li>
+        <li><a href="sonorisation.html">Sonorisation</a></li>
+        <li><a href="video.html">Vidéo</a></li>
+        <li><a href="catalog.html">Boutique</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>L'AGENCE</h4>
+      <ul>
+        <li><a href="a-propos.html">À propos de nous</a></li>
+        <li><a href="carrieres.html">Carrières</a></li>
+        <li><a href="actualites.html">Actualités</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>CONTACT</h4>
+      <ul>
+        <li><a href="contact.html">Demander un devis</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 OSSPROGROUP. TOUS DROITS RÉSERVÉS.</div>
+    <div class="footer-legal-links">
+      <a href="#">MENTIONS LÉGALES</a>
+      <a href="#">POLITIQUE DE CONFIDENTIALITÉ</a>
+      <a href="#">GESTION DES COOKIES</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

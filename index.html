@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSPROGROUP Gabon — Agence Évènementielle</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--deep:#0d0d0d;--surf:#141414;--card:#1a1a1a;
+  --red:#8b1a1a;--rl:#b22222;--rd:rgba(139,26,26,.18);
+  --w:#f0eaea;--mu:#6e5a5a;--tx:#c4b8b8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:"DM Sans",sans-serif;font-weight:300;overflow-x:hidden;cursor:auto;}
+.cursor{position:fixed;width:12px;height:12px;background:var(--red);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s;mix-blend-mode:difference;}
+.ring{position:fixed;width:36px;height:36px;border:1px solid var(--red);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .25s;opacity:.6;}
+@media (pointer:fine){
+  body{cursor:none;}
+}
+@media (pointer:coarse), (prefers-reduced-motion: reduce){
+  .cursor,.ring{display:none;}
+}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 4rem;background:linear-gradient(to bottom,rgba(8,8,8,.95),transparent);backdrop-filter:blur(4px);}
+.nav-logo{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;letter-spacing:.12em;color:var(--w);text-decoration:none;display:flex;align-items:center;gap:.7rem;}
+.nav-logo img{height:44px;width:auto;object-fit:contain;display:block;}
+#logo-nav{height:44px;width:auto;object-fit:contain;display:block;}
+.nav-logo .nav-logo-text{display:none;}
+.nav-logo span{color:var(--red);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--tx);text-decoration:none;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;transition:color .3s;cursor:none;}
+.nav-links a:hover{color:var(--red);}
+.nav-cta{border:1px solid var(--red)!important;color:var(--red)!important;padding:.5rem 1.4rem;}
+.nav-cta:hover{background:var(--red)!important;color:var(--w)!important;}
+
+/* DROPDOWN NAV */
+.dropdown{position:relative;}
+.dropdown-content{
+  display:none;
+  position:absolute;
+  top:100%;
+  left:0;
+  background:rgba(8,8,8,.98);
+  min-width:240px;
+  border:1px solid rgba(139,26,26,.35);
+  border-radius:14px;
+  padding:0.75rem 0;
+  box-shadow:0 18px 60px rgba(0,0,0,.6);
+  flex-direction:column;
+  z-index:1000;
+}
+.dropdown:hover .dropdown-content{display:flex;}
+.dropdown-content a{
+  display:block;
+  padding:0.85rem 1.15rem;
+  color:var(--w);
+  text-decoration:none;
+  font-size:.85rem;
+  letter-spacing:.05em;
+  text-transform:none;
+  transition:background .2s,color .2s;
+  cursor:auto;
+}
+.dropdown-content a:hover{
+  background:rgba(139,26,26,.18);
+  color:var(--red);
+}
+
+/* MOBILE NAV */
+#nav-toggle{
+  display:none;
+  margin-left:auto;
+  background:transparent;
+  border:1px solid rgba(240,234,234,.12);
+  color:var(--w);
+  width:46px;height:46px;
+  border-radius:10px;
+  font-size:1.05rem;
+  cursor:pointer;
+}
+#nav-toggle:focus{outline:3px solid rgba(139,26,26,.25);outline-offset:2px;}
+
+@media(max-width:640px){
+  #nav-toggle{display:inline-flex;align-items:center;justify-content:center;}
+  .nav-links{
+    display:none;
+    position:fixed;
+    top:70px;
+    left:12px;
+    right:12px;
+    background:rgba(8,8,8,.98);
+    border:1px solid rgba(139,26,26,.25);
+    border-radius:14px;
+    padding:14px;
+    flex-direction:column;
+    gap:10px;
+    z-index:999;
+    box-shadow:0 18px 60px rgba(0,0,0,.6);
+  }
+  .nav-links.open{display:flex;}
+  .nav-links a{cursor:auto;padding:.75rem .9rem;border:1px solid rgba(139,26,26,.12);border-radius:10px;}
+  .nav-links a:hover{background:rgba(139,26,26,.12);text-decoration:none;}
+}
+
+ /* HERO */
+#hero{position:relative;height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 4rem 5rem;overflow:hidden;}
+.hero-slider{position:absolute;inset:0;z-index:0;}
+.slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;}
+.slide.active{opacity:1;}
+.hero-ov{position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(8,8,8,.97) 0%,rgba(8,8,8,.45) 50%,rgba(8,8,8,.25) 100%);}
+.hero-ov2{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 60% 50% at 20% 70%,rgba(139,26,26,.15) 0%,transparent 70%);}
+.hero-lines{position:absolute;inset:0;z-index:2;background-image:repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(139,26,26,.03) 80px),repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(139,26,26,.025) 80px);pointer-events:none;}
+.s-dots{position:absolute;bottom:2rem;left:4rem;display:flex;gap:.6rem;z-index:10;}
+.s-dot{width:28px;height:2px;background:rgba(240,234,234,.2);border:none;padding:0;cursor:pointer;transition:background .4s,width .4s;}
+.s-dot.active{width:52px;background:var(--red);}
+.s-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(8,8,8,.4);border:1px solid rgba(139,26,26,.3);color:rgba(240,234,234,.6);width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:background .3s,border-color .3s,color .3s;}
+.s-arrow:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.s-arrow.prev{left:2rem;}.s-arrow.next{right:2rem;}
+.hero-content{position:relative;z-index:5;display:flex;flex-direction:column;}
+.h-tag{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--red);margin-bottom:1.4rem;display:flex;align-items:center;gap:1rem;animation:fadeUp .8s ease .3s both;}
+.h-tag::before{content:"";width:36px;height:1px;background:var(--red);}
+.h-title{font-family:"Bebas Neue",sans-serif;font-size:clamp(4.5rem,10vw,9.5rem);line-height:.92;color:var(--w);letter-spacing:.02em;animation:fadeUp .9s ease .5s both;}
+.h-title em{font-family:"Cormorant Garamond",serif;font-style:italic;color:var(--red);font-size:.68em;letter-spacing:.06em;display:block;line-height:1.1;}
+.h-sub{max-width:500px;font-size:.93rem;line-height:1.85;color:rgba(240,234,234,.65);margin-top:1.8rem;margin-bottom:2.4rem;animation:fadeUp .9s ease .7s both;}
+.h-btns{display:flex;gap:1.4rem;align-items:center;animation:fadeUp .9s ease .9s both;}
+.btn-p{background:var(--red);color:var(--w);padding:1rem 2.5rem;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;font-weight:500;transition:background .3s,transform .2s;cursor:none;}
+.btn-p:hover{background:var(--rl);transform:translateY(-2px);}
+.btn-g{color:var(--w);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:.6rem;transition:color .3s;cursor:none;}
+.btn-g::after{content:"→";transition:transform .3s;}
+.btn-g:hover{color:var(--red);}
+.btn-g:hover::after{transform:translateX(4px);}
+.h-scroll{position:absolute;bottom:2rem;right:4rem;writing-mode:vertical-rl;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mu);display:flex;align-items:center;gap:1rem;animation:fadeUp 1s ease 1.2s both;z-index:10;}
+.h-scroll::after{content:"";width:1px;height:60px;background:linear-gradient(to bottom,var(--red),transparent);animation:sline 2s ease-in-out infinite;}
+@keyframes sline{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* MARQUEE */
+.marquee-wrap{overflow:hidden;border-top:1px solid rgba(139,26,26,.2);border-bottom:1px solid rgba(139,26,26,.2);padding:1.2rem 0;background:var(--deep);}
+.marquee-track{display:flex;gap:3rem;animation:mq 22s linear infinite;white-space:nowrap;}
+.mq-item{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:.15em;color:var(--mu);display:flex;align-items:center;gap:3rem;}
+.mq-dot{color:var(--red);}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+section{position:relative;z-index:1;}
+.sec-lbl{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+.sec-lbl::before{content:"";width:30px;height:1px;background:var(--red);}
+
+/* MAGNUM TEMPLATE SYSTEM (whole-site harmonization, keep your IDs) */
+section[id]{scroll-margin-top:96px;}
+#about,#services,#portfolio,#process,#gallery,#testimonials,#clients,#contact{border-top:1px solid rgba(139,26,26,.14);}
+.tech-acc,.port-item,.proc-steps,.testi-card,.gal-strip,#contact .contact-left,#contact .cform{border-radius:18px;}
+
+.gal-strip{border:1px solid rgba(139,26,26,.14);padding:2px;background:rgba(139,26,26,.06);border-radius:18px;}
+.gal-thumb{border-radius:14px;}
+.client-card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:auto;
+  padding:1rem 1.2rem;
+  border:1px solid rgba(139,26,26,.14);
+  border-radius:16px;
+  background:rgba(8,8,8,.22);
+  opacity:.65;
+  transition:opacity .4s,transform .25s,border-color .3s;
+}
+.client-card:hover{opacity:1;transform:translateY(-2px);border-color:rgba(139,26,26,.35);}
+.client-card img{filter:grayscale(100%) contrast(1.05) brightness(.95);transition:filter .35s,transform .35s;}
+.client-card:hover img{filter:grayscale(0%) contrast(1.05) brightness(1);transform:scale(1.03);}
+
+/* MORE MAGNUM TEMPLATE “WHOLE SITE” HARMONIZATION (keep all IDs) */
+#portfolio .port-grid{border-radius:18px;overflow:hidden;}
+#portfolio .port-item{box-shadow:0 20px 70px rgba(0,0,0,.42);}
+#process .step{border-radius:16px;}
+#process .step-circle{box-shadow:0 14px 40px rgba(139,26,26,.10);}
+#testimonials .testi-card{box-shadow:0 22px 70px rgba(0,0,0,.38);}
+#testimonials .testi-q{text-shadow:0 18px 50px rgba(139,26,26,.10);}
+#gallery .gal-strip{box-shadow:0 18px 60px rgba(0,0,0,.35);}
+#gallery .gal-thumb{border-radius:14px;border:1px solid rgba(139,26,26,.14);}
+#contact .cform,#contact .contact-left{box-shadow:0 25px 90px rgba(0,0,0,.40);}
+footer{box-shadow:0 -30px 100px rgba(0,0,0,.45);}
+
+#contact .cform input,#contact .cform select,#contact .cform textarea{cursor:auto;}
+/* ABOUT */
+#about{padding:10rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
+.about-visual{position:relative;height:580px;}
+.about-frame{position:absolute;inset:0;border:1px solid rgba(139,26,26,.25);overflow:hidden;}
+.about-photo{width:100%;height:100%;object-fit:cover;filter:brightness(.62) saturate(.95) contrast(1.04);}
+.about-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,26,26,.14) 0%,rgba(8,8,8,.55) 100%);opacity:.98;}
+.about-num{position:absolute;font-family:"Bebas Neue",sans-serif;font-size:12rem;color:rgba(139,26,26,.10);line-height:1;right:-1rem;bottom:-1rem;pointer-events:none;letter-spacing:.01em;}
+.stat-grid{position:absolute;bottom:2rem;left:2rem;right:2rem;display:grid;grid-template-columns:1fr 1fr;gap:10px;background:transparent;}
+.stat-box{background:rgba(8,8,8,.45);border:1px solid rgba(139,26,26,.35);backdrop-filter:blur(10px);padding:1.2rem;}
+.stat-box .num{font-family:"Bebas Neue",sans-serif;font-size:2.75rem;color:var(--red);line-height:1;}
+.stat-box .lbl{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(196,184,184,.78);margin-top:.35rem;}
+.about-content h2{font-family:"Cormorant Garamond",serif;font-size:clamp(2.5rem,4vw,3.8rem);font-weight:300;line-height:1.2;color:var(--w);margin-bottom:2rem;}
+.about-content h2 strong{font-weight:600;color:var(--red);}
+.about-content p{font-size:.95rem;line-height:1.9;color:var(--tx);margin-bottom:1.5rem;}
+.vals{margin-top:2.5rem;display:flex;flex-direction:column;gap:1rem;}
+.val-item{display:flex;align-items:center;gap:1rem;font-size:.85rem;letter-spacing:.08em;color:var(--tx);}
+.val-item::before{content:"";width:6px;height:6px;background:var(--red);flex-shrink:0;}
+
+/* SERVICES (Magnum-style accordion: “Solutions Techniques”) */
+#services{padding:10rem 4rem;background:var(--deep);}
+.svc-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5rem;gap:2rem;}
+.svc-header h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(3rem,6vw,6rem);color:var(--w);line-height:.95;letter-spacing:.02em;}
+.svc-header p{max-width:420px;font-size:.9rem;line-height:1.8;color:var(--mu);}
+
+.tech-wrap{display:grid;grid-template-columns:1.05fr 1.45fr;gap:3rem;align-items:start;}
+.tech-kicker{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+.tech-kicker::before{content:"";width:30px;height:1px;background:var(--red);}
+.tech-intro{color:var(--mu);line-height:1.9;font-size:.95rem;}
+
+.tech-acc{
+  background:rgba(139,26,26,.1);
+  border:1px solid rgba(139,26,26,.22);
+  border-radius:18px;
+  overflow:hidden;
+}
+.tech-item{background:var(--surf);border-top:1px solid rgba(139,26,26,.12);}
+.tech-item:first-child{border-top:none;}
+
+.tech-btn{
+  width:100%;
+  background:transparent;
+  border:none;
+  color:var(--w);
+  display:flex;
+  align-items:center;
+  gap:1.2rem;
+  padding:1.35rem 1.6rem;
+  cursor:pointer;
+  text-align:left;
+}
+.tech-item.open .tech-btn{background:rgba(139,26,26,.12);}
+
+.tech-img{
+  width:64px;height:64px;
+  border:1px solid rgba(139,26,26,.25);
+  border-radius:14px;
+  overflow:hidden;
+  flex-shrink:0;
+  background:rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:center;
+}
+.tech-img img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:brightness(.72) saturate(.85);
+  transition:filter .35s,transform .35s;
+}
+.tech-item.open .tech-img img{filter:brightness(.92) saturate(1);transform:scale(1.03);}
+
+.tech-title{
+  font-family:"Bebas Neue",sans-serif;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  font-size:1.15rem;
+}
+.tech-meta{
+  margin-left:auto;
+  display:flex;align-items:center;gap:1rem;
+  color:rgba(196,184,184,.75);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.tech-chevron{
+  width:34px;height:34px;border-radius:12px;
+  border:1px solid rgba(139,26,26,.22);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--red);
+  background:rgba(8,8,8,.35);
+  transition:transform .25s ease;
+}
+.tech-item.open .tech-chevron{transform:rotate(45deg);}
+
+.tech-panel{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .35s ease;
+  background:rgba(8,8,8,.2);
+}
+.tech-item.open .tech-panel{max-height:320px;}
+.tech-panel p{
+  padding:0 1.6rem 1.55rem 1.6rem;
+  color:var(--mu);
+  line-height:1.8;
+  font-size:.92rem;
+}
+.tech-tags{
+  display:flex;flex-wrap:wrap;gap:.5rem;
+  padding:0 1.6rem 1.55rem 1.6rem;
+  margin-top:-.6rem;
+}
+.tech-tag{
+  font-size:.65rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  padding:.3rem .8rem;
+  border:1px solid rgba(139,26,26,.25);
+  color:var(--mu);
+}
+.tech-item.open .tech-tag{border-color:rgba(139,26,26,.55);color:var(--red);}
+
+@media(max-width:1024px){
+  .tech-wrap{grid-template-columns:1fr;gap:1.5rem;}
+}
+@media(max-width:640px){
+  #services{padding-left:1.5rem;padding-right:1.5rem;}
+  .svc-header{flex-direction:column;align-items:flex-start;margin-bottom:3rem;}
+  .tech-btn{padding:1.05rem 1.2rem;gap:1rem;}
+  .tech-panel p,.tech-tags{padding-left:1.2rem;padding-right:1.2rem;}
+}
+
+/* PORTFOLIO */
+#portfolio{padding:10rem 4rem;}
+.port-header{margin-bottom:4rem;}
+.port-header h2{font-family:"Cormorant Garamond",serif;font-size:clamp(2.5rem,4vw,4rem);font-weight:300;color:var(--w);line-height:1.1;}
+.port-header h2 em{font-style:italic;color:var(--red);}
+.port-grid{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:340px 340px;gap:10px;background:transparent;}
+.port-item{position:relative;overflow:hidden;cursor:none;border:1px solid rgba(139,26,26,.18);border-radius:18px;transition:transform .25s ease,border-color .3s ease,box-shadow .3s ease;}
+.port-item:first-child{grid-row:1/3;}
+.port-bg{position:absolute;inset:0;background-size:cover!important;background-position:center!important;transition:transform .7s ease;}
+.port-item:hover{border-color:rgba(139,26,26,.45);transform:translateY(-6px);}
+.port-item:hover .port-bg{transform:scale(1.06);}
+.port-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,.92) 0%,rgba(8,8,8,.22) 70%);display:flex;flex-direction:column;justify-content:flex-end;padding:2.25rem;background-color:rgba(8,8,8,.35);}
+.port-cat{font-size:.65rem;letter-spacing:.33em;text-transform:uppercase;color:rgba(178,34,34,.95);margin-bottom:.55rem;}
+.port-title{font-family:"Cormorant Garamond",serif;font-size:1.85rem;font-weight:600;color:var(--w);line-height:1.14;}
+.port-item:first-child .port-title{font-size:2.6rem;}
+.port-year{font-size:.7rem;color:rgba(196,184,184,.7);margin-top:.5rem;}
+
+/* PROCESS */
+#process{padding:10rem 4rem;background:var(--deep);}
+.proc-header{text-align:center;margin-bottom:6rem;}
+.proc-header h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(3rem,6vw,6rem);color:var(--w);letter-spacing:.03em;}
+.proc-steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;}
+.proc-steps::before{content:"";position:absolute;top:2.5rem;left:12%;right:12%;height:1px;background:rgba(139,26,26,.45);}
+.step{padding:0 2rem;text-align:center;}
+.step-circle{width:5rem;height:5rem;border:2px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;background:rgba(8,8,8,.15);font-family:"Bebas Neue",sans-serif;font-size:1.4rem;color:var(--red);position:relative;z-index:1;transition:background .3s,border-color .3s,transform .25s;}
+.step:hover .step-circle{background:var(--rd);border-color:var(--red);transform:translateY(-2px);}
+.step h4{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:600;color:var(--w);margin-bottom:.8rem;}
+.step p{font-size:.85rem;line-height:1.8;color:var(--mu);}
+
+/* GALLERY */
+#gallery{padding:0 4rem 10rem;}
+.gal-lbl{margin-bottom:2rem;}
+.gal-lbl h3{font-family:"Cormorant Garamond",serif;font-size:2rem;font-weight:300;color:var(--w);}
+.gal-lbl h3 em{font-style:italic;color:var(--red);}
+.gal-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:rgba(139,26,26,.08);}
+.gal-thumb{height:220px;overflow:hidden;position:relative;cursor:none;transition:transform .25s ease;}
+.gal-thumb img{width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(.7);transition:filter .4s,transform .5s;}
+.gal-thumb:hover{transform:translateY(-4px);}
+.gal-thumb:hover img{filter:brightness(.85) saturate(1);transform:scale(1.05);}
+.gal-ov{position:absolute;inset:0;border:0 solid var(--red);transition:border-width .3s;}
+.gal-thumb:hover .gal-ov{border-width:4px;}
+
+/* TESTIMONIALS */
+#testimonials{padding:10rem 4rem;}
+.testi-header{margin-bottom:4rem;}
+.testi-header h2{font-family:"Cormorant Garamond",serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:300;color:var(--w);}
+.testi-header h2 em{font-style:italic;color:var(--red);}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.testi-card{border:1px solid rgba(139,26,26,.22);padding:2.5rem;background:rgba(20,20,20,.6);transition:border-color .3s,transform .25s;}
+.testi-card:hover{transform:translateY(-3px);}
+.testi-card:hover{border-color:rgba(139,26,26,.4);}
+.testi-q{font-family:"Cormorant Garamond",serif;font-size:4.2rem;color:rgba(178,34,34,.95);line-height:.75;margin-bottom:1rem;}
+.testi-text{font-family:"Cormorant Garamond",serif;font-size:1.1rem;font-style:italic;line-height:1.7;color:var(--tx);margin-bottom:1.5rem;}
+.testi-author{display:flex;align-items:center;gap:1rem;}
+.testi-av{width:40px;height:40px;background:var(--rd);border:1px solid rgba(139,26,26,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",sans-serif;font-size:1rem;color:var(--red);}
+.testi-name{font-size:.85rem;font-weight:500;color:var(--w);}
+.testi-role{font-size:.72rem;color:var(--mu);letter-spacing:.1em;}
+
+/* CLIENTS */
+#clients{padding:6rem 4rem;background:var(--deep);text-align:center;}
+#clients h3{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--mu);margin-bottom:3rem;}
+.clients-row{display:flex;justify-content:center;align-items:center;gap:3rem;flex-wrap:wrap;}
+.client-card{opacity:.5;transition:opacity .4s;cursor:none;}
+.client-card:hover{opacity:1;}
+.client-card img{display:block;max-width:140px;max-height:44px;object-fit:contain;filter:grayscale(20%);}
+
+/* CONTACT */
+#contact{padding:10rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:8rem;}
+#contact .cform, #contact .contact-left{border:1px solid rgba(139,26,26,.16);border-radius:18px;padding:2.2rem;background:rgba(13,13,13,.25);}
+.contact-left h2{font-family:"Bebas Neue",sans-serif;font-size:clamp(3rem,5vw,5.5rem);color:var(--w);line-height:.95;letter-spacing:.02em;margin-bottom:2rem;}
+.contact-left h2 span{color:var(--red);}
+.contact-left p{font-size:.95rem;line-height:1.8;color:var(--mu);margin-bottom:3rem;}
+.cinfos{display:flex;flex-direction:column;gap:1.5rem;}
+.ci{display:flex;gap:1.2rem;align-items:flex-start;}
+.ci-icon{width:40px;height:40px;border:1px solid rgba(139,26,26,.25);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.ci-text strong{display:block;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:.2rem;}
+.ci-text span{font-size:.9rem;color:var(--tx);}
+.cform{display:flex;flex-direction:column;gap:1.2rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.fg{display:flex;flex-direction:column;gap:.5rem;}
+.fg label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mu);}
+.fg input,.fg select,.fg textarea{background:rgba(20,20,20,.75);border:1px solid rgba(139,26,26,.22);color:var(--w);padding:1rem 1.2rem;font-family:"DM Sans",sans-serif;font-size:.9rem;outline:none;transition:border-color .3s,transform .2s;resize:none;cursor:none;border-radius:14px;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--red);}
+.fg select option{background:var(--surf);}
+.btn-submit{background:var(--red);color:var(--w);border:none;padding:1.2rem 2rem;font-family:"DM Sans",sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:500;cursor:none;transition:background .3s,transform .2s;margin-top:.5rem;}
+.btn-submit:hover{background:var(--rl);transform:translateY(-2px);}
+
+/* FOOTER */
+footer{background:var(--deep);border-top:1px solid rgba(139,26,26,.12);padding:5rem 4rem 3rem;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:4rem;margin-bottom:4rem;}
+.footer-brand .logo{font-family:"Bebas Neue",sans-serif;font-size:2.2rem;color:var(--w);letter-spacing:.1em;text-decoration:none;display:flex;align-items:center;gap:.7rem;margin-bottom:1rem;}
+.footer-brand .logo img{height:44px;width:auto;object-fit:contain;display:block;}
+.footer-brand .logo .footer-logo-text{display:none;}
+.footer-brand .logo span{color:var(--red);}
+.footer-brand p{font-size:.88rem;line-height:1.8;color:var(--mu);max-width:280px;margin-bottom:1.5rem;}
+.social-links{display:flex;gap:1rem;}
+.social-link{width:40px;height:40px;border:1px solid rgba(139,26,26,.22);display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.85rem;text-decoration:none;transition:border-color .3s,color .3s,background .3s,transform .2s;cursor:none;border-radius:14px;}
+.social-link:hover{border-color:var(--red);color:var(--red);background:var(--rd);}
+.footer-col h5{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.8rem;}
+.footer-col ul li a{font-size:.88rem;color:var(--mu);text-decoration:none;transition:color .3s;cursor:none;}
+.footer-col ul li a:hover{color:var(--red);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:2rem;border-top:1px solid rgba(139,26,26,.07);font-size:.75rem;color:var(--mu);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:1024px){
+  nav{padding:1.2rem 2rem;}
+  #about,#services,#portfolio,#process,#gallery,#contact{padding-left:2rem;padding-right:2rem;}
+  #about{grid-template-columns:1fr;gap:3rem;}.about-visual{height:380px;}
+  .svc-grid{grid-template-columns:repeat(2,1fr);}
+  .port-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;}.port-item:first-child{grid-row:auto;}
+  .proc-steps{grid-template-columns:repeat(2,1fr);gap:3rem;}.proc-steps::before{display:none;}
+  .testi-grid{grid-template-columns:1fr;}
+  #contact{grid-template-columns:1fr;gap:4rem;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:3rem;}
+  .h-scroll{display:none;}
+  .gal-strip{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  nav{padding:1rem;}
+  #logo-nav{height:34px;width:auto;object-fit:contain;display:block;}
+  /* mobile nav handled above */
+  #hero{padding:0 1.5rem 4rem;}
+  .svc-grid,.proc-steps{grid-template-columns:1fr;}
+  .port-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr;}
+  .svc-header{flex-direction:column;align-items:flex-start;gap:2rem;}
+  .gal-strip{grid-template-columns:1fr 1fr;}
+}
+#main-nav > a{display:flex;align-items:center;gap:0.8rem;}
+</style>\n</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="ring" id="ring"></div>
+
+<nav id="main-nav">
+  <a href="index.html" class=""><img id="logo-nav" src="MEDIA/LOGO.avif" alt="OSSPROGROUP logo"></a>
+  <button id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">☰</button>
+  <ul class="nav-links" id="nav-menu">
+    <li class="dropdown">
+      <a href="solutions.html">Solutions Techniques ▾</a>
+      <div class="dropdown-content">
+        <a href="lumiere.html">Lumière</a>
+        <a href="distribution-electrique.html">Distribution Électrique</a>
+        <a href="sonorisation.html">Sonorisation</a>
+        <a href="scene-mobile.html">Scène Mobile</a>
+        <a href="video.html">Vidéo</a>
+        <a href="integration-led.html">Intégration LED</a>
+        <a href="captation.html">Captation</a>
+        <a href="logistique.html">Logistique</a>
+      </div>
+    </li>
+    <li><a href="projets.html">Nos Projets</a></li>
+    <li class="dropdown">
+      <a href="agence.html">L'Agence ▾</a>
+      <div class="dropdown-content">
+        <a href="a-propos.html">À propos de nous</a>
+        <a href="carrieres.html">Carrières</a>
+        <a href="actualites.html">Actualités</a>
+      </div>
+    </li>
+    <li><a href="catalog.html" class="nav-boutique">Boutique</a></li>
+    <li><a href="contact.html" class="nav-cta">S'inscrire / Contact</a></li>
+    <li><a href="#" class="lang-switch">FR</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-slider">
+    <div class="slide active" id="slide-0" style="background-image:url('MEDIA/Event 1 slide 2.avif');"></div>
+    <div class="slide" id="slide-1" style="background-image:url('MEDIA/concert.avif');"></div>
+    <div class="slide" id="slide-2" style="background-image:url('MEDIA/IMG_1569.avif');"></div>
+  </div>
+  <div class="hero-ov"></div><div class="hero-ov2"></div><div class="hero-lines"></div>
+  <button class="s-arrow prev" onclick="slideBy(-1)">&#8592;</button>
+  <button class="s-arrow next" onclick="slideBy(1)">&#8594;</button>
+  <div class="hero-content">
+    <div class="h-tag" id="hero-tag">Agence Évènementielle — Libreville, Gabon</div>
+    <h1 class="h-title">
+      <span id="hero-l1">CRÉATEURS</span>
+      <em id="hero-em">d'instants</em>
+      <span id="hero-l3">MÉMORABLES</span>
+    </h1>
+    <p class="h-sub" id="hero-sub">OSSPROGROUP transforme vos ambitions en événements d'exception. Du concept à la réalisation, nous orchestrons chaque détail pour créer des expériences uniques et inoubliables au cœur du Gabon.</p>
+    <div class="h-btns">
+      <a href="/solutions" class="btn-p">Découvrir nos services</a>
+      <a href="/projets.html" class="btn-g">Nos réalisations</a>
+    </div>
+  </div>
+  <div class="s-dots">
+    <button class="s-dot active" onclick="goSlide(0)"></button>
+    <button class="s-dot" onclick="goSlide(1)"></button>
+    <button class="s-dot" onclick="goSlide(2)"></button>
+  </div>
+  <div class="h-scroll">Défiler</div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="mq-item">Galas &amp; Dîners <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Conférences Corporates <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Lancements de Produits <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Concerts &amp; Spectacles <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Mariages Prestige <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Événements Institutionnels <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Team Building <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Expositions &amp; Salons <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Galas &amp; Dîners <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Conférences Corporates <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Lancements de Produits <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Concerts &amp; Spectacles <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Mariages Prestige <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Événements Institutionnels <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Team Building <span class="mq-dot">◆</span></span>
+    <span class="mq-item">Expositions &amp; Salons <span class="mq-dot">◆</span></span>
+  </div>
+</div>
+
+<section id="about">
+  <div class="about-visual reveal">
+    <div class="about-frame">
+      <img src="MEDIA/Briefing.avif" alt="Event" class="about-photo" id="about-photo">
+      <div class="about-ov"></div>
+      <div class="about-num">10</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="num" id="stat-1">+200</div><div class="lbl" id="stat-1-lbl">Événements réalisés</div></div>
+        <div class="stat-box"><div class="num" id="stat-2">10</div><div class="lbl" id="stat-2-lbl">Ans d'expérience</div></div>
+        <div class="stat-box"><div class="num" id="stat-3">+80</div><div class="lbl" id="stat-3-lbl">Clients satisfaits</div></div>
+        <div class="stat-box"><div class="num" id="stat-4">9</div><div class="lbl" id="stat-4-lbl">Provinces couvertes</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="about-content reveal">
+    <div class="sec-lbl">Qui sommes-nous</div>
+    <h2>L'excellence<br>évènementielle<br>au <strong>cœur de l'Afrique</strong></h2>
+    <p id="about-p1">Fondée à Libreville, OSSPROGROUP est l'agence de référence pour la conception et l'organisation d'événements professionnels et privés au Gabon.</p>
+    <p id="about-p2">Nous intervenons à chaque étape de votre projet avec un engagement total pour la qualité et la satisfaction de nos clients.</p>
+    <div class="vals">
+      <div class="val-item">Excellence &amp; Précision dans chaque détail</div>
+      <div class="val-item">Créativité &amp; Innovation conceptuelle</div>
+      <div class="val-item">Fiabilité &amp; Respect des engagements</div>
+      <div class="val-item">Expertise locale &amp; Rayonnement régional</div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="svc-header reveal">
+    <div><div class="sec-lbl">Ce que nous faisons</div><h2>NOS<br>SOLUTIONS</h2></div>
+    <p>Un service complet : son, vidéo, lumière, énergie, structure, scènes, réseaux, intégration LED et digital. Une solution technique de bout en bout pour vos événements.</p>
+  </div>
+
+  <div class="tech-wrap">
+    <div class="reveal">
+      <div class="tech-kicker">Nos Solutions Techniques</div>
+      <div class="tech-intro">
+        OSSPROGROUP capitalise sur son expérience et sa volonté d’améliorer la qualité de prestation, tout en proposant une solution complète.
+        Ouvrez chaque expertise ci-dessous pour découvrir notre approche.
+      </div>
+    </div>
+
+    <div class="tech-acc reveal" id="tech-accordion">
+      <div class="tech-item open">
+        <button class="tech-btn" type="button" aria-expanded="true" aria-controls="tech-0">
+          <div class="tech-img"><img src="MEDIA/Briefing.avif" alt=""></div>
+          <div class="tech-title">LUMIÈRE</div>
+          <div class="tech-meta"><span>01</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-0">
+          <p>Nos équipes proposent une mise en lumière pour tout type d’événements (événements architecturaux, expositions, shows lumières...) qui se déroulent en intérieur ou en extérieur, de jour comme de nuit.
+            Notre but : immerger les participants dans une atmosphère unique.</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Architectural</span><span class="tech-tag">Exposition</span><span class="tech-tag">Shows lumières</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <button class="tech-btn" type="button" aria-expanded="false" aria-controls="tech-1">
+          <div class="tech-img"><img src="MEDIA/concert.avif" alt=""></div>
+          <div class="tech-title">DISTRIBUTION ÉLECTRIQUE</div>
+          <div class="tech-meta"><span>02</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-1">
+          <p>Magnum est spécialisée dans l’étude et l’installation de l’ensemble de la distribution électrique d’événements et spectacles.
+            Nos innovations proposent des solutions concrètes (onduleurs, transfo d’isolement…), en élaborant des synopsis techniques, bilans de puissance et plans de sécurisation.</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Synopsis techniques</span><span class="tech-tag">Bilans de puissance</span><span class="tech-tag">Sécurisation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <button class="tech-btn" type="button" aria-expanded="false" aria-controls="tech-2">
+          <div class="tech-img"><img src="MEDIA/Event 1 slide 2.avif" alt=""></div>
+          <div class="tech-title">SONORISATION</div>
+          <div class="tech-meta"><span>03</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-2">
+          <p>Il n’y a pas de spectacle vivant, d’événement corporate, institutionnel, grand public, B2B & B2C, sportif, etc. sans ambiance sonore.
+            Nos équipes étudient tous les facteurs (lieux — intérieur ou extérieur — taille de l’espace, nombre de personnes, intensité du son à adopter...) pour fournir une proposition adaptée.</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Ambiance sonore</span><span class="tech-tag">Intérieur / extérieur</span><span class="tech-tag">Adéquation au lieu</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <button class="tech-btn" type="button" aria-expanded="false" aria-controls="tech-3">
+          <div class="tech-img"><img src="MEDIA/IMG_1569.avif" alt=""></div>
+          <div class="tech-title">SCÈNE MOBILE</div>
+          <div class="tech-meta"><span>04</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-3">
+          <p>Magnum possède une vaste gamme de scènes mobiles hautes gammes et de tailles diverses.
+            Elles s’adaptent aux lieux et types d’événements : municipalités, villes & parcs, rencontres sportives, stades, lancements de produits...
+            Notre bureau d’étude adapte les besoins scénographiques via des tests de charge et un contrôle qualité.</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Adaptation lieux</span><span class="tech-tag">Tests de charge</span><span class="tech-tag">Contrôle qualité</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <button class="tech-btn" type="button" aria-expanded="false" aria-controls="tech-4">
+          <div class="tech-img"><img src="MEDIA/event 2 slide 2.avif" alt=""></div>
+          <div class="tech-title">VIDÉO</div>
+          <div class="tech-meta"><span>05</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-4">
+          <p>Un service incontournable aujourd’hui.
+            Les équipes interviennent lors de l’installation de supports de diffusion, de véritables régies vidéo (plateau TV, multi caméras).
+            La direction technique apporte son expertise et son contrôle (études, synoptiques, intégration, contrôle qualité...).</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Régies vidéo</span><span class="tech-tag">Multi caméras</span><span class="tech-tag">Contrôle qualité</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-item">
+        <button class="tech-btn" type="button" aria-expanded="false" aria-controls="tech-5">
+          <div class="tech-img"><img src="MEDIA/event 3.avif" alt=""></div>
+          <div class="tech-title">INTÉGRATION LED</div>
+          <div class="tech-meta"><span>06</span></div>
+          <div class="tech-chevron">+</div>
+        </button>
+        <div class="tech-panel" id="tech-5">
+          <p>Magnum vous propose une intégration LED grâce à sa gamme de produits très polyvalents et aux multiples atouts.
+            Nos produits (ruban LED, LED matriçable, DOT LED) s’intègrent parfaitement dans les éléments de décoration.
+            Le bureau d’étude apporte son expertise sur la puissance lumineuse, la température de couleur et le nombre de LED au mètre pour répondre à tous vos besoins.</p>
+          <div class="tech-tags">
+            <span class="tech-tag">Ruban LED</span><span class="tech-tag">LED matriçable</span><span class="tech-tag">Puissance & couleur</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <div class="port-header reveal">
+    <div class="sec-lbl">Nos réalisations</div>
+    <h2>Des événements qui<br><em>font l'histoire</em></h2>
+  </div>
+  <div class="port-grid reveal">
+    <div class="port-item">
+      <div class="port-bg" id="proj-1-bg" style="background-image:url('MEDIA/Projet Perenco 30 ans/AVIF/6R8A7762.avif');"></div>
+      <div class="port-ov">
+        <div class="port-cat" id="proj-1-cat">Événement Corporate</div>
+        <div class="port-title" id="proj-1-title">Forum Économique<br>du Gabon 2024</div>
+        <div class="port-year" id="proj-1-year">500+ participants · Palais des Congrès</div>
+      </div>
+    </div>
+    <div class="port-item">
+      <div class="port-bg" id="proj-2-bg" style="background-image:url('MEDIA/Projet Perenco 30 ans/AVIF/IMG_20221203_121316.avif');"></div>
+      <div class="port-ov">
+        <div class="port-cat" id="proj-2-cat">Gala Prestige</div>
+        <div class="port-title" id="proj-2-title">Nuit des<br>Entrepreneurs</div>
+        <div class="port-year" id="proj-2-year">300 invités VIP · Hôtel Radisson Blu</div>
+      </div>
+    </div>
+    <div class="port-item">
+      <div class="port-bg" id="proj-3-bg" style="background-image:url('MEDIA/Projet Perenco 30 ans/AVIF/DJI_0047.avif');"></div>
+      <div class="port-ov">
+        <div class="port-cat" id="proj-3-cat">Concert &amp; Spectacle</div>
+        <div class="port-title" id="proj-3-title">AfricaFest<br>Libreville</div>
+        <div class="port-year" id="proj-3-year">2000+ spectateurs · Esplanade du Port</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="proc-header reveal"><div class="sec-lbl">Notre approche</div><h2>UNE MÉTHODE<br>ÉPROUVÉE</h2></div>
+  <div class="proc-steps">
+    <div class="step reveal"><div class="step-circle">01</div><h4>Brief &amp; Vision</h4><p>Nous écoutons vos besoins pour définir ensemble la vision de votre événement.</p></div>
+    <div class="step reveal"><div class="step-circle">02</div><h4>Conception</h4><p>Notre équipe élabore un concept unique, de la scénographie au programme.</p></div>
+    <div class="step reveal"><div class="step-circle">03</div><h4>Production</h4><p>Coordination des prestataires, logistique et répétitions avant J-Jour.</p></div>
+    <div class="step reveal"><div class="step-circle">04</div><h4>Exécution</h4><p>Le jour J, notre équipe garantit une expérience fluide et mémorable.</p></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="gal-lbl reveal"><div class="sec-lbl">Galerie</div><h3>Instants <em>captés</em></h3></div>
+  <div class="gal-strip reveal">
+    <div class="gal-thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7397.avif" alt="Perenco 30 ans" id="gal-1"><div class="gal-ov"></div></div>
+    <div class="gal-thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7409.avif" alt="Perenco 30 ans" id="gal-2"><div class="gal-ov"></div></div>
+    <div class="gal-thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/DJI_0046.avif" alt="Perenco 30 ans" id="gal-3"><div class="gal-ov"></div></div>
+    <div class="gal-thumb"><img src="MEDIA/Projet Perenco 30 ans/AVIF/6R8A7969.avif" alt="Perenco 30 ans" id="gal-4"><div class="gal-ov"></div></div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="testi-header reveal"><div class="sec-lbl">Ils nous font confiance</div><h2>La parole<br>de nos <em>clients</em></h2></div>
+  <div class="testi-grid">
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">OSSPROGROUP a su transformer notre vision en une réalité qui a dépassé toutes nos espérances. Un professionnalisme remarquable.</p><div class="testi-author"><div class="testi-av">MN</div><div><div class="testi-name">Marie-Claire Ntoutoume</div><div class="testi-role">DG, Gabon Export</div></div></div></div>
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">Notre conférence internationale fut un véritable succès grâce à leur rigueur et créativité. Je recommande vivement OSSPROGROUP.</p><div class="testi-author"><div class="testi-av">JO</div><div><div class="testi-name">Jean-Pierre Obiang</div><div class="testi-role">Ministre du Commerce</div></div></div></div>
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">Un mariage féerique, une organisation parfaite, une équipe à l'écoute. OSSPROGROUP a rendu notre plus beau jour exceptionnel.</p><div class="testi-author"><div class="testi-av">SA</div><div><div class="testi-name">Sophie &amp; Armand Mba</div><div class="testi-role">Mariés en 2024</div></div></div></div>
+  </div>
+</section>
+
+<section id="clients">
+  <h3>Ils nous ont fait confiance</h3>
+  <div class="clients-row">
+    <div class="client-card" id="client-logo-0"><img src="MEDIA/LOGOS_clients/Logo_gabon%20oil%20company.png" alt="Gabon Oil"></div>
+    <div class="client-card" id="client-logo-1"><img src="MEDIA/LOGOS_clients/BGFI_logo.png" alt="BGFI Bank"></div>
+    <div class="client-card" id="client-logo-2"><img src="MEDIA/LOGOS_clients/Logo_Total%20Energies..png" alt="Total Energies"></div>
+    <div class="client-card" id="client-logo-3"><img src="MEDIA/LOGOS_clients/Airtel_Africa_logo.png" alt="Airtel"></div>
+    <div class="client-card" id="client-logo-4"><img src="MEDIA/LOGOS_clients/Olam_Logo_gc2rpl.png" alt="Olam"></div>
+    <div class="client-card" id="client-logo-5"><img src="MEDIA/LOGOS_clients/Cnamgs.webp" alt="Cnamgs"></div>
+    <div class="client-card" id="client-logo-6"><img src="MEDIA/LOGOS_clients/logo-setrag_wgiluh.png" alt="Setrag"></div>
+    <div class="client-card" id="client-logo-7"><img src="MEDIA/LOGOS_clients/ministere%20du%20tourism.jpg" alt="Ministère du Tourisme"></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-left reveal">
+    <div class="sec-lbl">Parlons de votre projet</div>
+    <h2>TRAVAILLONS<br><span>ENSEMBLE</span></h2>
+    <p>Nos experts sont à votre écoute pour vous accompagner dans la réalisation de vos ambitions.</p>
+    <div class="cinfos">
+      <div class="ci"><div class="ci-icon">📍</div><div class="ci-text"><strong>Adresse</strong><span id="contact-address">Boulevard Triomphal, Libreville, Gabon</span></div></div>
+      <div class="ci"><div class="ci-icon">📞</div><div class="ci-text"><strong>Téléphone</strong><span id="contact-phone">+241 XX XX XX XX</span></div></div>
+      <div class="ci"><div class="ci-icon">✉️</div><div class="ci-text"><strong>Email</strong><span id="contact-email">contact@ossprogroup.ga</span></div></div>
+      <div class="ci"><div class="ci-icon">🕐</div><div class="ci-text"><strong>Horaires</strong><span id="contact-hours">Lun – Ven : 8h00 – 18h00</span></div></div>
+    </div>
+  </div>
+  <div class="cform reveal">
+    <div class="form-row"><div class="fg"><label>Prénom</label><input type="text" placeholder="Votre prénom"></div><div class="fg"><label>Nom</label><input type="text" placeholder="Votre nom"></div></div>
+    <div class="fg"><label>Email</label><input type="email" placeholder="votre@email.com"></div>
+    <div class="fg"><label>Téléphone</label><input type="tel" placeholder="+241 XX XX XX XX"></div>
+    <div class="fg"><label>Type d'événement</label><select><option value="">Sélectionnez</option><option>Événement Corporate</option><option>Gala &amp; Cérémonie</option><option>Mariage</option><option>Concert &amp; Spectacle</option><option>Institutionnel</option><option>Autre</option></select></div>
+    <div class="fg"><label>Votre projet</label><textarea rows="4" placeholder="Date, nombre d'invités, lieu souhaité..."></textarea></div>
+    <button class="btn-submit" id="btn-submit">Envoyer ma demande →</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="/" class="logo"><img id="logo-footer" src="MEDIA/LOGO.avif" alt="OSSPROGROUP logo"></a>
+      <p>L'agence évènementielle de référence au Gabon. Nous transformons vos idées en expériences inoubliables depuis plus de 10 ans.</p>
+      <div class="social-links">
+        <a href="/">f</a>
+        <a href="/">in</a>
+        <a href="/">ig</a>
+        <a href="/">yt</a>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Services</h5><ul><li><a href="/lumiere.html">Événements Corporates</a></li><li><a href="/distribution-electrique.html">Galas &amp; Cérémonies</a></li><li><a href="/sonorisation.html">Mariages</a></li><li><a href="/scene-mobile.html">Concerts &amp; Shows</a></li><li><a href="/video.html">Institutionnel</a></li><li><a href="/integration-led.html">Décoration</a></li><li><a href="/catalog.html">Boutique</a></li></ul></div>
+    <div class="footer-col"><h5>Entreprise</h5><ul><li><a href="/a-propos.html">À propos</a></li><li><a href="/agence.html">Notre équipe</a></li><li><a href="/projets.html">Réalisations</a></li><li><a href="/solutions.html">Partenaires</a></li><li><a href="/actualites.html">Actualités</a></li><li><a href="/carrieres.html">Carrières</a></li></ul></div>
+    <div class="footer-col"><h5>Contact</h5><ul><li><a href="/contact.html">Demander un devis</a></li><li><a href="/contact.html">Nous appeler</a></li><li><a href="/contact.html">Visiter nos bureaux</a></li><li><a href="/contact.html">FAQ</a></li><li><a href="/contact.html">Mentions légales</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span id="footer-copy">© 2025 OSSPROGROUP Gabon — Tous droits réservés</span>
+    <span>Libreville, Gabon 🇬🇦</span>
+  </div>
+</footer>
+
+<script>
+/* CURSOR (optional for accessibility) */
+(function initCursor(){
+  var cur=document.getElementById("cursor");
+  var rng=document.getElementById("ring");
+  if(!cur || !rng) return;
+
+  var m = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  var c = window.matchMedia ? window.matchMedia("(pointer: coarse)") : null;
+  var prefersReduced = m ? m.matches : false;
+  var isCoarse = c ? c.matches : false;
+
+  if(prefersReduced || isCoarse){
+    cur.style.display="none";
+    rng.style.display="none";
+    document.body.style.cursor="auto";
+    return;
+  }
+
+  var cx=0,cy=0,rx=0,ry=0;
+  document.addEventListener("mousemove",function(e){
+    cx=e.clientX;cy=e.clientY;
+    cur.style.left=cx+"px";cur.style.top=cy+"px";
+  });
+
+  (function loop(){
+    rx+=(cx-rx)*.12;ry+=(cy-ry)*.12;
+    rng.style.left=rx+"px";rng.style.top=ry+"px";
+    requestAnimationFrame(loop);
+  })();
+
+  document.querySelectorAll("a,button,.svc-card,.port-item,.testi-card,.client-card").forEach(function(el){
+    el.addEventListener("mouseenter",function(){
+      cur.style.width="20px";cur.style.height="20px";
+      rng.style.width="52px";rng.style.height="52px";
+    });
+    el.addEventListener("mouseleave",function(){
+      cur.style.width="12px";cur.style.height="12px";
+      rng.style.width="36px";rng.style.height="36px";
+    });
+  });
+})();
+
+// REVEAL
+var ro=new IntersectionObserver(function(entries){entries.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add("visible");},i*80);ro.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll(".reveal").forEach(function(el){ro.observe(el);});
+
+// NAV SCROLL
+window.addEventListener("scroll",function(){
+  document.querySelector("nav").style.background=window.scrollY>80?"rgba(8,8,8,.97)":"linear-gradient(to bottom,rgba(8,8,8,.95),transparent)";
+});
+
+// FORM -> POST /api/contact (handled by server.js)
+document.getElementById("btn-submit").addEventListener("click", async function(){
+  var btn = this;
+  btn.disabled = true;
+  var originalText = btn.textContent;
+
+  try{
+    var contactSection = document.getElementById("contact");
+    if(!contactSection) throw new Error("Missing #contact section");
+
+    var textInputs = contactSection.querySelectorAll('input[type="text"]');
+    var emailInput = contactSection.querySelector('input[type="email"]');
+    var telInput = contactSection.querySelector('input[type="tel"]');
+    var selectEl = contactSection.querySelector('select');
+    var textareaEl = contactSection.querySelector('textarea');
+
+    var name = (textInputs && textInputs[0] ? textInputs[0].value : "").trim();
+    var lastName = (textInputs && textInputs[1] ? textInputs[1].value : "").trim();
+    var email = emailInput ? emailInput.value.trim() : "";
+    var phone = telInput ? telInput.value.trim() : "";
+    var eventType = selectEl ? selectEl.value : "";
+    var message = textareaEl ? textareaEl.value.trim() : "";
+
+    if(!name || !email || !message){
+      btn.textContent = "Vérifier champs";
+      btn.style.background = "#5a1a1a";
+      setTimeout(function(){
+        btn.textContent = originalText;
+        btn.style.background = "";
+        btn.disabled = false;
+      }, 2500);
+      return;
+    }
+
+    btn.textContent = "Envoi…";
+    btn.style.background = "#1e4d1e";
+
+    var payload = {
+      name: name + (lastName ? (" " + lastName) : ""),
+      email: email,
+      phone: phone || "",
+      eventType: eventType || "",
+      message: message
+    };
+
+    var resp = await fetch("/api/contact",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    var data = await resp.json().catch(function(){ return { ok:false, error:"Bad JSON response" }; });
+
+    if(!resp.ok || !data.ok){
+      throw new Error(data && data.error ? data.error : "Contact submission failed");
+    }
+
+    btn.textContent = "Message envoyé ✓";
+    btn.style.background = "#1e4d1e";
+
+    setTimeout(function(){
+      btn.textContent = originalText;
+      btn.style.background = "";
+      btn.disabled = false;
+    }, 3000);
+
+  }catch(e){
+    btn.textContent = "Erreur envoi";
+    btn.style.background = "#5a1a1a";
+    setTimeout(function(){
+      btn.textContent = originalText;
+      btn.style.background = "";
+      btn.disabled = false;
+    }, 3000);
+  }
+});
+
+// COUNTERS
+function animCount(el,target){var s=0;(function step(ts){if(!s)s=ts;var p=Math.min((ts-s)/1800,1);el.textContent=(el.dataset.pre||"")+Math.floor(p*target);if(p<1)requestAnimationFrame(step);})(0);}
+var so=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.querySelectorAll(".num").forEach(function(n){var raw=n.textContent.replace(/\D/g,"");n.dataset.pre=n.textContent.includes("+")?"+ ":"";animCount(n,parseInt(raw)||0);});so.unobserve(e.target);}});},{threshold:.3});
+document.querySelectorAll(".stat-grid").forEach(function(el){so.observe(el);});
+
+/* SLIDER */
+(function(){
+  var slides=document.querySelectorAll(".slide"),dots=document.querySelectorAll(".s-dot"),cur=0,timer;
+  function go(n){slides[cur].classList.remove("active");dots[cur].classList.remove("active");cur=(n+slides.length)%slides.length;slides[cur].classList.add("active");dots[cur].classList.add("active");reset();}
+  function reset(){clearInterval(timer);timer=setInterval(function(){go(cur+1);},5500);}
+  window.goSlide=go;
+  window.slideBy=function(d){go(cur+d);};
+  document.addEventListener("keydown",function(e){if(e.key==="ArrowLeft")go(cur-1);if(e.key==="ArrowRight")go(cur+1);});
+  var tx=0;
+  document.getElementById("hero").addEventListener("touchstart",function(e){tx=e.touches[0].clientX;},{passive:true});
+  document.getElementById("hero").addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(cur+(dx<0?1:-1));},{passive:true});
+  reset();
+})();
+
+/* TECH ACCORDION (Magnum-style) */
+(function initTechAccordion(){
+  var acc=document.getElementById("tech-accordion");
+  if(!acc) return;
+  var items=acc.querySelectorAll(".tech-item");
+  items.forEach(function(item){
+    var btn=item.querySelector(".tech-btn");
+    var panel=item.querySelector(".tech-panel");
+    if(!btn || !panel) return;
+
+    function setOpen(open){
+      item.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      if(open) panel.style.maxHeight = panel.scrollHeight + "px";
+      else panel.style.maxHeight = "0px";
+    }
+
+    // init
+    var isOpen=item.classList.contains("open");
+    if(isOpen) panel.style.maxHeight = panel.scrollHeight + "px";
+    else panel.style.maxHeight = "0px";
+
+    btn.addEventListener("click", function(){
+      setOpen(!item.classList.contains("open"));
+    });
+
+  });
+})();
+
+/* MOBILE NAV TOGGLE */
+(function initMobileNav(){
+  var btn = document.getElementById("nav-toggle");
+  var menu = document.getElementById("nav-menu");
+  if(!btn || !menu) return;
+
+  function setOpen(open){
+    menu.classList.toggle("open", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  btn.addEventListener("click", function(){
+    var open = !menu.classList.contains("open");
+    setOpen(open);
+  });
+
+  menu.querySelectorAll("a").forEach(function(a){
+    a.addEventListener("click", function(){
+      setOpen(false);
+    });
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") setOpen(false);
+  });
+})();
+</script>
+</body>
+</html>

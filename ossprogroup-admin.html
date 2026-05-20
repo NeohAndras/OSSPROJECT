@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OSSPROGROUP — Admin (CMS léger)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070707;
+      --panel:#101010;
+      --card:#151515;
+      --stroke:#000;
+      --red:#b22222;
+      --red2:#ff3b3b;
+      --muted:#b9a9a9;
+      --text:#f2e8e8;
+      --border:3px solid #000;
+      --radius:16px;
+      --shadow: 10px 10px 0 #000;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"DM Sans",sans-serif;
+      font-weight:300;
+      overflow:auto;
+    }
+
+    .app{
+      height:100%;
+      display:grid;
+      grid-template-columns:340px 1fr;
+    }
+
+    /* Sidebar */
+    .side{
+      background:rgba(16,16,16,.9);
+      border-right:var(--border);
+      padding:18px;
+      overflow:auto;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      margin-bottom:14px;
+      padding:10px 12px;
+      border:var(--border);
+      background:#121212;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .brand .mark{
+      width:44px;height:44px;border-radius:12px;
+      border:var(--border);
+      background:#1a1a1a;
+      display:flex;align-items:center;justify-content:center;
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.08em;
+      font-size:1.2rem;
+      color:var(--red2);
+    }
+    .brand h1{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      font-size:1.2rem;
+      line-height:1.1;
+    }
+    .brand h1 span{color:var(--red2);}
+
+    .side .sectionTitle{
+      margin:14px 0 10px;
+      font-size:.7rem;
+      letter-spacing:.28em;
+      text-transform:uppercase;
+      color:rgba(185,169,169,.9);
+      display:flex;align-items:center;gap:10px;
+    }
+    .side .sectionTitle:after{
+      content:"";
+      flex:1;
+      height:3px;
+      background:rgba(178,34,34,.45);
+      border:1px solid #000;
+    }
+
+    .navBtn{
+      width:100%;
+      border:var(--border);
+      background:#121212;
+      color:rgba(185,169,169,.95);
+      border-radius:var(--radius);
+      padding:12px 12px;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      transition:transform .08s ease, background .08s ease;
+      user-select:none;
+    }
+    .navBtn:hover{
+      transform:translate(-3px,-3px);
+      background:#151515;
+      color:#fff;
+    }
+    .navBtn.active{
+      background:rgba(178,34,34,.18);
+      color:#fff;
+      outline:3px solid var(--red2);
+      outline-offset:3px;
+    }
+    .navLeft{
+      display:flex;align-items:center;gap:10px;
+      font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.72rem;
+    }
+    .navIcon{
+      width:38px;height:38px;border-radius:12px;
+      border:var(--border);
+      background:#0f0f0f;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.05rem;
+      color:var(--red2);
+      flex-shrink:0;
+    }
+
+    .side .quick{
+      margin-top:14px;
+      border:var(--border);
+      background:#121212;
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .quick h3{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.1em;
+      font-size:1.2rem;
+      margin-bottom:10px;
+    }
+    .quick ol{
+      padding-left:18px;
+      margin-top:6px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:.88rem;
+    }
+
+    /* Content */
+    .main{
+      overflow:auto;
+      padding:18px;
+    }
+    .topRow{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .titleBlock{
+      border:var(--border);
+      background:#121212;
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+      flex:1;
+    }
+    .titleBlock h2{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.14em;
+      font-size:1.8rem;
+      line-height:1.1;
+      margin-bottom:8px;
+      text-transform:uppercase;
+    }
+    .titleBlock p{
+      color:rgba(185,169,169,.95);
+      line-height:1.6;
+      font-size:.9rem;
+      max-width:880px;
+    }
+
+    .actions{
+      display:flex;flex-direction:column;gap:10px;
+      min-width:250px;
+    }
+    .actionBtn{
+      border:var(--border);
+      border-radius:var(--radius);
+      padding:12px 14px;
+      background:#121212;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      color:#fff;
+      font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.78rem;
+      transition:transform .08s ease, background .08s ease, outline .08s ease;
+      user-select:none;
+    }
+    .actionBtn:hover{transform:translate(-3px,-3px); background:#151515;}
+    .actionBtn.primary{
+      background:rgba(178,34,34,.22);
+      outline:4px solid var(--red2);
+      outline-offset:4px;
+    }
+    .actionBtn.danger{
+      background:rgba(192,57,43,.18);
+      outline:4px solid #ff6b6b;
+      outline-offset:4px;
+    }
+
+    .panel{
+      display:none;
+      gap:12px;
+      flex-direction:column;
+    }
+    .panel.active{display:flex;}
+
+    .card{
+      border:var(--border);
+      background:#121212;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .cardHeader{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-bottom:12px;
+    }
+    .cardHeader h3{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      font-size:1.35rem;
+      color:#fff;
+    }
+    .cardHeader .hint{
+      color:rgba(185,169,169,.9);
+      font-size:.82rem;
+      line-height:1.5;
+      max-width:420px;
+      text-align:right;
+    }
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+    @media(max-width:1100px){
+      body{overflow:auto;}
+      .app{grid-template-columns:1fr;}
+      .side{border-right:none;border-bottom:var(--border);}
+      .actions{min-width:unset;flex:1}
+      .grid2,.grid3,.grid4{grid-template-columns:1fr;}
+    }
+
+    label{
+      display:block;
+      font-size:.68rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:rgba(185,169,169,.95);
+      margin-bottom:8px;
+      font-weight:600;
+    }
+    input[type="text"], textarea, select{
+      width:100%;
+      border:var(--border);
+      border-radius:14px;
+      background:rgba(0,0,0,.2);
+      color:#fff;
+      padding:11px 12px;
+      outline:none;
+      font-family:"DM Sans",sans-serif;
+      font-weight:300;
+      font-size:.95rem;
+    }
+    textarea{min-height:92px;resize:vertical;}
+    input:focus, textarea:focus, select:focus{
+      outline:4px solid rgba(255,59,59,.6);
+      outline-offset:3px;
+    }
+
+    .btnRow{
+      display:flex;gap:12px;flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .mini{
+      border:var(--border);
+      border-radius:14px;
+      background:#141414;
+      box-shadow:var(--shadow);
+      padding:10px 12px;
+      cursor:pointer;
+      color:#fff;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      user-select:none;
+      transition:transform .08s ease, background .08s ease;
+    }
+    .mini:hover{transform:translate(-3px,-3px); background:#171717;}
+    .mini.primary{
+      background:rgba(178,34,34,.22);
+      outline:4px solid var(--red2);
+      outline-offset:4px;
+    }
+
+    .imgPick{
+      display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;
+    }
+    .preview{
+      width:220px;
+      border:var(--border);
+      border-radius:16px;
+      background:rgba(0,0,0,.22);
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    .preview .imgBox{
+      height:110px;
+      border:var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      background:#0f0f0f;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .preview img{
+      width:100%;height:100%;object-fit:contain;display:block;
+      filter:grayscale(15%);
+    }
+    .preview .ph{
+      color:rgba(185,169,169,.9);
+      font-size:.85rem;
+      text-align:center;
+      line-height:1.4;
+      padding:10px;
+    }
+
+    .galleryOrder{
+      display:flex;flex-direction:column;gap:12px;
+    }
+    .gItem{
+      border:var(--border);
+      border-radius:16px;
+      background:rgba(0,0,0,.22);
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    .gTop{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;
+    }
+    .gTop b{
+      font-family:"Bebas Neue",sans-serif;
+      letter-spacing:.12em;
+      font-size:1.1rem;
+      color:#fff;
+      text-transform:uppercase;
+    }
+    .gBtns{display:flex;gap:8px;flex-wrap:wrap;}
+    .gBtn{
+      border:var(--border);
+      background:#141414;
+      color:#fff;
+      border-radius:14px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:.7rem;
+      user-select:none;
+    }
+    .gBtn:disabled{opacity:.45;cursor:not-allowed;}
+    .gBtn:hover{background:#171717; transform:translate(-2px,-2px);}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%) translateY(16px);
+      background:#121212;
+      border:var(--border);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:12px 16px;
+      color:#fff;
+      z-index:9999;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .15s ease, transform .15s ease;
+      font-size:.9rem;
+      max-width:92vw;
+      line-height:1.4;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    .toast.ok{outline:4px solid rgba(45,106,45,.8); outline-offset:4px;}
+    .toast.err{outline:4px solid rgba(192,57,43,.9); outline-offset:4px;}
+    .smallNote{
+      color:rgba(185,169,169,.95);
+      line-height:1.6;
+      font-size:.9rem;
+      margin-top:8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">
+        <div class="mark">OS</div>
+        <h1><img src="MEDIA/LOGO.avif" alt="OSSPROGROUP Logo"> <br/>ADMIN</h1>
+      </div>
+
+      <div class="sectionTitle">Navigation</div>
+
+      <div class="navBtn active" data-panel="hero">
+        <div class="navLeft"><div class="navIcon">🎯</div> Hero</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">texte</div>
+      </div>
+      <div class="navBtn" data-panel="about">
+        <div class="navLeft"><div class="navIcon">📊</div> À propos</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">stats</div>
+      </div>
+      <div class="navBtn" data-panel="portfolio">
+        <div class="navLeft"><div class="navIcon">🖼</div> Réalisations</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">3 projets</div>
+      </div>
+      <div class="navBtn" data-panel="contact">
+        <div class="navLeft"><div class="navIcon">📞</div> Contact</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">infos</div>
+      </div>
+      <div class="navBtn" data-panel="footer">
+        <div class="navLeft"><div class="navIcon">©</div> Pied de page</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">copyright</div>
+      </div>
+
+      <div class="sectionTitle" style="margin-top:18px;">Médias</div>
+      <div class="navBtn" data-panel="media">
+        <div class="navLeft"><div class="navIcon">🧩</div> Images site</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">MEDIA</div>
+      </div>
+      <div class="navBtn" data-panel="clients">
+        <div class="navLeft"><div class="navIcon">🏷️</div> Clients</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">LOGOS_clients</div>
+      </div>
+      <div class="navBtn" data-panel="gallery">
+        <div class="navLeft"><div class="navIcon">🧱</div> Galerie</div>
+        <div style="color:rgba(185,169,169,.95);font-weight:700;font-size:.7rem;">ordre</div>
+      </div>
+
+      <div class="quick">
+        <h3>Mode rapide</h3>
+        <ol>
+          <li>Ouvre la preview : ↗ Prévisualiser</li>
+          <li>Change textes + médias</li>
+          <li>Clique ✓ Appliquer</li>
+          <li>Si tout est bon : ⬇ Exporter</li>
+        </ol>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topRow">
+        <div class="titleBlock">
+          <h2>CMS léger — modification rapide</h2>
+          <p>
+            Ce panneau modifie <b>directement</b> les ids existants dans <b>ossprogroup.html</b>, puis peut exporter un
+            fichier HTML final avec vos images/textes. <br/>
+            <span class="smallNote">Aucun upload lourd : sélectionnez les images dans <b>ossprogroup/MEDIA</b>.</span>
+          </p>
+        </div>
+
+        <div class="actions">
+          <button class="actionBtn" id="btnPreview">↗ Prévisualiser le site</button>
+          <button class="actionBtn primary" id="btnApply">✓ Appliquer</button>
+          <button class="actionBtn primary" id="btnExport">⬇ Exporter (HTML)</button>
+          <button class="actionBtn danger" id="btnReset">↺ Réinitialiser</button>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <section class="panel active" id="panel-hero">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Hero — textes</h3>
+            <div class="hint">IDs : hero-tag, hero-l1, hero-em, hero-l3, hero-sub</div>
+          </div>
+
+          <div class="grid2">
+            <div>
+              <label for="hero-tag">Tag / ligne rouge</label>
+              <input id="hero-tag" type="text">
+            </div>
+            <div>
+              <label for="hero-sub">Sous-titre (paragraphe)</label>
+              <textarea id="hero-sub"></textarea>
+            </div>
+          </div>
+
+          <div class="grid3" style="margin-top:12px;">
+            <div>
+              <label for="hero-l1">Ligne 1 (CAPS)</label>
+              <input id="hero-l1" type="text">
+            </div>
+            <div>
+              <label for="hero-em">Ligne 2 (italique rouge)</label>
+              <input id="hero-em" type="text">
+            </div>
+            <div>
+              <label for="hero-l3">Ligne 3 (CAPS)</label>
+              <input id="hero-l3" type="text">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="panel" id="panel-about">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>À propos — stats + texte</h3>
+            <div class="hint">IDs : stat-1..4, stat-1-lbl..4-lbl, about-p1, about-p2</div>
+          </div>
+
+          <div class="grid4">
+            <div><label for="stat-1">Stat 1 valeur</label><input id="stat-1" type="text"></div>
+            <div><label for="stat-2">Stat 2 valeur</label><input id="stat-2" type="text"></div>
+            <div><label for="stat-3">Stat 3 valeur</label><input id="stat-3" type="text"></div>
+            <div><label for="stat-4">Stat 4 valeur</label><input id="stat-4" type="text"></div>
+          </div>
+
+          <div class="grid4" style="margin-top:12px;">
+            <div><label for="stat-1-lbl">Stat 1 label</label><input id="stat-1-lbl" type="text"></div>
+            <div><label for="stat-2-lbl">Stat 2 label</label><input id="stat-2-lbl" type="text"></div>
+            <div><label for="stat-3-lbl">Stat 3 label</label><input id="stat-3-lbl" type="text"></div>
+            <div><label for="stat-4-lbl">Stat 4 label</label><input id="stat-4-lbl" type="text"></div>
+          </div>
+
+          <div class="grid2" style="margin-top:12px;">
+            <div>
+              <label for="about-p1">Paragraphe 1</label>
+              <textarea id="about-p1"></textarea>
+            </div>
+            <div>
+              <label for="about-p2">Paragraphe 2</label>
+              <textarea id="about-p2"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PORTFOLIO -->
+      <section class="panel" id="panel-portfolio">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Réalisations — 3 projets</h3>
+            <div class="hint">IDs : proj-*-cat, proj-*-title, proj-*-year</div>
+          </div>
+
+          <div class="galleryOrder">
+            <div class="gItem">
+              <div class="gTop">
+                <b>Projet 1</b><div class="gBtns"><span style="color:rgba(185,169,169,.95);font-weight:700;font-size:.75rem;">proj-1</span></div>
+              </div>
+              <div class="grid2">
+                <div><label for="proj-1-cat">Catégorie</label><input id="proj-1-cat" type="text"></div>
+                <div><label for="proj-1-title">Titre</label><input id="proj-1-title" type="text"></div>
+              </div>
+              <div style="margin-top:12px;"><label for="proj-1-year">Année / détails</label><input id="proj-1-year" type="text"></div>
+            </div>
+
+            <div class="gItem">
+              <div class="gTop">
+                <b>Projet 2</b><div class="gBtns"><span style="color:rgba(185,169,169,.95);font-weight:700;font-size:.75rem;">proj-2</span></div>
+              </div>
+              <div class="grid2">
+                <div><label for="proj-2-cat">Catégorie</label><input id="proj-2-cat" type="text"></div>
+                <div><label for="proj-2-title">Titre</label><input id="proj-2-title" type="text"></div>
+              </div>
+              <div style="margin-top:12px;"><label for="proj-2-year">Année / détails</label><input id="proj-2-year" type="text"></div>
+            </div>
+
+            <div class="gItem">
+              <div class="gTop">
+                <b>Projet 3</b><div class="gBtns"><span style="color:rgba(185,169,169,.95);font-weight:700;font-size:.75rem;">proj-3</span></div>
+              </div>
+              <div class="grid2">
+                <div><label for="proj-3-cat">Catégorie</label><input id="proj-3-cat" type="text"></div>
+                <div><label for="proj-3-title">Titre</label><input id="proj-3-title" type="text"></div>
+              </div>
+              <div style="margin-top:12px;"><label for="proj-3-year">Année / détails</label><input id="proj-3-year" type="text"></div>
+            </div>
+          </div>
+
+          <div class="smallNote">
+            Astuce : pour les retours à la ligne dans les titres, utilisez <b>\\n</b> (ex: <code>AfricaFest\\nLibreville</code>).
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="panel" id="panel-contact">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Contact — infos</h3>
+            <div class="hint">IDs : contact-address, contact-phone, contact-email, contact-hours</div>
+          </div>
+
+          <div class="grid2">
+            <div><label for="contact-address">Adresse</label><input id="contact-address" type="text"></div>
+            <div><label for="contact-phone">Téléphone</label><input id="contact-phone" type="text"></div>
+          </div>
+          <div class="grid2" style="margin-top:12px;">
+            <div><label for="contact-email">Email</label><input id="contact-email" type="text"></div>
+            <div><label for="contact-hours">Horaires</label><input id="contact-hours" type="text"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <section class="panel" id="panel-footer">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Pied de page</h3>
+            <div class="hint">ID : footer-copy</div>
+          </div>
+          <div>
+            <label for="footer-copy">Copyright</label>
+            <input id="footer-copy" type="text">
+          </div>
+        </div>
+      </section>
+
+      <!-- MEDIA -->
+      <section class="panel" id="panel-media">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Médias — images site</h3>
+            <div class="hint">
+              Hero slider: slide-0..2 (background-image) • About: about-photo (src)
+              • Portfolio bg: proj-1-bg..3-bg (background-image) • Logo: logo-nav/logo-footer (src)
+            </div>
+          </div>
+
+          <div class="imgPick">
+            <div style="flex:1;min-width:320px;">
+              <div class="grid2">
+                <div>
+                  <label for="media-logo">Logo (LOGO.avif)</label>
+                  <select id="media-logo"></select>
+                </div>
+                <div>
+                  <label>Hero slides</label>
+                  <div class="grid2">
+                    <div>
+                      <label for="media-slide0" style="margin-top:0;">Slide 1</label>
+                      <select id="media-slide0"></select>
+                    </div>
+                    <div>
+                      <label for="media-slide1" style="margin-top:0;">Slide 2</label>
+                      <select id="media-slide1"></select>
+                    </div>
+                    <div>
+                      <label for="media-slide2" style="margin-top:0;">Slide 3</label>
+                      <select id="media-slide2"></select>
+                    </div>
+                    <div style="display:flex;align-items:flex-end;">
+                      <div class="smallNote" style="margin:0;">
+                        Les images viennent de <b>ossprogroup/MEDIA</b>.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid3" style="margin-top:12px;">
+                <div>
+                  <label for="media-about">Photo À propos</label>
+                  <select id="media-about"></select>
+                </div>
+                <div>
+                  <label for="media-proj1">Projet 1 BG</label>
+                  <select id="media-proj1"></select>
+                </div>
+                <div>
+                  <label for="media-proj2">Projet 2 BG</label>
+                  <select id="media-proj2"></select>
+                </div>
+              </div>
+
+              <div class="grid2" style="margin-top:12px;">
+                <div>
+                  <label for="media-proj3">Projet 3 BG</label>
+                  <select id="media-proj3"></select>
+                </div>
+                <div>
+                  <div class="smallNote">
+                    Si l’image ne s’affiche pas : vérifiez le nom exact du fichier dans <b>Média</b>.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="preview">
+              <div class="imgBox" id="previewLogoBox">
+                <div class="ph">Aperçu</div>
+              </div>
+              <div class="smallNote" style="margin-top:10px;">
+                Le preview s’actualise quand vous changez les selects.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLIENTS -->
+      <section class="panel" id="panel-clients">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Clients — remplace les logos</h3>
+            <div class="hint">IDs : client-logo-0..7 (images depuis MEDIA/LOGOS_clients)</div>
+          </div>
+
+          <div class="galleryOrder" id="clientsList"></div>
+
+          <div class="smallNote">
+            Important : on remplace complètement l’élément par un <b><img></b> (donc aucun texte SVG ne reste).
+          </div>
+        </div>
+      </section>
+
+      <!-- GALLERY -->
+      <section class="panel" id="panel-gallery">
+        <div class="card">
+          <div class="cardHeader">
+            <h3>Galerie — ordre (4)</h3>
+            <div class="hint">IDs : gal-1..4 (src)</div>
+          </div>
+
+          <div class="galleryOrder" id="galleryList"></div>
+
+          <div class="smallNote">
+            Utilisez ↑ ↓ pour changer l’ordre. Les images viennent de <b>ossprogroup/MEDIA</b>.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ---------------------------
+      Utils / Toast
+    ---------------------------- */
+    const toastEl = document.getElementById('toast');
+    function toast(msg, type){
+      toastEl.textContent = msg;
+      toastEl.className = 'toast show' + (type ? ' '+type : '');
+      clearTimeout(toastEl._tm);
+      toastEl._tm = setTimeout(()=>toastEl.className='toast', 2300);
+    }
+    function encodeUrl(file){
+      // Encode spaces etc, but keep slashes safe
+      return 'MEDIA/' + encodeURI(file).replaceAll('%2F','/');
+    }
+    function encodeClientUrl(file){
+      return 'MEDIA/LOGOS_clients/' + encodeURI(file).replaceAll('%2F','/');
+    }
+    function applyText(el, value){
+      if(!el) return;
+      if(value == null) return;
+      el.textContent = value;
+    }
+    function applyHtml(el, value){
+      if(!el) return;
+      if(value == null) return;
+      // allow \n -> <br>
+      const v = String(value).replaceAll('\\\\n', '<br>');
+      el.innerHTML = v;
+    }
+
+
+    /* ---------------------------
+      MEDIA lists (server-driven)
+      Loaded from:
+        GET /api/media/list?type=assets
+        GET /api/media/list?type=clients
+    ---------------------------- */
+    let MEDIA_FILES = [];
+    let CLIENT_FILES = [];
+
+    let heroCandidates = [];
+    let portfolioCandidates = [];
+    let aboutCandidates = [];
+
+    async function loadMediaFiles(){
+      // assets (site images)
+      const assetsResp = await fetch("/api/media/list?type=assets");
+      const assets = await assetsResp.json();
+      if(!assetsResp.ok || !assets.ok || !Array.isArray(assets.files)) throw new Error("assets list failed");
+      MEDIA_FILES = assets.files;
+
+      // clients (partner logos)
+      const clientsResp = await fetch("/api/media/list?type=clients");
+      const clients = await clientsResp.json();
+      if(!clientsResp.ok || !clients.ok || !Array.isArray(clients.files)) throw new Error("clients list failed");
+      CLIENT_FILES = clients.files;
+
+      heroCandidates = MEDIA_FILES.filter(f => f !== "LOGO.avif");
+      portfolioCandidates = heroCandidates;
+      aboutCandidates = heroCandidates;
+    }
+
+    /* ---------------------------
+      Client mapping 0..7
+      (Use exact ids in ossprogroup.html)
+    ---------------------------- */
+    const CLIENT_IDS = ["client-logo-0","client-logo-1","client-logo-2","client-logo-3","client-logo-4","client-logo-5","client-logo-6","client-logo-7"];
+
+    /* ---------------------------
+      State + defaults from ossprogroup.html current content
+    ---------------------------- */
+    const STATE_KEY = "ospg_admin_state_v1";
+
+    const DEFAULT_STATE = {
+      hero:{
+        tag: "Agence Évènementielle — Libreville, Gabon",
+        l1: "CRÉATEURS",
+        em: "d'instants",
+        l3: "MÉMORABLES",
+        sub: "OSSPROGROUP transforme vos ambitions en événements d'exception. Du concept à la réalisation, nous orchestrons chaque détail pour créer des expériences uniques et inoubliables au cœur du Gabon."
+      },
+      about:{
+        stat1:"+200", stat1Lbl:"Événements réalisés",
+        stat2:"10",   stat2Lbl:"Ans d'expérience",
+        stat3:"+80",  stat3Lbl:"Clients satisfaits",
+        stat4:"9",     stat4Lbl:"Provinces couvertes",
+        p1:"Fondée à Libreville, OSSPROGROUP est l'agence de référence pour la conception et l'organisation d'événements professionnels et privés au Gabon.",
+        p2:"Nous intervenons à chaque étape de votre projet avec un engagement total pour la qualité et la satisfaction de nos clients."
+      },
+      portfolio:{
+        p1cat:"Événement Corporate",
+        p1title:"Forum Économique\\ndu Gabon 2024",
+        p1year:"500+ participants · Palais des Congrès",
+        p2cat:"Gala Prestige",
+        p2title:"Nuit des\\nEntrepreneurs",
+        p2year:"300 invités VIP · Hôtel Radisson Blu",
+        p3cat:"Concert & Spectacle",
+        p3title:"AfricaFest\\nLibreville",
+        p3year:"2000+ spectateurs · Esplanade du Port"
+      },
+      contact:{
+        address:"Boulevard Triomphal, Libreville, Gabon",
+        phone:"+241 XX XX XX XX",
+        email:"contact@ossprogroup.ga",
+        hours:"Lun – Ven : 8h00 – 18h00"
+      },
+      footer:{
+        copy:"© 2025 OSSPROGROUP Gabon — Tous droits réservés"
+      },
+      media:{
+        logo:"LOGO.avif",
+        slide0:"Event 1 slide 2.avif",
+        slide1:"concert.avif",
+        slide2:"IMG_1569.avif",
+        aboutPhoto:"Briefing.avif",
+        proj1:"Event 1.avif",
+        proj2:"event 2 slide 2.avif",
+        proj3:"event 3.avif"
+      },
+      gallery:{
+        gal1:"IMG_1569.avif",
+        gal2:"Briefing.avif",
+        gal3:"concert.avif",
+        gal4:"camer on a job.avif"
+      },
+      clients:{
+        "client-logo-0":"Logo_gabon oil company.png",
+        "client-logo-1":"BGFI_logo.png",
+        "client-logo-2":"Logo_Total Energies..png",
+        "client-logo-3":"Airtel_Africa_logo.png",
+        "client-logo-4":"Olam_Logo_gc2rpl.png",
+        "client-logo-5":"Cnamgs.webp",
+        "client-logo-6":"logo-setrag_wgiluh.png",
+        "client-logo-7":"ministere du tourism.jpg"
+      }
+    };
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STATE_KEY);
+        if(!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        return {...structuredClone(DEFAULT_STATE), ...parsed};
+      }catch(e){
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+    function saveState(){
+      localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    }
+
+    let state = loadState();
+
+    /* ---------------------------
+      Preview tab / apply/export
+    ---------------------------- */
+    let previewTab = null;
+
+    function ensurePreview(){
+      if(previewTab && !previewTab.closed) return previewTab;
+      previewTab = window.open("ossprogroup.html","_blank");
+      return previewTab;
+    }
+
+    async function applyToPreview(){
+      const tab = ensurePreview();
+      const start = Date.now();
+
+      const applyOnce = () => {
+        try{
+          if(!tab || tab.closed) return false;
+          const doc = tab.document;
+
+          // HERO
+          applyText(doc.getElementById('hero-tag'), state.hero.tag);
+          applyText(doc.getElementById('hero-l1'), state.hero.l1);
+          applyText(doc.getElementById('hero-em'), state.hero.em);
+          applyText(doc.getElementById('hero-l3'), state.hero.l3);
+          applyText(doc.getElementById('hero-sub'), state.hero.sub);
+
+          // ABOUT
+          applyText(doc.getElementById('stat-1'), state.about.stat1);
+          applyText(doc.getElementById('stat-1-lbl'), state.about.stat1Lbl);
+          applyText(doc.getElementById('stat-2'), state.about.stat2);
+          applyText(doc.getElementById('stat-2-lbl'), state.about.stat2Lbl);
+          applyText(doc.getElementById('stat-3'), state.about.stat3);
+          applyText(doc.getElementById('stat-3-lbl'), state.about.stat3Lbl);
+          applyText(doc.getElementById('stat-4'), state.about.stat4);
+          applyText(doc.getElementById('stat-4-lbl'), state.about.stat4Lbl);
+          applyText(doc.getElementById('about-p1'), state.about.p1);
+          applyText(doc.getElementById('about-p2'), state.about.p2);
+
+          // PORTFOLIO
+          applyText(doc.getElementById('proj-1-cat'), state.portfolio.p1cat);
+          applyHtml(doc.getElementById('proj-1-title'), state.portfolio.p1title);
+          applyText(doc.getElementById('proj-1-year'), state.portfolio.p1year);
+
+          applyText(doc.getElementById('proj-2-cat'), state.portfolio.p2cat);
+          applyHtml(doc.getElementById('proj-2-title'), state.portfolio.p2title);
+          applyText(doc.getElementById('proj-2-year'), state.portfolio.p2year);
+
+          applyText(doc.getElementById('proj-3-cat'), state.portfolio.p3cat);
+          applyHtml(doc.getElementById('proj-3-title'), state.portfolio.p3title);
+          applyText(doc.getElementById('proj-3-year'), state.portfolio.p3year);
+
+          // CONTACT
+          applyText(doc.getElementById('contact-address'), state.contact.address);
+          applyText(doc.getElementById('contact-phone'), state.contact.phone);
+          applyText(doc.getElementById('contact-email'), state.contact.email);
+          applyText(doc.getElementById('contact-hours'), state.contact.hours);
+
+          // FOOTER
+          applyText(doc.getElementById('footer-copy'), state.footer.copy);
+
+          // LOGO
+          const navLogo = doc.getElementById('logo-nav');
+          const footLogo = doc.getElementById('logo-footer');
+          if(navLogo) navLogo.src = encodeUrl(state.media.logo);
+          if(footLogo) footLogo.src = encodeUrl(state.media.logo);
+
+          // SLIDES (background images)
+          const slide0 = doc.getElementById('slide-0');
+          const slide1 = doc.getElementById('slide-1');
+          const slide2 = doc.getElementById('slide-2');
+          if(slide0) slide0.style.backgroundImage = "url('" + encodeUrl(state.media.slide0) + "')";
+          if(slide1) slide1.style.backgroundImage = "url('" + encodeUrl(state.media.slide1) + "')";
+          if(slide2) slide2.style.backgroundImage = "url('" + encodeUrl(state.media.slide2) + "')";
+
+          // ABOUT photo
+          const aboutPh = doc.getElementById('about-photo');
+          if(aboutPh) aboutPh.src = encodeUrl(state.media.aboutPhoto);
+
+          // Portfolio bg
+          const p1 = doc.getElementById('proj-1-bg');
+          const p2 = doc.getElementById('proj-2-bg');
+          const p3 = doc.getElementById('proj-3-bg');
+          if(p1) p1.style.backgroundImage = "url('" + encodeUrl(state.media.proj1) + "')";
+          if(p2) p2.style.backgroundImage = "url('" + encodeUrl(state.media.proj2) + "')";
+          if(p3) p3.style.backgroundImage = "url('" + encodeUrl(state.media.proj3) + "')";
+
+          // Gallery images
+          const gal1 = doc.getElementById('gal-1');
+          const gal2 = doc.getElementById('gal-2');
+          const gal3 = doc.getElementById('gal-3');
+          const gal4 = doc.getElementById('gal-4');
+          if(gal1) gal1.src = encodeUrl(state.gallery.gal1);
+          if(gal2) gal2.src = encodeUrl(state.gallery.gal2);
+          if(gal3) gal3.src = encodeUrl(state.gallery.gal3);
+          if(gal4) gal4.src = encodeUrl(state.gallery.gal4);
+
+          // Client logos: replace whole node content with <img>
+          CLIENT_IDS.forEach((id)=>{
+            const el = doc.getElementById(id);
+            if(!el) return;
+            const file = state.clients[id];
+            el.innerHTML = '<img src="' + encodeClientUrl(file) + '" alt="Client logo">';
+          });
+
+          return true;
+        }catch(e){
+          return false;
+        }
+      };
+
+      while(Date.now()-start < 5000){
+        const ok = applyOnce();
+        if(ok) return true;
+        await new Promise(r=>setTimeout(r,120));
+      }
+      return false;
+    }
+
+    function exportFromPreview(){
+      const tab = previewTab && !previewTab.closed ? previewTab : ensurePreview();
+      const start = Date.now();
+      const tick = () => {
+        try{
+          if(tab && !tab.closed && tab.document && tab.document.getElementById('hero-tag')){
+            const html = "<!DOCTYPE html>\\n" + tab.document.documentElement.outerHTML;
+            const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = "ossprogroup-export.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            toast("Export téléchargé : ossprogroup-export.html", "ok");
+            return;
+          }
+        }catch(e){}
+        if(Date.now()-start < 5000) setTimeout(tick,150);
+        else toast("Export impossible (preview bloquée). Ouvre la preview puis réessaie.", "err");
+      };
+      tick();
+    }
+
+    /* ---------------------------
+      UI render
+    ---------------------------- */
+    function setValue(id, v){ const el=document.getElementById(id); if(el) el.value = v ?? ''; }
+
+    function initGalleryUI(){
+      const wrap = document.getElementById('galleryList');
+      wrap.innerHTML = '';
+      const slots = [
+        { key:'gal1', title:'gal-1' },
+        { key:'gal2', title:'gal-2' },
+        { key:'gal3', title:'gal-3' },
+        { key:'gal4', title:'gal-4' },
+      ];
+
+      const candidates = heroCandidates;
+
+      slots.forEach((s, idx)=>{
+        const item = document.createElement('div');
+        item.className = 'gItem';
+
+        const upDisabled = idx === 0;
+        const downDisabled = idx === slots.length - 1;
+
+        item.innerHTML = `
+          <div class="gTop">
+            <b>${s.title}</b>
+            <div class="gBtns">
+              <button class="gBtn" ${upDisabled?'disabled':''} data-up="${idx}">↑</button>
+              <button class="gBtn" ${downDisabled?'disabled':''} data-down="${idx}">↓</button>
+            </div>
+          </div>
+
+          <label>Image</label>
+          <select data-sel="${s.key}">
+            ${candidates.map(f=>{
+              const selected = state.gallery[s.key]===f ? 'selected' : '';
+              return '<option value="'+f+'" '+selected+'>'+f+'</option>';
+            }).join('')}
+          </select>
+          <div style="height:10px;"></div>
+          <div class="preview">
+            <div class="imgBox"><img src="${encodeUrl(state.gallery[s.key])}" alt=""></div>
+          </div>
+        `;
+        const sel = item.querySelector('select[data-sel="'+s.key+'"]');
+        sel.addEventListener('change', ()=>{
+          state.gallery[s.key] = sel.value;
+          saveState();
+          initGalleryUI();
+        });
+
+        item.querySelectorAll('button[data-up]').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            if(btn.disabled) return;
+            const i = parseInt(btn.getAttribute('data-up'),10);
+            moveGallery(i, i-1);
+          });
+        });
+        item.querySelectorAll('button[data-down]').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            if(btn.disabled) return;
+            const i = parseInt(btn.getAttribute('data-down'),10);
+            moveGallery(i, i+1);
+          });
+        });
+
+        wrap.appendChild(item);
+      });
+    }
+
+    function moveGallery(i1, i2){
+      const order = ['gal1','gal2','gal3','gal4'];
+      const a = order[i1];
+      const b = order[i2];
+      const tmp = state.gallery[a];
+      state.gallery[a] = state.gallery[b];
+      state.gallery[b] = tmp;
+      saveState();
+      initGalleryUI();
+    }
+
+    function initClientsUI(){
+      const wrap = document.getElementById('clientsList');
+      wrap.innerHTML = '';
+      CLIENT_IDS.forEach((id, idx)=>{
+        const slot = document.createElement('div');
+        slot.className = 'gItem';
+
+        const current = state.clients[id];
+
+        slot.innerHTML = `
+          <div class="gTop">
+            <b>${id}</b>
+            <div class="gBtns">
+              <span style="color:rgba(185,169,169,.95);font-weight:700;font-size:.75rem;">#${idx+1}</span>
+            </div>
+          </div>
+
+          <label>Logo file</label>
+          <select data-client-sel="${id}">
+            ${CLIENT_FILES.map(f=>{
+              const sel = f===current ? 'selected' : '';
+              return '<option value="'+f+'" '+sel+'>'+f+'</option>';
+            }).join('')}
+          </select>
+
+          <div style="height:10px;"></div>
+
+          <div class="preview" style="width:100%;max-width:520px;">
+            <div class="imgBox">
+              <img src="${encodeClientUrl(current)}" alt="">
+            </div>
+          </div>
+        `;
+
+        const sel = slot.querySelector('select[data-client-sel="'+id+'"]');
+        sel.addEventListener('change', ()=>{
+          state.clients[id] = sel.value;
+          saveState();
+          initClientsUI();
+        });
+
+        wrap.appendChild(slot);
+      });
+    }
+
+    function initMediaUI(){
+      // Logo (only LOGO.avif in current media list)
+      const logoSel = document.getElementById('media-logo');
+      logoSel.innerHTML = MEDIA_FILES.map(f=>'<option value="'+f+'" '+(state.media.logo===f?'selected':'')+'>'+f+'</option>').join('');
+
+      // (slideSel helper removed: it contained a syntax error and is not used)
+
+      // Slides
+      ['media-slide0','media-slide1','media-slide2'].forEach((selId)=>{
+        const key = selId==='media-slide0'?'slide0':selId==='media-slide1'?'slide1':'slide2';
+        const sel = document.getElementById(selId);
+        sel.innerHTML = heroCandidates.map(f=>'<option value="'+f+'" '+(state.media[key]===f?'selected':'')+'>'+f+'</option>').join('');
+        sel.addEventListener('change', ()=>{
+          state.media[key] = sel.value;
+          saveState();
+          updatePreviewBox();
+        });
+      });
+
+      // about-photo
+      const selAbout = document.getElementById('media-about');
+      selAbout.innerHTML = aboutCandidates.map(f=>'<option value="'+f+'" '+(state.media.aboutPhoto===f?'selected':'')+'>'+f+'</option>').join('');
+      selAbout.addEventListener('change', ()=>{
+        state.media.aboutPhoto = selAbout.value;
+        saveState();
+        updatePreviewBox();
+      });
+
+      // proj bg
+      ['media-proj1','media-proj2','media-proj3'].forEach((selId)=>{
+        const key = selId==='media-proj1'?'proj1':selId==='media-proj2'?'proj2':'proj3';
+        const sel = document.getElementById(selId);
+        sel.innerHTML = portfolioCandidates.map(f=>'<option value="'+f+'" '+(state.media[key]===f?'selected':'')+'>'+f+'</option>').join('');
+        sel.addEventListener('change', ()=>{
+          state.media[key] = sel.value;
+          saveState();
+          updatePreviewBox();
+        });
+      });
+
+      document.getElementById('media-logo').addEventListener('change', ()=>{
+        state.media.logo = document.getElementById('media-logo').value;
+        saveState();
+        updatePreviewBox();
+      });
+
+      updatePreviewBox();
+    }
+
+    function updatePreviewBox(){
+      // Use logo as main preview
+      const box = document.getElementById('previewLogoBox');
+      const file = state.media.logo;
+      box.innerHTML = '<img src="'+encodeUrl(file)+'" alt="Logo preview">';
+    }
+
+    /* ---------------------------
+      Tabs wiring
+    ---------------------------- */
+    function wireTabs(){
+      const btns = document.querySelectorAll('.navBtn');
+      const panels = document.querySelectorAll('.panel');
+      btns.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          btns.forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          const panelId = 'panel-'+btn.getAttribute('data-panel');
+          panels.forEach(p=>p.classList.toggle('active', p.id===panelId));
+        });
+      });
+    }
+
+    /* ---------------------------
+      Read UI -> state
+    ---------------------------- */
+    function readHero(){
+      state.hero.tag = document.getElementById('hero-tag').value;
+      state.hero.l1 = document.getElementById('hero-l1').value;
+      state.hero.em = document.getElementById('hero-em').value;
+      state.hero.l3 = document.getElementById('hero-l3').value;
+      state.hero.sub = document.getElementById('hero-sub').value;
+    }
+    function readAbout(){
+      state.about.stat1 = document.getElementById('stat-1').value;
+      state.about.stat2 = document.getElementById('stat-2').value;
+      state.about.stat3 = document.getElementById('stat-3').value;
+      state.about.stat4 = document.getElementById('stat-4').value;
+      state.about.stat1Lbl = document.getElementById('stat-1-lbl').value;
+      state.about.stat2Lbl = document.getElementById('stat-2-lbl').value;
+      state.about.stat3Lbl = document.getElementById('stat-3-lbl').value;
+      state.about.stat4Lbl = document.getElementById('stat-4-lbl').value;
+      state.about.p1 = document.getElementById('about-p1').value;
+      state.about.p2 = document.getElementById('about-p2').value;
+    }
+    function readPortfolio(){
+      state.portfolio.p1cat = document.getElementById('proj-1-cat').value;
+      state.portfolio.p1title = document.getElementById('proj-1-title').value;
+      state.portfolio.p1year = document.getElementById('proj-1-year').value;
+
+      state.portfolio.p2cat = document.getElementById('proj-2-cat').value;
+      state.portfolio.p2title = document.getElementById('proj-2-title').value;
+      state.portfolio.p2year = document.getElementById('proj-2-year').value;
+
+      state.portfolio.p3cat = document.getElementById('proj-3-cat').value;
+      state.portfolio.p3title = document.getElementById('proj-3-title').value;
+      state.portfolio.p3year = document.getElementById('proj-3-year').value;
+    }
+    function readContact(){
+      state.contact.address = document.getElementById('contact-address').value;
+      state.contact.phone = document.getElementById('contact-phone').value;
+      state.contact.email = document.getElementById('contact-email').value;
+      state.contact.hours = document.getElementById('contact-hours').value;
+    }
+    function readFooter(){
+      state.footer.copy = document.getElementById('footer-copy').value;
+    }
+    function readAllText(){
+      readHero();
+      readAbout();
+      readPortfolio();
+      readContact();
+      readFooter();
+      saveState();
+    }
+
+    /* ---------------------------
+      Init values into UI
+    ---------------------------- */
+    function initUI(){
+      // hero
+      setValue('hero-tag', state.hero.tag);
+      setValue('hero-l1', state.hero.l1);
+      setValue('hero-em', state.hero.em);
+      setValue('hero-l3', state.hero.l3);
+      setValue('hero-sub', state.hero.sub);
+
+      // about
+      setValue('stat-1', state.about.stat1);
+      setValue('stat-2', state.about.stat2);
+      setValue('stat-3', state.about.stat3);
+      setValue('stat-4', state.about.stat4);
+      setValue('stat-1-lbl', state.about.stat1Lbl);
+      setValue('stat-2-lbl', state.about.stat2Lbl);
+      setValue('stat-3-lbl', state.about.stat3Lbl);
+      setValue('stat-4-lbl', state.about.stat4Lbl);
+      setValue('about-p1', state.about.p1);
+      setValue('about-p2', state.about.p2);
+
+      // portfolio
+      setValue('proj-1-cat', state.portfolio.p1cat);
+      setValue('proj-1-title', state.portfolio.p1title);
+      setValue('proj-1-year', state.portfolio.p1year);
+      setValue('proj-2-cat', state.portfolio.p2cat);
+      setValue('proj-2-title', state.portfolio.p2title);
+      setValue('proj-2-year', state.portfolio.p2year);
+      setValue('proj-3-cat', state.portfolio.p3cat);
+      setValue('proj-3-title', state.portfolio.p3title);
+      setValue('proj-3-year', state.portfolio.p3year);
+
+      // contact
+      setValue('contact-address', state.contact.address);
+      setValue('contact-phone', state.contact.phone);
+      setValue('contact-email', state.contact.email);
+      setValue('contact-hours', state.contact.hours);
+
+      // footer
+      setValue('footer-copy', state.footer.copy);
+
+      // medias/clients/gallery
+      initMediaUI();
+      initClientsUI();
+      initGalleryUI();
+    }
+
+    /* ---------------------------
+      Buttons
+    ---------------------------- */
+    document.getElementById('btnPreview').addEventListener('click', ()=>{
+      ensurePreview();
+      toast("Preview ouverte.", "ok");
+    });
+
+    document.getElementById('btnApply').addEventListener('click', async ()=>{
+      readAllText();
+      toast("Application en cours…", "ok");
+      const ok = await applyToPreview();
+      toast(ok ? "✓ Site mis à jour (prévisualisation)." : "Impossible d’appliquer (preview pas prête).", ok ? "ok" : "err");
+    });
+
+    document.getElementById('btnExport').addEventListener('click', async ()=>{
+      readAllText();
+      toast("Préparation export…", "ok");
+      const ok = await applyToPreview();
+      if(!ok){
+        toast("Impossible d’atteindre la preview. Ouvre ↗ Prévisualiser puis réessaie.", "err");
+        return;
+      }
+      exportFromPreview();
+    });
+
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      if(!confirm("Réinitialiser les champs et choix de médias ?")) return;
+      state = structuredClone(DEFAULT_STATE);
+      saveState();
+      initUI();
+      toast("Réinitialisé.", "ok");
+    });
+
+    /* ---------------------------
+      Live update for text changes
+      (so Apply uses latest)
+    ---------------------------- */
+    document.addEventListener('input', (e)=>{
+      const t = e.target;
+      if(!t || !t.id) return;
+      // Only for text fields; media selection is handled by select events
+      const isText = ['hero-tag','hero-l1','hero-em','hero-l3','hero-sub',
+        'stat-1','stat-2','stat-3','stat-4','stat-1-lbl','stat-2-lbl','stat-3-lbl','stat-4-lbl','about-p1','about-p2',
+        'proj-1-cat','proj-1-title','proj-1-year','proj-2-cat','proj-2-title','proj-2-year','proj-3-cat','proj-3-title','proj-3-year',
+        'contact-address','contact-phone','contact-email','contact-hours',
+        'footer-copy'
+      ].includes(t.id);
+      if(!isText) return;
+      // Keep it simple: read all text on each input.
+      // (forms are small)
+      readAllText();
+    });
+
+    /* ---------------------------
+      Init
+    ---------------------------- */
+    wireTabs();
+    initUI();
+    saveState();
+    toast("Admin prêt. Ouvre la preview puis Appliquer.", "ok");
+  </script>
+</body>
+</html>
