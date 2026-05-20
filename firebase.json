@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "node_modules/**",
+      "data/**",
+      "Leftovers/**",
+      ".git/**",
+      ".github/**",
+      "server.js",
+      "package.json",
+      "package-lock.json",
+      ".env",
+      ".env.*",
+      "ossproject1-*-firebase-adminsdk-*.json",
+      "firebase.json"
+    ],
+    "cleanUrls": false,
+    "trailingSlash": false
+  }
+}
